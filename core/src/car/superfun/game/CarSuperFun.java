@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class CarSuperFun extends ApplicationAdapter {
 
-    public static final String TITLE = "Car Superfun xD";
     private GameStateManager gsm;
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -33,6 +32,8 @@ public class CarSuperFun extends ApplicationAdapter {
 
         //sets the color to black
         Gdx.gl.glClearColor(0, 0, 0, 1);
+
+        // Starts the game in MainMenu
         gsm.push(new MainMenu());
         // Starts the game in playstate
         // gsm.push(new PlayState(camera));
