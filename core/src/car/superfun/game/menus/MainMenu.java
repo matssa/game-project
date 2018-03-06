@@ -15,8 +15,7 @@ import car.superfun.game.states.State;
 public class MainMenu extends State {
     private Texture background, button, settings;
 
-    public MainMenu(GameStateManager gsm){
-        super(gsm);
+    public MainMenu(){
         background = new Texture("background.png");
         settings = new Texture("cogwheel.png");
     }

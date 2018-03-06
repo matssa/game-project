@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector3;
 public abstract class State {
     protected GameStateManager gsm;
 
-    protected State(GameStateManager gsm) {
-        this.gsm = gsm;
+    protected State() {
+        this.gsm = GameStateManager.getInstance();
     }
 
     //Handles input from user
