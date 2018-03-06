@@ -13,11 +13,11 @@ import car.superfun.game.states.State;
  */
 
 public class SettingsMenu extends State {
-    private Texture background, back;
+    private Texture background, hostButton, joinButton, backButton;
 
     public SettingsMenu(){
         background = new Texture("pink_car.png");
-        back = new Texture("cogwheel.png");
+        backButton = new Texture("cogwheel.png");
     }
 
     @Override
@@ -41,18 +41,18 @@ public class SettingsMenu extends State {
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        sb.draw(back, 1600, 890);
+        sb.draw(backButton, 1600, 890);
         sb.end();
     }
 
     @Override
     public void dispose() {
         background.dispose();
-        back.dispose();
+        backButton.dispose();
     }
 
     public boolean isOnBack(){
-        Circle textureBounds = new Circle(1600+back.getWidth()/2, (Gdx.graphics.getHeight() - 890)-back.getHeight()/2, back.getWidth()/2);
+        Circle textureBounds = new Circle(1600+backButton.getWidth()/2, (Gdx.graphics.getHeight() - 890)-backButton.getHeight()/2, backButton.getWidth()/2);
         if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
             return true;
         }else{
