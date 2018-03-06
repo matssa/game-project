@@ -22,16 +22,16 @@ public class LocalCar extends PhysicalObject implements Observer {
     }
 
     public LocalCar(Vector2 position) {
-        this(position, new Sprite(new Texture("som")));
+        this(position, new Sprite(new Texture("blue_car.png")));
     }
 
     @Override
     public void notifyOfChange() {
-
+        // TODO: use the slider changes to control the car
     }
 
     @Override
     public void subscribeTo(Subject subject) {
-
+        // TODO: subscribe to the CarController
     }
 }
