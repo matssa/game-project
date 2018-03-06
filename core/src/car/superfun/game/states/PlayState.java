@@ -4,21 +4,27 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 
 public class PlayState extends State{
 
     private Sprite map;
+    TiledMap tiledMap;
+    TiledMapRenderer tiledMapRenderer;
 
     private OrthographicCamera camera;
 
     public PlayState(OrthographicCamera  camera) {
         this.camera = camera;
 
-        // init test map
-        map = new Sprite(new Texture("really_the_first_track.png"));
-        map.setPosition(0, 0);
+        tiledMap = new TmxMapLoader().load("testMap.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
     }
 
     @Override
@@ -35,9 +41,8 @@ public class PlayState extends State{
 
     @Override
     public void render(SpriteBatch sb) {
-        sb.begin();
-        map.draw(sb);
-        sb.end();
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render();
     }
 
     @Override
