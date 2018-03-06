@@ -15,7 +15,7 @@ public class PlayState extends State{
 
     public PlayState(OrthographicCamera  camera) {
         this.camera = camera;
-        Sprite test = new Sprite(new Texture())
+        Sprite test = new Sprite(new Texture('really_the_first_track.png'))
     }
 
     @Override
