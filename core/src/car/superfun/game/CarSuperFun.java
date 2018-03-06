@@ -31,6 +31,7 @@ public class CarSuperFun extends ApplicationAdapter {
         //sets the color to black
         Gdx.gl.glClearColor(0, 0, 0, 1);
 
+        // Starts the game in playstate
         gsm.push(new PlayState(camera));
     }
 
@@ -41,7 +42,16 @@ public class CarSuperFun extends ApplicationAdapter {
     @Override
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         gsm.update(Gdx.graphics.getDeltaTime());
+
+        // Update the camera position
+        camera.update();
+
+        // render based on the camera position
+        batch.setProjectionMatrix(camera.combined);
+
+        // render the bach
         gsm.render(batch);
     }
 
