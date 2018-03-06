@@ -18,4 +18,8 @@ public abstract class GeneralObject {
         this.sprite = sprite;
     }
 
+    public Sprite getSprite() {
+        return sprite;
+    }
+
 }
