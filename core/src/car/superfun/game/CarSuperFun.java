@@ -1,5 +1,6 @@
 package car.superfun.game;
 
+import car.superfun.game.menus.MainMenu;
 import car.superfun.game.states.GameStateManager;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -9,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 public class CarSuperFun extends ApplicationAdapter {
+
+    public static final String TITLE = "Car Superfun xD";
     private GameStateManager gsm;
     private SpriteBatch batch;
 
@@ -24,7 +27,7 @@ public class CarSuperFun extends ApplicationAdapter {
         //sets the color to black
         Gdx.gl.glClearColor(0, 0, 0, 1);
 
-
+        gsm.push(new MainMenu(gsm));
     }
 
     /**
@@ -44,5 +47,6 @@ public class CarSuperFun extends ApplicationAdapter {
     @Override
     public void dispose() {
         gsm.dispose();
+        batch.dispose();
     }
 }
