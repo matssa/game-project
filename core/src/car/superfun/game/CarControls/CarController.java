@@ -15,12 +15,15 @@ public class CarController extends Subject {
     public float slider1Position;
     public float slider2Position;
 
+    public float forward;
+    public float rotation;
+
     private Texture slider1Texture;
     private Texture slider2Texture;
 
     private Texture knob1Texture;
     private Texture knob2Texture;
-    
+
     private int knobRadius = 50;
     private int sliderWidth = 120;
 
@@ -46,6 +49,9 @@ public class CarController extends Subject {
             if(justTouched.x > 7 * Gdx.graphics.getWidth() / 8) {
                 slider2Position = justTouched.y;
             }
+
+            forward = slider1Position + slider2Position - Gdx.graphics.getHeight();
+
             notifyObservers();
         }
     }
@@ -56,8 +62,8 @@ public class CarController extends Subject {
         sb.draw(slider1Texture, 0, 0, slider1Texture.getWidth(), Gdx.graphics.getHeight());
         sb.draw(slider2Texture, Gdx.graphics.getWidth() - sliderWidth, 0, slider1Texture.getWidth(), Gdx.graphics.getHeight());
 
-        sb.draw(knob1Texture, sliderWidth / 2, slider1Position);
-        sb.draw(knob2Texture, Gdx.graphics.getWidth() - (sliderWidth / 2), slider2Position);
+        sb.draw(knob1Texture, (sliderWidth / 2) - knobRadius, slider1Position);
+        sb.draw(knob2Texture, Gdx.graphics.getWidth() - (sliderWidth / 2) - knobRadius, slider2Position);
 
         sb.end();
     }

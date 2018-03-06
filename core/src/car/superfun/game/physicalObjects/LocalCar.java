@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
+import car.superfun.game.CarControls.CarController;
 import car.superfun.game.observerPattern.Observer;
 import car.superfun.game.observerPattern.Subject;
 
@@ -14,6 +15,8 @@ import car.superfun.game.observerPattern.Subject;
 public class LocalCar extends PhysicalObject implements Observer {
     private int maxSpeed;
     private int acceleration;
+
+    CarController carController;
 
     public LocalCar(Vector2 position, Sprite sprite){
         super(position, sprite, new Vector2(0,0));
@@ -32,6 +35,6 @@ public class LocalCar extends PhysicalObject implements Observer {
 
     @Override
     public void subscribeTo(Subject subject) {
-        // TODO: subscribe to the CarController
+        carController = (CarController) subject;
     }
 }
