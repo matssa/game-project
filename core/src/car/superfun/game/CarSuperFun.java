@@ -8,6 +8,10 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class CarSuperFun extends ApplicationAdapter {
     private GameStateManager gsm;
@@ -20,6 +24,7 @@ public class CarSuperFun extends ApplicationAdapter {
     @Override
     public void create() {
 
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
         camera.update();
@@ -29,10 +34,12 @@ public class CarSuperFun extends ApplicationAdapter {
         gsm = GameStateManager.getInstance();
 
         //sets the color to black
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 1, 1);
 
         // Starts the game in playstate
         gsm.push(new PlayState(camera));
+
+
     }
 
     /**
