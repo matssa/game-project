@@ -40,19 +40,35 @@ public class CarController extends Subject {
     }
 
     public void update() {
-        Vector2 justTouched = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        for (int i = 0; i < 5; i++) {
+            if (Gdx.input.isTouched(i)) {
+                Vector2 justTouched = new Vector2(Gdx.input.getX(i), Gdx.input.getY(i) * (-1) + Gdx.graphics.getHeight());
+                if(justTouched.x < Gdx.graphics.getWidth() / 8) {
+                    slider1Position =
+                            (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
+                                    || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
+                                    ? justTouched.y :
+                                    Gdx.graphics.getHeight() / 2;
+                }
+                if(justTouched.x > 7 * Gdx.graphics.getWidth() / 8) {
+                    slider2Position =
+                            (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
+                                    || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
+                                    ? justTouched.y :
+                                    Gdx.graphics.getHeight() / 2;
+                }
+            }
+        }
+
+        forward = Math.max(-1f, Math.min(1f, (slider1Position + slider2Position - Gdx.graphics.getHeight()) / (Gdx.graphics.getHeight() * 0.8f)));
+
+        notifyObservers();
 
         if(Gdx.input.justTouched()) {
-            if(justTouched.x < Gdx.graphics.getWidth() / 8) {
-                slider1Position = justTouched.y;
-            }
-            if(justTouched.x > 7 * Gdx.graphics.getWidth() / 8) {
-                slider2Position = justTouched.y;
-            }
+//            Gdx.app.log("justTouched.x", "" + justTouched.x);
+//            Gdx.app.log("justTouched.y", "" + justTouched.y);
+//            Gdx.app.log("forward", "" + forward);
 
-            forward = slider1Position + slider2Position - Gdx.graphics.getHeight();
-
-            notifyObservers();
         }
     }
 

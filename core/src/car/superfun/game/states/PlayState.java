@@ -30,7 +30,7 @@ public class PlayState extends State{
         this.camera = camera;
 
         carController = new CarController();
-        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController);
         tiledMap = new TmxMapLoader().load("testMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
@@ -50,9 +50,10 @@ public class PlayState extends State{
 
     @Override
     public void render(SpriteBatch sb) {
-        carController.render(sb);
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
+        localCar.render(sb);
+        carController.render(sb);
     }
 
     @Override

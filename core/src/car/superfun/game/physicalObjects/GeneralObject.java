@@ -1,7 +1,7 @@
 package car.superfun.game.physicalObjects;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Shape2D;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -18,4 +18,9 @@ public abstract class GeneralObject {
         this.sprite = sprite;
     }
 
+    public void render(SpriteBatch sb) {
+        sb.begin();
+        sb.draw(sprite.getTexture(), position.x, position.y);
+        sb.end();
+    }
 }
