@@ -53,7 +53,6 @@ public class PlayState extends State{
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         localCar.render(sb);
-
     }
 
     @Override
@@ -61,10 +60,7 @@ public class PlayState extends State{
         carController.render(sb);
     }
 
-
-
     @Override
     public void dispose() {
-
     }
 }
