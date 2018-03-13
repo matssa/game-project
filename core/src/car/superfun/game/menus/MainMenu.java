@@ -28,9 +28,6 @@ public class MainMenu extends State {
     @Override
     public void handleInput() {
         if(Gdx.input.justTouched()){
-            //Gdx.app.log("X", Integer.toString(Gdx.input.getX()));
-            //Gdx.app.log("Y", Integer.toString(Gdx.input.getY()));
-            // height: 1080, width: 1796
             if(isOnSettings()){
                 GameStateManager.getInstance().push(new SettingsMenu());
             }
