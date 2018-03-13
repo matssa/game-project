@@ -65,12 +65,6 @@ public class CarController extends Subject {
 
         notifyObservers();
 
-        if(Gdx.input.justTouched()) {
-//            Gdx.app.log("justTouched.x", "" + justTouched.x);
-//            Gdx.app.log("justTouched.y", "" + justTouched.y);
-//            Gdx.app.log("forward", "" + forward);
-
-        }
     }
 
     public void render(SpriteBatch sb) {

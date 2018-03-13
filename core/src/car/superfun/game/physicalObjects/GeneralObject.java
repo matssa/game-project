@@ -21,7 +21,6 @@ public abstract class GeneralObject {
     public void render(SpriteBatch sb) {
         sb.begin();
         sprite.draw(sb);
-//        sb.draw(sprite.getTexture(), position.x, position.y);
         sb.end();
     }
 
