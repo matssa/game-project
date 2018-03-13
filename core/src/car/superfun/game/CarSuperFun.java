@@ -16,7 +16,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 public class CarSuperFun extends ApplicationAdapter {
     private GameStateManager gsm;
     private SpriteBatch batch;
-    private OrthographicCamera  camera;
+    private SpriteBatch hud;
+    private OrthographicCamera camera;
 
     /**
      * Sets up the app
@@ -31,6 +32,8 @@ public class CarSuperFun extends ApplicationAdapter {
 
 
         batch = new SpriteBatch();
+        hud = new SpriteBatch();
+
         gsm = GameStateManager.getInstance();
 
         //sets the color to black
@@ -60,7 +63,12 @@ public class CarSuperFun extends ApplicationAdapter {
 
         // render the bach
         gsm.render(batch);
+
+        //render controller
+        gsm.renderHud(hud);
+
     }
+
 
     /**
      * get gsm to dispose
