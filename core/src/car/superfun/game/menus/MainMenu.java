@@ -52,8 +52,8 @@ public class MainMenu extends State {
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        sb.draw(hostButton, Gdx.graphics.getWidth()/2-hostButton.getWidth()/2, Gdx.graphics.getHeight()/2+150);
-        sb.draw(joinButton, Gdx.graphics.getWidth()/2-hostButton.getWidth()/2, Gdx.graphics.getHeight()/2-150);
+        sb.draw(joinButton, Gdx.graphics.getWidth()/2-joinButton.getWidth()/2, Gdx.graphics.getHeight()/2-(joinButton.getHeight()/2)+150);
+        sb.draw(hostButton, Gdx.graphics.getWidth()/2-hostButton.getWidth()/2, Gdx.graphics.getHeight()/2-(hostButton.getHeight()/2)-150);
         sb.draw(settings, 1600, 890);
         sb.end();
     }
@@ -67,7 +67,7 @@ public class MainMenu extends State {
     }
 
     public boolean isOnJoin(){
-        Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-hostButton.getWidth()/2), (Gdx.graphics.getHeight()/2-350), (hostButton.getWidth()), hostButton.getHeight());
+        Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-joinButton.getWidth()/2), (Gdx.graphics.getHeight()/2+(joinButton.getHeight()/2)-350), (joinButton.getWidth()), joinButton.getHeight());
         if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
             return true;
         }else{
@@ -76,7 +76,7 @@ public class MainMenu extends State {
     }
 
     public boolean isOnHost(){
-        Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-hostButton.getWidth()/2), (Gdx.graphics.getHeight()/2-50), (hostButton.getWidth()), hostButton.getHeight());
+        Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-hostButton.getWidth()/2), (Gdx.graphics.getHeight()/2+(hostButton.getHeight()/2)-50), (hostButton.getWidth()), hostButton.getHeight());
         if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
             return true;
         }else{
