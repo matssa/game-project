@@ -17,7 +17,7 @@ public class SettingsMenu extends State {
 
     public SettingsMenu(){
         background = new Texture("pink_car.png");
-        backButton = new Texture("cogwheel.png");
+        backButton = new Texture("menu-buttons/settings.png");
     }
 
     @Override
