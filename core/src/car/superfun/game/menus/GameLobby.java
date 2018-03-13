@@ -30,4 +30,9 @@ public class GameLobby extends State{
     public void dispose() {
 
     }
+
+    @Override
+    public void renderHud(SpriteBatch sb) {
+
+    }
 }

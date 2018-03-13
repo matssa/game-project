@@ -56,4 +56,9 @@ public class GameBrowser extends State{
             return false;
         }
     }
+
+    @Override
+    public void renderHud(SpriteBatch sb) {
+
+    }
 }

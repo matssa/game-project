@@ -2,6 +2,7 @@ package car.superfun.game.menus;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
@@ -17,6 +18,7 @@ import car.superfun.game.states.State;
 
 public class MainMenu extends State {
     private Texture background, hostButton, joinButton, settings;
+    private Music menu_music;
 
     public MainMenu(){
         background = new Texture("background.png");
@@ -88,5 +90,10 @@ public class MainMenu extends State {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public void renderHud(SpriteBatch sb) {
+
     }
 }
