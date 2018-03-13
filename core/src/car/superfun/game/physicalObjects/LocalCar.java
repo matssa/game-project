@@ -55,11 +55,9 @@ public class LocalCar extends PhysicalObject implements Observer {
         return velocity;
     }
 
-
     public Vector2 getPosition() {
         return position;
     }
-
 
     @Override
     public void subscribeTo(Subject subject) {
