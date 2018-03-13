@@ -21,7 +21,7 @@ public class MainMenu extends State {
     public MainMenu(){
         background = new Texture("background.png");
         hostButton = new Texture("menu-buttons/host.png");
-        joinButton = new Texture("menu-buttons/hostb.png");
+        joinButton = new Texture("menu-buttons/join.png");
         settings = new Texture("menu-buttons/settings.png");
     }
 
