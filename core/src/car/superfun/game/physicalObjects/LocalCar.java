@@ -37,11 +37,12 @@ public class LocalCar extends PhysicalObject implements Observer {
     public void update(float dt) {
         super.update(dt);
 
+        direction.rotate(carController.rotation);
+        sprite.rotate(carController.rotation);
+        velocity.rotate(carController.rotation);
+
         if (velocity.len() < maxSpeed) {
             Vector2 addedVel = new Vector2(direction).scl(acceleration * carController.forward * dt);
-//            Gdx.app.log("added velocity.x", "" + addedVel.x);
-//            Gdx.app.log("added velocity.y", "" + addedVel.y);
-
             velocity.add(addedVel);
         }
     }
