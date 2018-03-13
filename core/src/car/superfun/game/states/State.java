@@ -1,7 +1,6 @@
 package car.superfun.game.states;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
 
 public abstract class State {
 
