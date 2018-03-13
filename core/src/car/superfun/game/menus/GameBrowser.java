@@ -23,8 +23,6 @@ public class GameBrowser extends State{
     @Override
     public void handleInput() {
         if(Gdx.input.justTouched()) {
-            //Gdx.app.log("X", Integer.toString(Gdx.input.getX()));
-            //Gdx.app.log("Y", Integer.toString(Gdx.input.getY()));
             if (isOnBack()) {
                 GameStateManager.getInstance().pop();
             }
