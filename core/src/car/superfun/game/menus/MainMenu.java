@@ -22,7 +22,7 @@ public class MainMenu extends State {
         background = new Texture("background.png");
         hostButton = new Texture("black_car.png");
         joinButton = new Texture("blue_car.png");
-        settings = new Texture("cogwheel.png");
+        settings = new Texture("menu-buttons/settings.png");
     }
 
     @Override
