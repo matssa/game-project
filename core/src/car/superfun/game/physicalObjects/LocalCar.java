@@ -17,29 +17,36 @@ import car.superfun.game.observerPattern.Subject;
 public class LocalCar extends PhysicalObject implements Observer {
     private int maxSpeed;
     private float acceleration;
+    private float steering;
+
     private CarController carController;
 
     private Vector2 direction;
 
     public LocalCar(Vector2 position, Sprite sprite, CarController carController){
         super(position, sprite, new Vector2(0,0));
+
         maxSpeed = 1500;
         acceleration = 1000.0f;
+        steering = 2.0f;
+
         this.carController = carController;
         direction = new Vector2(0, 1);
     }
 
     public LocalCar(Vector2 position, CarController carController) {
-        this(position, new Sprite(new Texture("green_car.png")), carController);
+        this(position, new Sprite(new Texture("racing-pack/PNG/Cars/car_green_5.png")), carController);
     }
 
     @Override
     public void update(float dt) {
         super.update(dt);
 
-        direction.rotate(carController.rotation);
-        sprite.rotate(carController.rotation);
-        velocity.rotate(carController.rotation);
+        float rotation = carController.rotation * steering;
+
+        direction.rotate(rotation);
+        sprite.rotate(rotation);
+        velocity.rotate(rotation);
 
         if (velocity.len() < maxSpeed) {
             Vector2 addedVel = new Vector2(direction).scl(acceleration * carController.forward * dt);
