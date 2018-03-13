@@ -2,7 +2,6 @@ package car.superfun.game.states;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-
 public abstract class State {
 
     protected State() {
