@@ -21,7 +21,7 @@ public abstract class PhysicalObject extends GeneralObject {
     }
 
     public PhysicalObject(Vector2 position, Sprite sprite, Vector2 velocity) {
-        this(position, sprite, velocity, 1, 0.1f);
+        this(position, sprite, velocity, 1, 0.3f);
     }
 
     public void update(float dt) {
@@ -30,7 +30,7 @@ public abstract class PhysicalObject extends GeneralObject {
         velocity.scl(1/dt);
 
         velocity.scl(1 - friction * dt);
-        if (velocity.isZero(0.05f)) {
+        if (velocity.isZero(50f)) {
             velocity.set(0,0);
         }
     }
