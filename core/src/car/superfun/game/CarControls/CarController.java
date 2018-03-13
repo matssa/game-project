@@ -15,8 +15,8 @@ public class CarController extends Subject {
     public float slider1Position;
     public float slider2Position;
 
-    public float forward;
-    public float rotation;
+    public float forward; // Value range is [-1, 1]
+    public float rotation; // Value range is [-1, 1], where -1 means left and 1 means right
 
     private Texture slider1Texture;
     private Texture slider2Texture;
@@ -43,14 +43,14 @@ public class CarController extends Subject {
         for (int i = 0; i < 5; i++) {
             if (Gdx.input.isTouched(i)) {
                 Vector2 justTouched = new Vector2(Gdx.input.getX(i), Gdx.input.getY(i) * (-1) + Gdx.graphics.getHeight());
-                if(justTouched.x < Gdx.graphics.getWidth() / 8) {
+                if (justTouched.x < Gdx.graphics.getWidth() / 8) {
                     slider1Position =
                             (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
                                     || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
                                     ? justTouched.y :
                                     Gdx.graphics.getHeight() / 2;
                 }
-                if(justTouched.x > 7 * Gdx.graphics.getWidth() / 8) {
+                if (justTouched.x > 7 * Gdx.graphics.getWidth() / 8) {
                     slider2Position =
                             (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
                                     || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
@@ -61,15 +61,10 @@ public class CarController extends Subject {
         }
 
         forward = Math.max(-1f, Math.min(1f, (slider1Position + slider2Position - Gdx.graphics.getHeight()) / (Gdx.graphics.getHeight() * 0.8f)));
+        rotation = Math.max(-1f, Math.min(1f, (slider2Position - slider1Position) / (Gdx.graphics.getHeight() * 0.8f)));
 
         notifyObservers();
 
-        if(Gdx.input.justTouched()) {
-//            Gdx.app.log("justTouched.x", "" + justTouched.x);
-//            Gdx.app.log("justTouched.y", "" + justTouched.y);
-//            Gdx.app.log("forward", "" + forward);
-
-        }
     }
 
     public void render(SpriteBatch sb) {
@@ -78,8 +73,8 @@ public class CarController extends Subject {
         sb.draw(slider1Texture, 0, 0, slider1Texture.getWidth(), Gdx.graphics.getHeight());
         sb.draw(slider2Texture, Gdx.graphics.getWidth() - sliderWidth, 0, slider1Texture.getWidth(), Gdx.graphics.getHeight());
 
-        sb.draw(knob1Texture, (sliderWidth / 2) - knobRadius, slider1Position);
-        sb.draw(knob2Texture, Gdx.graphics.getWidth() - (sliderWidth / 2) - knobRadius, slider2Position);
+        sb.draw(knob1Texture, (sliderWidth / 2) - knobRadius, slider1Position - knobRadius);
+        sb.draw(knob2Texture, Gdx.graphics.getWidth() - (sliderWidth / 2) - knobRadius, slider2Position - knobRadius);
 
         sb.end();
     }

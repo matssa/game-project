@@ -3,12 +3,9 @@ package car.superfun.game.states;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
-
 public abstract class State {
-    protected GameStateManager gsm;
 
     protected State() {
-        this.gsm = GameStateManager.getInstance();
     }
 
     //Handles input from user
@@ -20,7 +17,9 @@ public abstract class State {
     //Renders the object
     public abstract void render(SpriteBatch sb);
 
+    //Renders the object
+    public abstract void renderHud(SpriteBatch sb);
+
     //dispose
     public abstract void dispose();
-
 }

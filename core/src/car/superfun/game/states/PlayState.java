@@ -42,8 +42,8 @@ public class PlayState extends State{
 
     @Override
     public void update(float dt) {
-        Vector2 position = new Vector2(0,0);
-        camera.translate(position);
+        Vector2 position = localCar.getPosition();
+        camera.position.set(position.x, position.y, 0);
         carController.update();
         localCar.update(dt);
     }
@@ -53,11 +53,14 @@ public class PlayState extends State{
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         localCar.render(sb);
+    }
+
+    @Override
+    public void renderHud(SpriteBatch sb) {
         carController.render(sb);
     }
 
     @Override
     public void dispose() {
-
     }
 }

@@ -84,4 +84,10 @@ public class GameStateManager {
             states.peek().dispose();
         }
     }
+
+    public void renderHud(SpriteBatch sb) {
+        if(!states.empty()) {
+            states.peek().renderHud(sb);
+        }
+    }
 }

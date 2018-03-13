@@ -3,6 +3,7 @@ package car.superfun.game.physicalObjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 
 import car.superfun.game.CarControls.CarController;
@@ -36,11 +37,12 @@ public class LocalCar extends PhysicalObject implements Observer {
     public void update(float dt) {
         super.update(dt);
 
+        direction.rotate(carController.rotation);
+        sprite.rotate(carController.rotation);
+        velocity.rotate(carController.rotation);
+
         if (velocity.len() < maxSpeed) {
             Vector2 addedVel = new Vector2(direction).scl(acceleration * carController.forward * dt);
-//            Gdx.app.log("added velocity.x", "" + addedVel.x);
-//            Gdx.app.log("added velocity.y", "" + addedVel.y);
-
             velocity.add(addedVel);
         }
     }
@@ -48,6 +50,14 @@ public class LocalCar extends PhysicalObject implements Observer {
     @Override
     public void notifyOfChange() {
         //TODO: Is this really needed at all?
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public Vector2 getPosition() {
+        return position;
     }
 
     @Override
