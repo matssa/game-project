@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class GeneralObject {
     public Vector2 position;
-    private Sprite sprite;
+    protected Sprite sprite;
     // private Shape2D collider; // TODO: try using sprites first.
 
     public GeneralObject(Vector2 position, Sprite sprite) {
@@ -20,7 +20,8 @@ public abstract class GeneralObject {
 
     public void render(SpriteBatch sb) {
         sb.begin();
-        sb.draw(sprite.getTexture(), position.x, position.y);
+        sprite.draw(sb);
+//        sb.draw(sprite.getTexture(), position.x, position.y);
         sb.end();
     }
 

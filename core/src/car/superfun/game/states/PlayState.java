@@ -31,7 +31,7 @@ public class PlayState extends State{
 
         carController = new CarController();
         localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController);
-        tiledMap = new TmxMapLoader().load("testMap.tmx");
+        tiledMap = new TmxMapLoader().load("goodMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
 

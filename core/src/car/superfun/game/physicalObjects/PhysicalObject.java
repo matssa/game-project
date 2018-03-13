@@ -33,6 +33,7 @@ public abstract class PhysicalObject extends GeneralObject {
         if (velocity.isZero(50f)) {
             velocity.set(0,0);
         }
+        sprite.setPosition(position.x, position.y);
     }
 
     // TODO: create onHit dependent on weight
