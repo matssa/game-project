@@ -3,6 +3,7 @@ package car.superfun.game.physicalObjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 
 import car.superfun.game.CarControls.CarController;
@@ -48,6 +49,14 @@ public class LocalCar extends PhysicalObject implements Observer {
     @Override
     public void notifyOfChange() {
         //TODO: Is this really needed at all?
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public Vector2 getPosition() {
+        return position;
     }
 
     @Override
