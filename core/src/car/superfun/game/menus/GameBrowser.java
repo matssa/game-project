@@ -16,8 +16,8 @@ public class GameBrowser extends State{
     private Texture background, backButton;
 
     public GameBrowser(){
-        background = new Texture("blue_car.png");
-        backButton = new Texture("menu-buttons/settings.png");
+        background = new Texture("background.png");
+        backButton = new Texture("menu-buttons/back.png");
     }
 
     @Override

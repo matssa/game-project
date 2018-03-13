@@ -16,8 +16,8 @@ public class HostMenu extends State{
     private Texture background, backButton;
 
     public HostMenu(){
-        background = new Texture("green_car.png");
-        backButton = new Texture("menu-buttons/settings.png");
+        background = new Texture("background.png");
+        backButton = new Texture("menu-buttons/back.png");
     }
 
     @Override
