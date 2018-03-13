@@ -24,12 +24,9 @@ public class CarSuperFun extends ApplicationAdapter {
      */
     @Override
     public void create() {
-
-
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
         camera.update();
-
 
         batch = new SpriteBatch();
         hud = new SpriteBatch();
@@ -41,8 +38,6 @@ public class CarSuperFun extends ApplicationAdapter {
 
         // Starts the game in playstate
         gsm.push(new PlayState(camera));
-
-
     }
 
     /**
@@ -66,9 +61,7 @@ public class CarSuperFun extends ApplicationAdapter {
 
         //render controller
         gsm.renderHud(hud);
-
     }
-
 
     /**
      * get gsm to dispose
