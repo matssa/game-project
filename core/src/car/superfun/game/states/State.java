@@ -3,12 +3,9 @@ package car.superfun.game.states;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-
 public abstract class State {
 
-
     protected State() {
-
     }
 
     //Handles input from user
@@ -23,8 +20,6 @@ public abstract class State {
     //Renders the object
     public abstract void renderHud(SpriteBatch sb);
 
-
     //dispose
     public abstract void dispose();
-
 }
