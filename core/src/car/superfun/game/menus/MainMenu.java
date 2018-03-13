@@ -31,15 +31,14 @@ public class MainMenu extends State {
             //Gdx.app.log("X", Integer.toString(Gdx.input.getX()));
             //Gdx.app.log("Y", Integer.toString(Gdx.input.getY()));
             // height: 1080, width: 1796
-            if(isOnHost()){
+            if(isOnSettings()){
                 GameStateManager.getInstance().push(new SettingsMenu());
             }
             if(isOnJoin()){
-                GameStateManager.getInstance().push(new SettingsMenu());
+                GameStateManager.getInstance().push(new GameBrowser());
             }
-            if(isOnSettings()){
-                Gdx.app.log("Touched", "heyo");
-                GameStateManager.getInstance().push(new SettingsMenu());
+            if(isOnHost()){
+                GameStateManager.getInstance().push(new HostMenu());
             }
         }
     }

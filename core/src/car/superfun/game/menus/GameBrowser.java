@@ -9,14 +9,14 @@ import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
 /**
- * Created by Jonas on 06.03.2018.
+ * Created by Jonas on 13.03.2018.
  */
 
-public class SettingsMenu extends State {
+public class GameBrowser extends State{
     private Texture background, backButton;
 
-    public SettingsMenu(){
-        background = new Texture("pink_car.png");
+    public GameBrowser(){
+        background = new Texture("blue_car.png");
         backButton = new Texture("menu-buttons/settings.png");
     }
 
