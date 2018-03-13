@@ -1,14 +1,14 @@
 package car.superfun.game.states;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
+import com.badlogic.gdx.math.Vector3;
 
 
 public abstract class State {
-
+    protected GameStateManager gsm;
 
     protected State() {
-
+        this.gsm = GameStateManager.getInstance();
     }
 
     //Handles input from user

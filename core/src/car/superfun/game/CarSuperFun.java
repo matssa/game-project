@@ -1,5 +1,6 @@
 package car.superfun.game;
 
+import car.superfun.game.menus.MainMenu;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.PlayState;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -14,9 +15,10 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class CarSuperFun extends ApplicationAdapter {
+
     private GameStateManager gsm;
     private SpriteBatch batch;
-    private OrthographicCamera  camera;
+    private OrthographicCamera camera;
 
     /**
      * Sets up the app
@@ -36,10 +38,10 @@ public class CarSuperFun extends ApplicationAdapter {
         //sets the color to black
         Gdx.gl.glClearColor(0, 0, 1, 1);
 
+        // Starts the game in MainMenu
+        gsm.push(new MainMenu());
         // Starts the game in playstate
-        gsm.push(new PlayState(camera));
-
-
+        // gsm.push(new PlayState(camera));
     }
 
     /**
@@ -68,5 +70,6 @@ public class CarSuperFun extends ApplicationAdapter {
     @Override
     public void dispose() {
         gsm.dispose();
+        batch.dispose();
     }
 }
