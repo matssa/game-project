@@ -20,8 +20,8 @@ public class MainMenu extends State {
 
     public MainMenu(){
         background = new Texture("background.png");
-        hostButton = new Texture("black_car.png");
-        joinButton = new Texture("blue_car.png");
+        hostButton = new Texture("menu-buttons/host.png");
+        joinButton = new Texture("menu-buttons/hostb.png");
         settings = new Texture("cogwheel.png");
     }
 
@@ -53,8 +53,8 @@ public class MainMenu extends State {
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        sb.draw(hostButton, Gdx.graphics.getWidth()/2-hostButton.getWidth()/2, Gdx.graphics.getHeight()/2+100);
-        //sb.draw(joinButton, Gdx.graphics.getWidth()/2-hostButton.getWidth()/2, Gdx.graphics.getHeight()/2-100);
+        sb.draw(hostButton, Gdx.graphics.getWidth()/2-hostButton.getWidth()/2, Gdx.graphics.getHeight()/2+150);
+        sb.draw(joinButton, Gdx.graphics.getWidth()/2-hostButton.getWidth()/2, Gdx.graphics.getHeight()/2-150);
         sb.draw(settings, 1600, 890);
         sb.end();
     }
@@ -67,8 +67,8 @@ public class MainMenu extends State {
         background.dispose();
     }
 
-    public boolean isOnHost(){
-        Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-hostButton.getWidth()/2), (Gdx.graphics.getHeight()/2-400), (hostButton.getWidth()), hostButton.getHeight());
+    public boolean isOnJoin(){
+        Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-hostButton.getWidth()/2), (Gdx.graphics.getHeight()/2-350), (hostButton.getWidth()), hostButton.getHeight());
         if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
             return true;
         }else{
@@ -76,8 +76,13 @@ public class MainMenu extends State {
         }
     }
 
-    public boolean isOnJoin(){
-        return false;
+    public boolean isOnHost(){
+        Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-hostButton.getWidth()/2), (Gdx.graphics.getHeight()/2-50), (hostButton.getWidth()), hostButton.getHeight());
+        if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public boolean isOnSettings(){
