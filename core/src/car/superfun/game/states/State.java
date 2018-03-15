@@ -13,11 +13,8 @@ public abstract class State {
     //Updates the state
     public abstract void update(float dt);
 
-    //Renders the object
+    //Renders the objects in this state
     public abstract void render(SpriteBatch sb);
-
-    //Renders the object
-    public abstract void renderHud(SpriteBatch sb);
 
     //dispose
     public abstract void dispose();
