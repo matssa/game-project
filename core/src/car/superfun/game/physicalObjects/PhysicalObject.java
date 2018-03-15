@@ -11,7 +11,7 @@ public abstract class PhysicalObject extends GeneralObject {
     public Vector2 velocity;
     public int weight;
 
-    private float friction;
+    protected float friction;
 
     public PhysicalObject(Vector2 position, Sprite sprite, Vector2 velocity, int weight, float friction) {
         super(position, sprite);
