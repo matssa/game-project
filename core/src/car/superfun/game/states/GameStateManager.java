@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Stack;
 
+import car.superfun.game.gameModes.GameMode;
+
 
 /**
  * This class handles the different states the game can be in, that is menu, game, game over etc...
@@ -86,8 +88,8 @@ public class GameStateManager {
     }
 
     public void renderHud(SpriteBatch sb) {
-        if(!states.empty()) {
-            states.peek().renderHud(sb);
+        if(!states.empty() && states.peek() instanceof GameMode) {
+            ((GameMode) states.peek()).renderHud(sb);
         }
     }
 }

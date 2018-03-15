@@ -12,10 +12,11 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import car.superfun.game.CarControls.CarController;
+import car.superfun.game.gameModes.GameMode;
 import car.superfun.game.physicalObjects.LocalCar;
 
 
-public class PlayState extends State{
+public class PlayState extends GameMode{
 
     private Sprite map;
     TiledMap tiledMap;
@@ -62,5 +63,10 @@ public class PlayState extends State{
 
     @Override
     public void dispose() {
+    }
+
+    @Override
+    public void endGame() {
+        // TODO: Implement a way to exit to main menu
     }
 }
