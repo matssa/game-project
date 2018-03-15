@@ -22,13 +22,11 @@ public class PlayState extends GameMode{
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
-    private OrthographicCamera camera;
-
     private CarController carController;
     private LocalCar localCar;
 
-    public PlayState(OrthographicCamera  camera) {
-        this.camera = camera;
+    public PlayState() {
+        super();
 
         carController = new CarController();
         localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController);
@@ -49,13 +47,15 @@ public class PlayState extends GameMode{
         localCar.update(dt);
     }
 
+    // Renders objects that had a static position in the gameworld. Is called by superclass
     @Override
-    public void render(SpriteBatch sb) {
+    public void renderWithCamera(SpriteBatch sb, OrthographicCamera camera) {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         localCar.render(sb);
     }
 
+    // Renders objects that have a static position on the screen. Is called by superclass
     @Override
     public void renderHud(SpriteBatch sb) {
         carController.render(sb);

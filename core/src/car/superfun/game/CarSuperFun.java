@@ -18,20 +18,15 @@ public class CarSuperFun extends ApplicationAdapter {
 
     private GameStateManager gsm;
     private SpriteBatch batch;
-    private SpriteBatch hud;
-    private OrthographicCamera camera;
+//    private SpriteBatch hud;
 
     /**
      * Sets up the app
      */
     @Override
     public void create() {
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false);
-        camera.update();
-
         batch = new SpriteBatch();
-        hud = new SpriteBatch();
+//        hud = new SpriteBatch();
 
         gsm = GameStateManager.getInstance();
 
@@ -39,10 +34,10 @@ public class CarSuperFun extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 1, 1);
 
         // Starts the game in MainMenu
-        //gsm.push(new MainMenu());
+        gsm.push(new MainMenu());
       
         // Starts the game in playstate
-        gsm.push(new PlayState(camera));
+//        gsm.push(new PlayState(camera));
     }
 
     /**
@@ -55,17 +50,11 @@ public class CarSuperFun extends ApplicationAdapter {
 
         gsm.update(Gdx.graphics.getDeltaTime());
 
-        // Update the camera position
-        camera.update();
-
-        // render based on the camera position
-        batch.setProjectionMatrix(camera.combined);
-
         // render the bach
         gsm.render(batch);
 
         //render controller
-        gsm.renderHud(hud);
+//        gsm.renderHud(hud);
     }
 
     /**

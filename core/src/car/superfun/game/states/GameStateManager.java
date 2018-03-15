@@ -87,9 +87,9 @@ public class GameStateManager {
         }
     }
 
-    public void renderHud(SpriteBatch sb) {
-        if(!states.empty() && states.peek() instanceof GameMode) {
-            ((GameMode) states.peek()).renderHud(sb);
-        }
-    }
+//    public void renderHud(SpriteBatch sb) {
+//        if(!states.empty() && states.peek() instanceof GameMode) {
+//            ((GameMode) states.peek()).renderHud(sb);
+//        }
+//    }
 }
