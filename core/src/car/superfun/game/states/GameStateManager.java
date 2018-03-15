@@ -87,9 +87,10 @@ public class GameStateManager {
         }
     }
 
-//    public void renderHud(SpriteBatch sb) {
-//        if(!states.empty() && states.peek() instanceof GameMode) {
-//            ((GameMode) states.peek()).renderHud(sb);
-//        }
-//    }
+    public boolean isEmpty() {
+        return states.isEmpty();
+    }
+    public boolean isOnlyOneLeft() {
+        return (states.size() == 1);
+    }
 }

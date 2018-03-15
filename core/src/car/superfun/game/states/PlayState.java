@@ -18,7 +18,6 @@ import car.superfun.game.physicalObjects.LocalCar;
 
 public class PlayState extends GameMode{
 
-    private Sprite map;
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 

@@ -2,23 +2,21 @@ package car.superfun.game;
 
 import car.superfun.game.menus.MainMenu;
 import car.superfun.game.states.GameStateManager;
-import car.superfun.game.states.PlayState;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CarSuperFun extends ApplicationAdapter {
 
     private GameStateManager gsm;
     private SpriteBatch batch;
-//    private SpriteBatch hud;
+
+    private boolean justPressedBack;
 
     /**
      * Sets up the app
@@ -38,6 +36,10 @@ public class CarSuperFun extends ApplicationAdapter {
       
         // Starts the game in playstate
 //        gsm.push(new PlayState(camera));
+
+        // Take control of the back button
+        Gdx.input.setCatchBackKey(true);
+        justPressedBack = false;
     }
 
     /**
@@ -50,11 +52,28 @@ public class CarSuperFun extends ApplicationAdapter {
 
         gsm.update(Gdx.graphics.getDeltaTime());
 
-        // render the bach
+        // render the batch
         gsm.render(batch);
 
-        //render controller
-//        gsm.renderHud(hud);
+
+        // TODO: implement this in a less hacky way
+        // Pop the game state when pressing back.
+        // Unless the current state is the bottom state (should be MainMenu),
+        // in such case the app is closed
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+            if (gsm.isOnlyOneLeft()) {
+                Gdx.app.exit();
+            } else if (!justPressedBack) {
+                justPressedBack = true;
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        justPressedBack = false;
+                    }
+                }, 1500);
+                gsm.pop();
+            }
+        }
     }
 
     /**
