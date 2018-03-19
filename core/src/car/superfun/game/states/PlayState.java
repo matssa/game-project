@@ -40,10 +40,10 @@ public class PlayState extends GameMode{
 
     @Override
     public void update(float dt) {
-        Vector2 position = localCar.getPosition();
-        camera.position.set(position.x, position.y, 0);
         carController.update();
         localCar.update(dt);
+        camera.position.set(localCar.getPosition().add(localCar.getVelocity().scl(0.12f)), 0);
+        camera.rotate(-localCar.getFrameRotation());
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
@@ -66,6 +66,6 @@ public class PlayState extends GameMode{
 
     @Override
     public void endGame() {
-        // TODO: Implement a way to exit to main menu
+        // TODO: Implement a proper way to exit the game
     }
 }
