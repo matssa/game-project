@@ -59,15 +59,15 @@ public class LocalCar extends PhysicalObject implements Observer {
         frameRotation = carController.rotation * steering;
 
 
-        float rot = abs(this.getVelocity().dot(this.getDirection().rotate(90 + frameRotation)));
-        if (rot < grip) {
+        float tracktion = abs(this.getVelocity().dot(this.getDirection().rotate(90 + frameRotation)));
+        if (traction < grip) {
 //            lostGrip = false;
             friction = normalFriction;
             velocity.rotate(frameRotation);
         } else {
             frameRotation = frameRotation / 2;
             velocity.rotate(frameRotation * 0.15f);
-            Gdx.app.log("lost grip", "" + rot);
+            Gdx.app.log("lost grip", "" + tracktion);
             friction = 2f * normalFriction;
         }
 
