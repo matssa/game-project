@@ -60,10 +60,10 @@ public class CarSuperFun extends ApplicationAdapter {
         // Pop the game state when pressing back.
         // Unless the current state is the bottom state (should be MainMenu),
         // in such case the app is closed
-        if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK) && !justPressedBack) {
             if (gsm.isOnlyOneLeft()) {
                 Gdx.app.exit();
-            } else if (!justPressedBack) {
+            } else {
                 justPressedBack = true;
                 new Timer().schedule(new TimerTask() {
                     @Override
