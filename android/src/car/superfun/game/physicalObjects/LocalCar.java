@@ -151,7 +151,7 @@ public class LocalCar implements Observer {
     public Vector2 getPosition() {
 //        return position.cpy();
 //        Gdx.app.log("localCar position: ", "(" + body.getPosition().x + ", " + body.getPosition().y + ")");
-        return body.getPosition();
+        return new Vector2(sprite.getX(), sprite.getY());
     }
 
     @Override
