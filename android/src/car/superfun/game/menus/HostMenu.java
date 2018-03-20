@@ -5,19 +5,23 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 
-import car.superfun.game.states.GameStateManager;
-import car.superfun.game.states.State;
+import car.superfun.game.GameStateManager;
+import car.superfun.game.Multiplayer.MultiplayerManager;
+import car.superfun.game.State;
 
 /**
  * Created by Jonas on 13.03.2018.
  */
 
-public class GameBrowser extends State{
+public class HostMenu extends State{
     private Texture background, backButton;
+    private MultiplayerManager mulitiplayerManager;
 
-    public GameBrowser(){
+
+    public HostMenu(){
         background = new Texture("background.png");
         backButton = new Texture("menu-buttons/back.png");
+        mulitiplayerManager = new MultiplayerManager();
     }
 
     @Override

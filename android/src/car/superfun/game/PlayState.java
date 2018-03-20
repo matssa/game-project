@@ -1,4 +1,4 @@
-package car.superfun.game.states;
+package car.superfun.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;

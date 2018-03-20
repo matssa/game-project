@@ -1,10 +1,8 @@
-package car.superfun.game.states;
+package car.superfun.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Stack;
-
-import car.superfun.game.gameModes.GameMode;
 
 
 /**

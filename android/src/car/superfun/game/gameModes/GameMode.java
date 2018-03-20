@@ -3,7 +3,7 @@ package car.superfun.game.gameModes;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import car.superfun.game.states.State;
+import car.superfun.game.State;
 
 /**
  * Created by kristian on 14.03.18.

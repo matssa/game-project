@@ -5,17 +5,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 
-import car.superfun.game.states.GameStateManager;
-import car.superfun.game.states.State;
+import car.superfun.game.GameStateManager;
+import car.superfun.game.State;
 
 /**
- * Created by Jonas on 13.03.2018.
+ * Created by Jonas on 06.03.2018.
  */
 
-public class HostMenu extends State{
+public class SettingsMenu extends State {
     private Texture background, backButton;
 
-    public HostMenu(){
+    public SettingsMenu(){
         background = new Texture("background.png");
         backButton = new Texture("menu-buttons/back.png");
     }
