@@ -26,7 +26,7 @@ public class PlayState extends GameMode{
         super();
 
         carController = new CarController();
-        localCar = new LocalCar(new Vector2(100, 100), carController, world);
+        localCar = new LocalCar(new Vector2(1600, 11000), carController, world);
 //        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController, world);
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
