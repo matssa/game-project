@@ -1,4 +1,4 @@
-package car.superfun.game.states;
+package car.superfun.game.gameModes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -10,7 +10,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import car.superfun.game.CarControls.CarController;
-import car.superfun.game.gameModes.GameMode;
 import car.superfun.game.physicalObjects.LocalCar;
 
 
