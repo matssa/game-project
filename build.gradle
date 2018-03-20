@@ -24,9 +24,7 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
-        appcompat_library_version = '27.0.2'
-        support_library_version = '27.0.2'
-        gms_library_version = '11.6.2'
+        gms_library_version = '11.8.0'
     }
 
     repositories {
