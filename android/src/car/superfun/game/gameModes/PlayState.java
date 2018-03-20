@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import car.superfun.game.CarControls.CarController;
+import car.superfun.game.TrackBuilder;
 import car.superfun.game.physicalObjects.LocalCar;
 
 
@@ -29,6 +30,7 @@ public class PlayState extends GameMode{
 //        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController, world);
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        TrackBuilder.buildShapes(tiledMap, 100f, world);
     }
 
     @Override

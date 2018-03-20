@@ -29,10 +29,10 @@ import java.util.ArrayList;
 
 public class TrackBuilder {
 
-    static int pixelsPerTile;
+    static float pixelsPerTile;
 
 
-    public static Array<Body> buildShapes(Map map, int pixels, World world) {
+    public static Array<Body> buildShapes(Map map, float pixels, World world) {
 
         MapObjects mapObjects;
         Array<Body> bodies;
@@ -40,6 +40,7 @@ public class TrackBuilder {
         BodyDef bodyDef;
         Body body;
 
+        pixelsPerTile = pixels;
         mapObjects = map.getLayers().get("walls").getObjects();
         bodies = new Array<Body>();
 
