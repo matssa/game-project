@@ -42,7 +42,7 @@ public class PlayState extends GameMode{
         carController.update();
         localCar.update(dt);
         camera.position.set(localCar.getPosition(), 0);
-//        camera.position.set(localCar.getPosition().add(localCar.getVelocity().scl(0.12f)), 0);
+        camera.position.set(localCar.getPosition().add(localCar.getVelocity().scl(10f)), 0);
 //        camera.rotate(-localCar.getFrameRotation());
     }
 
