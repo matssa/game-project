@@ -1,7 +1,5 @@
 package car.superfun.game;
 
-import car.superfun.game.menus.MainMenu;
-import car.superfun.game.states.GameStateManager;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -10,6 +8,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import car.superfun.game.menus.MainMenu;
+import car.superfun.game.states.GameStateManager;
+
 
 public class CarSuperFun extends ApplicationAdapter {
 
@@ -75,7 +77,6 @@ public class CarSuperFun extends ApplicationAdapter {
             }
         }
     }
-
     /**
      * get gsm to dispose
      */

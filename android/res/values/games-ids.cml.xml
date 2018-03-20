@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- app_id -->
+<string name="app_id" translatable="false">584041529423</string>
+<!-- package_name -->
+<string name="package_name" translatable="false">car.superfun.game</string>
+<!-- achievement Fastest drive -->
+<string name="achievement_fastest_drive" translatable="false">CgkIz4Da3P8QEAIQAQ</string>
+<!-- leaderboard Drive Records -->
+<string name="leaderboard_drive_records" translatable="false">CgkIz4Da3P8QEAIQAg</string>
+</resources>
