@@ -24,7 +24,7 @@ import static java.lang.Math.abs;
  */
 
 public class LocalCar implements Observer {
-    private int maxSpeed;
+//    private int maxSpeed;
     private float acceleration;
     private float steering;
     private float grip;
@@ -50,6 +50,11 @@ public class LocalCar implements Observer {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set((sprite.getX() + sprite.getWidth() / 2) / CarSuperFun.PIXELS_TO_METERS,
                 (sprite.getY() + sprite.getHeight() / 2) / CarSuperFun.PIXELS_TO_METERS);
+        bodyDef.allowSleep = false;
+        bodyDef.angularDamping = 0.8f;
+        bodyDef.linearDamping = 0.4f;
+
+//        bodyDef.angularDamping
 
         body = world.createBody(bodyDef);
 
@@ -63,10 +68,10 @@ public class LocalCar implements Observer {
         body.createFixture(fixtureDef);
         shape.dispose();
 
-        maxSpeed = 2500;
-        acceleration = 1500.0f;
+//        maxSpeed = 2500;
+        acceleration = 15.0f;
         steering = 3.3f;
-        grip = 100;
+        grip = 7;
 
         this.carController = carController;
         direction = new Vector2(0, 1);
@@ -84,33 +89,39 @@ public class LocalCar implements Observer {
 
     //    @Override
     public void update(float dt) {
-        body.applyTorque(carController.rotation, true);
+//        body.applyTorque(carController.rotation * steering, true);
+        frameRotation = carController.rotation * steering;
 //        double angle = (body.getAngle() % (2 * Math.PI));
 //        angle = (angle + 2 * Math.PI) % (2 * Math.PI);
 //        Gdx.app.log("angle:    ", "" + angle);
 //        Gdx.app.log("SpriteAngle:    ", "" + sprite.getRotation());
-        Vector2 forceVector = new Vector2(0,1).rotateRad(body.getAngle());
-//        Gdx.app.log("forceVector: ", "(" + forceVector.x + ", " + forceVector.y + ")");
-//        Gdx.app.log("f len", "" + forceVector.len());
-        body.applyForceToCenter(forceVector.scl(carController.forward), true);
+        Vector2 direction = new Vector2(0,1).rotateRad(body.getAngle());
+//        Gdx.app.log("direction: ", "(" + direction.x + ", " + direction.y + ")");
+//        Gdx.app.log("f len", "" + direction.len());
 //        body.applyForceToCenter(body.getLinearVelocity().cpy().nor().scl(carController.forward), true);
 
 
 //        super.update(dt);
 
-//        frameRotation = carController.rotation * steering;
 
 
+        float traction = abs(body.getLinearVelocity().dot(direction.cpy().rotate(90 + (float) Math.toDegrees(frameRotation))));
+        float sidewaysVelocityDampening = (body.getLinearVelocity().len() > 0.1) ? (abs(body.getLinearVelocity().dot(direction) / body.getLinearVelocity().len()) / 4) + 0.75f : 1;
+//        Gdx.app.log("sideways velocity dampening", ": " + sidewaysVelocityDampening);
+
+//        Gdx.app.log("traction: ", "" + traction);
+//
 //        float traction = abs(this.getVelocity().dot(this.getDirection().rotate(90 + frameRotation)));
-//        if (traction < grip) {
-//            friction = normalFriction;
-//            velocity.rotate(frameRotation);
-//        } else {
-//            frameRotation = frameRotation / 2;
+        if (traction < grip) {
+            body.setLinearVelocity(body.getLinearVelocity().rotate(frameRotation).scl(sidewaysVelocityDampening));
+        } else {
+            frameRotation = frameRotation * (float) (Math.exp(grip / traction) / Math.exp(traction / grip));
+//            Gdx.app.log("frameRotation: ", "" + frameRotation);
+            body.setLinearVelocity(body.getLinearVelocity().rotate(frameRotation / 4).scl(sidewaysVelocityDampening));
 //            velocity.rotate(frameRotation * 0.15f);
-////            Gdx.app.log("lost grip", "" + traction);
+//            Gdx.app.log("lost grip", "" + traction);
 //            friction = 2f * normalFriction;
-//        }
+        }
 //
 //        direction.rotate(frameRotation);
 //        sprite.rotate(frameRotation);
@@ -118,6 +129,8 @@ public class LocalCar implements Observer {
 //            Vector2 addedVel = new Vector2(direction).scl(acceleration * carController.forward * dt);
 //            velocity.add(addedVel);
 //        }
+        body.applyForceToCenter(direction.scl(carController.forward * acceleration), true);
+        body.setAngularVelocity(frameRotation);
     }
 
     public void render(SpriteBatch sb) {
@@ -145,6 +158,7 @@ public class LocalCar implements Observer {
 
     public Vector2 getVelocity() {
 //        return velocity.cpy();
+        Gdx.app.log("localCar velocity: ", "(" + body.getLinearVelocity().x + ", " + body.getLinearVelocity().y + ")");
         return body.getLinearVelocity();
     }
 
