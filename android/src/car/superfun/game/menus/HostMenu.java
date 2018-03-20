@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 
-import car.superfun.game.GameStateManager;
+import car.superfun.game.states.GameStateManager;
 import car.superfun.game.Multiplayer.MultiplayerManager;
-import car.superfun.game.State;
+import car.superfun.game.states.State;
 
 /**
  * Created by Jonas on 13.03.2018.
