@@ -25,7 +25,8 @@ public class PlayState extends GameMode{
         super();
 
         carController = new CarController();
-        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController);
+        localCar = new LocalCar(new Vector2(100, 100), carController, world);
+//        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController, world);
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
@@ -37,10 +38,12 @@ public class PlayState extends GameMode{
 
     @Override
     public void update(float dt) {
+        world.step(1f/60f, 6, 2);
         carController.update();
         localCar.update(dt);
-        camera.position.set(localCar.getPosition().add(localCar.getVelocity().scl(0.12f)), 0);
-        camera.rotate(-localCar.getFrameRotation());
+        camera.position.set(localCar.getPosition(), 0);
+//        camera.position.set(localCar.getPosition().add(localCar.getVelocity().scl(0.12f)), 0);
+//        camera.rotate(-localCar.getFrameRotation());
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
