@@ -48,7 +48,6 @@ public class LocalCar implements Observer {
 
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
-        Gdx.app.log("inital sprite rotation: ", "" + this.sprite.getRotation());
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -93,35 +92,20 @@ public class LocalCar implements Observer {
 
     //    @Override
     public void update(float dt) {
-//        body.applyTorque(carController.rotation * steering, true);
         frameRotation = carController.rotation * steering * dt;
-//        log("" + frameRotation);
-//        double angle = (body.getAngle() % (2 * Math.PI));
-//        angle = (angle + 2 * Math.PI) % (2 * Math.PI);
-//        Gdx.app.log("angle:    ", "" + angle);
-//        Gdx.app.log("SpriteAngle:    ", "" + sprite.getRotation());
-        Vector2 direction = new Vector2(0,1).rotateRad(body.getAngle());
-//        Gdx.app.log("direction: ", "(" + direction.x + ", " + direction.y + ")");
-//        Gdx.app.log("f len", "" + direction.len());
-//        body.applyForceToCenter(body.getLinearVelocity().cpy().nor().scl(carController.forward), true);
+        Vector2 direction = this.getDirectionVector();
 
-
-//        super.update(dt);
-
-
-//        Gdx.app.log("degRot: ", "" + degRot);
         float traction = abs(body.getLinearVelocity().dot(direction.cpy().rotate(90 + 45 * carController.rotation)));
         float sidewaysVelocityDampening = (body.getLinearVelocity().len() > 0.1) ? (abs(body.getLinearVelocity().dot(direction) / body.getLinearVelocity().len()) / 4) + 0.75f : 1;
+
 //        Gdx.app.log("sideways velocity dampening", ": " + sidewaysVelocityDampening);
 
-//
-//        float traction = abs(this.getVelocity().dot(this.getDirection().rotate(90 + frameRotation)));
         if (traction < grip) {
             body.setLinearVelocity(body.getLinearVelocity().rotate(frameRotation).scl(sidewaysVelocityDampening));
-            if (lostGrip) {
-                lostGrip = false;
-                log("--- grip regained ---");
-            }
+//            if (lostGrip) {
+//                lostGrip = false;
+//                log("--- grip regained ---");
+//            }
         } else {
             float velocityRotator = frameRotation * (float) (Math.exp(grip / traction) / Math.exp(traction / grip));
             frameRotation = frameRotation * (grip / traction);
@@ -133,13 +117,7 @@ public class LocalCar implements Observer {
 //            friction = 2f * normalFriction;
             lostGrip = true;
         }
-//
-//        direction.rotate(frameRotation);
-//        sprite.rotate(frameRotation);
-//        if (velocity.len() < maxSpeed) {
-//            Vector2 addedVel = new Vector2(direction).scl(acceleration * carController.forward * dt);
-//            velocity.add(addedVel);
-//        }
+
         body.applyForceToCenter(direction.scl(carController.forward * acceleration * dt), true);
         body.setAngularVelocity(frameRotation);
     }
