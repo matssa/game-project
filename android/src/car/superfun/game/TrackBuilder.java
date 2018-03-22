@@ -43,7 +43,7 @@ public class TrackBuilder {
         FixtureDef fixtureDef;
 
         final short USER_ENTITY = 0x0001;       // 0001
-        final short WALL_ENTITY = 0x0002;    // 0010
+        final short WALL_ENTITY = 0x0002;       // 0010
 
         pixelsPerTile = pixels;
         mapObjects = map.getLayers().get("walls").getObjects();
@@ -75,7 +75,7 @@ public class TrackBuilder {
             fixtureDef.shape = shape;
 
             body = world.createBody(bodyDef);
-            body.createFixture(fixtureDef);
+            body.createFixture(fixtureDef).setDensity(0.9f);
             bodies.add(body);
             shape.dispose();
         }
@@ -124,7 +124,7 @@ public class TrackBuilder {
             fixtureDef.shape = shape;
 
             body = world.createBody(bodyDef);
-            body.createFixture(fixtureDef);
+            body.createFixture(fixtureDef).setDensity(0.5f);
             bodies.add(body);
             shape.dispose();
         }

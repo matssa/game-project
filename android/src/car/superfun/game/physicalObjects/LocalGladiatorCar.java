@@ -1,7 +1,9 @@
 package car.superfun.game.physicalObjects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -23,14 +25,17 @@ import static java.lang.Math.abs;
  * Created by kristian on 06.03.18.
  */
 
-public class LocalCar implements Observer {
-//    private int maxSpeed;
+public class LocalGladiatorCar implements Observer {
+    //    private int maxSpeed;
     private float acceleration;
     private float steering;
     private float grip;
+    private BitmapFont font;
 
-    private final short USER_ENTITY;
+    private final short PLAYER_ENTITY;
+    private final short DEATH_ENTITY;
     private final short WALL_ENTITY;
+    private final short MASK_PLAYER;
 
     private CarController carController;
 
@@ -41,18 +46,28 @@ public class LocalCar implements Observer {
 
     private float normalFriction;
     private boolean lostGrip;
+    private int score;
 
     private void log(String string) {
         Gdx.app.log("log: ", string);
     }
 
-    public LocalCar(Vector2 position, Sprite sprite, CarController carController, World world){
+    public LocalGladiatorCar(Vector2 position, Sprite sprite, CarController carController, World world, Integer score){
 //        super(position, sprite, new Vector2(0,0));
 
-        USER_ENTITY = 0x0001;
+        PLAYER_ENTITY = 0x0001;
         WALL_ENTITY = 0x0002;
+        DEATH_ENTITY = 0x0004;
+
+        // Player will crash with all
+        MASK_PLAYER = -1;
 
 
+        font = new BitmapFont();
+        font.setColor(Color.BLACK);
+        font.getData().setScale(5, 5);
+
+        this.score = score;
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
 
@@ -74,10 +89,10 @@ public class LocalCar implements Observer {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
-        fixtureDef.filter.categoryBits = USER_ENTITY;
-        fixtureDef.filter.maskBits = WALL_ENTITY;
+        fixtureDef.filter.categoryBits = PLAYER_ENTITY;
+        fixtureDef.filter.maskBits = MASK_PLAYER;
 
-        body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef).setUserData(this);
         shape.dispose();
 
 //        maxSpeed = 2500;
@@ -92,12 +107,25 @@ public class LocalCar implements Observer {
         lostGrip = false;
     }
 
-    public LocalCar(Vector2 position, CarController carController, World world) {
+    public LocalGladiatorCar(Vector2 position, CarController carController, World world, Integer score) {
         this(position,
                 new Sprite(new Texture("racing-pack/PNG/Cars/car_red_5.png")),
                 carController,
-                world);
+                world,
+                score);
     }
+
+    public void hitDeathWalls() {
+        score -= 1;
+        sprite.setPosition((50 * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
+                (40 * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
+        Gdx.app.log("score = ", String.valueOf(score));
+    }
+
+    public int getScore() {
+        return score;
+    }
+
 
     //    @Override
     public void update(float dt) {
@@ -146,6 +174,7 @@ public class LocalCar implements Observer {
                 sprite.getScaleX(),
                 sprite.getScaleY(),
                 sprite.getRotation());
+        font.draw(sb, String.valueOf(score), 500,500);
         sb.end();
     }
 
