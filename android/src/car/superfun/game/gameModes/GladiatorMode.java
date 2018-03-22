@@ -1,6 +1,5 @@
 package car.superfun.game.gameModes;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -8,34 +7,44 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
 
 import car.superfun.game.CarControls.CarController;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.physicalObjects.LocalCar;
 
+/**
+ * Created by matss on 21-Mar-18.
+ */
 
-public class PlayState extends GameMode{
+public class GladiatorMode extends GameMode {
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
     private CarController carController;
     private LocalCar localCar;
+    private int score;
 
-    public PlayState() {
+    public GladiatorMode() {
         super();
 
+        score = 5;
         carController = new CarController();
-        localCar = new LocalCar(new Vector2(1600, 11000), carController, world);
-//        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController, world);
-        tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
+        localCar = new LocalCar(new Vector2(6000, 6000), carController, world);
+        tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         TrackBuilder.buildWalls(tiledMap, 100f, world);
+        TrackBuilder.buildDeathZone(tiledMap, 100f, world);
     }
 
     @Override
     public void handleInput() {
-    
+
+    }
+
+    public void beginContact(Contact contact) {
+
     }
 
     @Override

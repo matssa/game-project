@@ -29,6 +29,10 @@ public class LocalCar implements Observer {
     private float steering;
     private float grip;
 
+    private final short USER_ENTITY;
+    private final short DEATH_ENTITY;
+    private final short WALL_ENTITY;
+
     private CarController carController;
 
     private float frameRotation;
@@ -45,6 +49,11 @@ public class LocalCar implements Observer {
 
     public LocalCar(Vector2 position, Sprite sprite, CarController carController, World world){
 //        super(position, sprite, new Vector2(0,0));
+
+        USER_ENTITY = 0x0001;
+        DEATH_ENTITY = 0x0002;
+        WALL_ENTITY = 0x0004;
+
 
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
@@ -67,6 +76,8 @@ public class LocalCar implements Observer {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
+        fixtureDef.filter.categoryBits = USER_ENTITY;
+        fixtureDef.filter.maskBits = WALL_ENTITY;
 
         body.createFixture(fixtureDef);
         shape.dispose();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="left-down" width="100" height="100" tilewidth="130" tileheight="130" infinite="0" nextobjectid="25">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="left-down" width="100" height="100" tilewidth="130" tileheight="130" infinite="0" nextobjectid="26">
  <tileset firstgid="1" source="simpleTiles.tsx"/>
  <layer name="ground" width="100" height="100">
   <data encoding="csv">
@@ -267,8 +267,10 @@
   <object id="22" x="3900.09" y="8450.36">
    <polyline points="-0.0859375,-0.0234375 -17.6364,-0.636364 -34.3636,-4.09091 -52,-8.54545 -67.8182,-14.9091 -82.6364,-23.0909 -95.7273,-34.7273 -106.182,-46.8182 -115.182,-63.0909 -121.091,-78.2727 -125.727,-95.2727 -128.636,-113.182 -130.418,-130.697"/>
   </object>
-  <object id="24" x="3120" y="2996">
-   <polyline points="0.0078125,-6 7019.75,-5.75 7019.75,2724 7410,2724 7410.5,2074.5 8710.25,2074 8710,4673.75 7410,4674 7409.75,3634.25 7020.25,3634.5 7020,7404.5 -0.75,7404 0,-5.98438"/>
+ </objectgroup>
+ <objectgroup name="dirt_barrier">
+  <object id="25" x="2992" y="2864">
+   <polyline points="-2,-3.98438 7277.99,-4.00391 7278,2726 7408,2726 7408,2075.94 8968,2076 8968,4936 7407.94,4936.03 7408,3896 7278,3896.25 7277.82,7666 -2,7666.13 -2,-3.99219"/>
   </object>
  </objectgroup>
 </map>
