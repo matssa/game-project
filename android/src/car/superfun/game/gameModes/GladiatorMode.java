@@ -1,7 +1,7 @@
 package car.superfun.game.gameModes;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -9,15 +9,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.Manifold;
 
 import car.superfun.game.CarControls.CarController;
 import car.superfun.game.TrackBuilder;
-import car.superfun.game.physicalObjects.LocalCar;
 import car.superfun.game.physicalObjects.LocalGladiatorCar;
 
 import static com.badlogic.gdx.Gdx.app;
@@ -30,6 +24,7 @@ public class GladiatorMode extends GameMode {
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
+    Sound dustWallCrash;
 
     private CarController carController;
     private LocalGladiatorCar localCar;
@@ -38,9 +33,11 @@ public class GladiatorMode extends GameMode {
     public GladiatorMode() {
         super();
 
+        dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
+
         score = 5;
         carController = new CarController();
-        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), carController, world, score);
+        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), carController, world, score, dustWallCrash);
         tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         world.setContactListener(new GladiatorContactListener());

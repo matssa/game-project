@@ -1,6 +1,7 @@
 package car.superfun.game.physicalObjects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -31,6 +32,7 @@ public class LocalGladiatorCar implements Observer {
     private float steering;
     private float grip;
     private BitmapFont font;
+    Sound dustWallCrash;
 
     private final short PLAYER_ENTITY;
     private final short DEATH_ENTITY;
@@ -52,7 +54,7 @@ public class LocalGladiatorCar implements Observer {
         Gdx.app.log("log: ", string);
     }
 
-    public LocalGladiatorCar(Vector2 position, Sprite sprite, CarController carController, World world, Integer score){
+    public LocalGladiatorCar(Vector2 position, Sprite sprite, CarController carController, World world, Integer score, Sound dustWallCrash){
 //        super(position, sprite, new Vector2(0,0));
 
         PLAYER_ENTITY = 0x0001;
@@ -70,6 +72,7 @@ public class LocalGladiatorCar implements Observer {
         this.score = score;
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
+        this.dustWallCrash = dustWallCrash;
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -107,15 +110,17 @@ public class LocalGladiatorCar implements Observer {
         lostGrip = false;
     }
 
-    public LocalGladiatorCar(Vector2 position, CarController carController, World world, Integer score) {
+    public LocalGladiatorCar(Vector2 position, CarController carController, World world, Integer score, Sound dustWallCrash) {
         this(position,
                 new Sprite(new Texture("racing-pack/PNG/Cars/car_red_5.png")),
                 carController,
                 world,
-                score);
+                score,
+                dustWallCrash);
     }
 
     public void hitDeathWalls() {
+        dustWallCrash.play(0.8f);
         score -= 1;
         sprite.setPosition((50 * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
                 (40 * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
