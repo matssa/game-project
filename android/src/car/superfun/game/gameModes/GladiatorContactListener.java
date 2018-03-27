@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-import car.superfun.game.physicalObjects.LocalCar;
 import car.superfun.game.physicalObjects.LocalGladiatorCar;
 
 /**
@@ -31,11 +30,11 @@ public class GladiatorContactListener implements ContactListener {
         
         if (user.getUserData() instanceof LocalGladiatorCar) {
             ((LocalGladiatorCar) user.getUserData()).hitDeathWalls();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Gdx.app.log("InterruptedException e: ", "Exception");
-            }
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                Gdx.app.log("InterruptedException e: ", "Exception");
+//            }
         }
 
     }

@@ -25,6 +25,7 @@ public class GladiatorMode extends GameMode {
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
     Sound dustWallCrash;
+    Sound carSound;
 
     private CarController carController;
     private LocalGladiatorCar localCar;
@@ -34,10 +35,11 @@ public class GladiatorMode extends GameMode {
         super();
 
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
+        carSound = Gdx.audio.newSound(Gdx.files.internal("sounds/car_sound.ogg"));
 
         score = 5;
         carController = new CarController();
-        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), carController, world, score, dustWallCrash);
+        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), carController, world, score, dustWallCrash, carSound);
         tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         world.setContactListener(new GladiatorContactListener());
@@ -78,6 +80,7 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void dispose() {
+        carSound.dispose();
     }
 
     @Override
