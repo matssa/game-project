@@ -100,7 +100,7 @@ public class LocalGladiatorCar implements Observer {
         shape.dispose();
 
 //        maxSpeed = 2500;
-        acceleration = 1000.0f;
+        acceleration = 4500.0f;
         steering = 200.0f;
         grip = 10;
 
@@ -113,7 +113,7 @@ public class LocalGladiatorCar implements Observer {
 
     public LocalGladiatorCar(Vector2 position, CarController carController, World world, Integer score, Sound dustWallCrash, Sound carSound) {
         this(position,
-                new Sprite(new Texture("racing-pack/PNG/Cars/car_red_5.png")),
+                new Sprite(new Texture("black_car.png")),
                 carController,
                 world,
                 score,
