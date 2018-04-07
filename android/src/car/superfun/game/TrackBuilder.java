@@ -24,6 +24,8 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 
+import car.superfun.game.gameModes.GladiatorMode;
+
 public class TrackBuilder {
 
     static float pixelsPerTile;
@@ -109,7 +111,7 @@ public class TrackBuilder {
             bodyDef.type = BodyDef.BodyType.StaticBody;
 
             fixtureDef = new FixtureDef();
-            fixtureDef.filter.categoryBits = GlobalVariables.DEATH_ENTITY;
+            fixtureDef.filter.categoryBits = GladiatorMode.DEATH_ENTITY;
             fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
             fixtureDef.shape = shape;
 

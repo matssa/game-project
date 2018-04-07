@@ -22,10 +22,14 @@ import static com.badlogic.gdx.Gdx.app;
 
 public class GladiatorMode extends GameMode {
 
+    // Filters
+    public static final short DEATH_ENTITY = 0x0032;
+
+    // Music and sounds
+    public static final Sound dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
+
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
-    Sound dustWallCrash;
-    Sound carSound;
 
     private CarController carController;
     private LocalGladiatorCar localCar;
@@ -77,7 +81,6 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void dispose() {
-        carSound.dispose();
     }
 
     @Override

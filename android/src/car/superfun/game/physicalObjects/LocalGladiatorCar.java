@@ -97,7 +97,7 @@ public class LocalGladiatorCar {
 
     public void hitDeathWalls() {
         score -= 1;
-        GlobalVariables.dustWallCrash.play(0.8f);
+        GladiatorMode.dustWallCrash.play(0.8f);
         getRebound();
     }
 

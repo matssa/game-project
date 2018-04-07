@@ -10,13 +10,12 @@ import com.badlogic.gdx.audio.Sound;
 public final class GlobalVariables {
 
     // Common Filters
-    public static final short MASK_PLAYER = -1;               // Crash with all
+    public static final short MASK_PLAYER = -1;               // -1 = Crash with all
     public static final short PLAYER_ENTITY = 0x0001;
     public static final short WALL_ENTITY = 0x0002;
 
-    // Game mode spesific filters
-    public static final short DEATH_ENTITY = 0x0032;
+    // Game mode spesific filters are made from 0x0032 and up.
 
     // Sounds and music
-    public static final Sound dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
+
 }
