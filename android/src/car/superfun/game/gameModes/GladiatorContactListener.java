@@ -10,9 +10,6 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.physicalObjects.LocalGladiatorCar;
 
-/**
- * Created by matss on 22-Mar-18.
- */
 
 public class GladiatorContactListener implements ContactListener {
     @Override

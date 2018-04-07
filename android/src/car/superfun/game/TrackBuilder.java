@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import car.superfun.game.gameModes.GladiatorMode;
 
+
 public class TrackBuilder {
 
     static float pixelsPerTile;
