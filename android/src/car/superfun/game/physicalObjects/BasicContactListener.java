@@ -8,7 +8,9 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
+import car.superfun.game.gameModes.PlayState;
 
 /**
  * Created by kristian on 07.04.18.
@@ -24,12 +26,12 @@ public class BasicContactListener implements ContactListener {
         int bothCategoryBits = (fixtureA.getFilterData().categoryBits | fixtureB.getFilterData().categoryBits);
 
         // stop here if not one and only one LocalCar is involved
-        if (((fixtureA.getFilterData().categoryBits ^ fixtureB.getFilterData().categoryBits) & TrackBuilder.USER_ENTITY) != TrackBuilder.USER_ENTITY) {
+        if (((fixtureA.getFilterData().categoryBits ^ fixtureB.getFilterData().categoryBits) & GlobalVariables.PLAYER_ENTITY) != GlobalVariables.PLAYER_ENTITY) {
             return;
         }
 
         // Check if at least one of the fixtures is a goal
-        if ((bothCategoryBits & TrackBuilder.GOAL_ENTITY) == TrackBuilder.GOAL_ENTITY) {
+        if ((bothCategoryBits & PlayState.GOAL_ENTITY) == PlayState.GOAL_ENTITY) {
             beginGoalContact(contact);
         }
     }
