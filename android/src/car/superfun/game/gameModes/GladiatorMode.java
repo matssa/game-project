@@ -52,6 +52,7 @@ public class GladiatorMode extends GameMode {
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
 
         FixtureDef deathZoneDef = new FixtureDef();
+        deathZoneDef.restitution = 2f;
         deathZoneDef.filter.categoryBits = GladiatorMode.DEATH_ENTITY;
         deathZoneDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
 

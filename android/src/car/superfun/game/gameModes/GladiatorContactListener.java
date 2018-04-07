@@ -53,7 +53,7 @@ public class GladiatorContactListener implements ContactListener {
     }
 
     public boolean isWalls(Fixture fixtureA, Fixture fixtureB) {
-        if (fixtureA.getDensity() == 0.9f || fixtureB.getDensity() == 0.9f) {
+        if (fixtureA.getFilterData().categoryBits == GlobalVariables.WALL_ENTITY || fixtureB.getFilterData().categoryBits == GlobalVariables.WALL_ENTITY) {
             return true;
         }
         return false;
