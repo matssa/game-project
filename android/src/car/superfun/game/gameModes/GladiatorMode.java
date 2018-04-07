@@ -16,9 +16,6 @@ import car.superfun.game.physicalObjects.LocalGladiatorCar;
 
 import static com.badlogic.gdx.Gdx.app;
 
-/**
- * Created by matss on 21-Mar-18.
- */
 
 public class GladiatorMode extends GameMode {
 
