@@ -25,16 +25,16 @@ public class GladiatorContactListener implements ContactListener {
 
         // Set localCar to user.
         Fixture user = fixtureA.getDensity() == 1f ? fixtureA : fixtureB;
-        // Set the death barrier to dirtWall.
-        Fixture dirtWall = fixtureA.getDensity() == 1f ? fixtureB : fixtureA;
-        
+
+        // Set the other fixture.
+        Fixture other = fixtureA.getDensity() == 1f ? fixtureB : fixtureA;
+
         if (user.getUserData() instanceof LocalGladiatorCar) {
-            ((LocalGladiatorCar) user.getUserData()).hitDeathWalls();
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                Gdx.app.log("InterruptedException e: ", "Exception");
-//            }
+            if (other.getDensity() == 1f) {
+                ((LocalGladiatorCar) user.getUserData()).hitByCar();
+            } else {
+                ((LocalGladiatorCar) user.getUserData()).hitDeathWalls();
+            }
         }
 
     }

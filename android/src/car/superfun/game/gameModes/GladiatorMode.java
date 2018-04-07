@@ -35,7 +35,6 @@ public class GladiatorMode extends GameMode {
         super();
 
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
-        carSound = Gdx.audio.newSound(Gdx.files.internal("sounds/car_sound.ogg"));
 
         score = 5;
         carController = new CarController();

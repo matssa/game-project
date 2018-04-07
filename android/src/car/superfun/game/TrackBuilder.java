@@ -42,9 +42,6 @@ public class TrackBuilder {
         Body body;
         FixtureDef fixtureDef;
 
-        final short USER_ENTITY = 0x0001;       // 0001
-        final short WALL_ENTITY = 0x0002;       // 0010
-
         pixelsPerTile = pixels;
         mapObjects = map.getLayers().get("walls").getObjects();
         bodies = new Array<Body>();
@@ -70,8 +67,8 @@ public class TrackBuilder {
             bodyDef.type = BodyDef.BodyType.StaticBody;
 
             fixtureDef = new FixtureDef();
-            fixtureDef.filter.categoryBits = WALL_ENTITY;
-            fixtureDef.filter.maskBits = USER_ENTITY;
+            fixtureDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
+            fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
             fixtureDef.shape = shape;
 
             body = world.createBody(bodyDef);
@@ -90,9 +87,6 @@ public class TrackBuilder {
         BodyDef bodyDef;
         Body body;
         FixtureDef fixtureDef;
-
-        final short USER_ENTITY = 0x0001;
-        final short DEATH_ENTITY = 0x0004;
 
         pixelsPerTile = pixels;
         mapObjects = map.getLayers().get("dirt_barrier").getObjects();
@@ -119,8 +113,8 @@ public class TrackBuilder {
             bodyDef.type = BodyDef.BodyType.StaticBody;
 
             fixtureDef = new FixtureDef();
-            fixtureDef.filter.categoryBits = DEATH_ENTITY;
-            fixtureDef.filter.maskBits = USER_ENTITY;
+            fixtureDef.filter.categoryBits = GlobalVariables.DEATH_ENTITY;
+            fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
             fixtureDef.shape = shape;
 
             body = world.createBody(bodyDef);
