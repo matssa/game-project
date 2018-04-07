@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import car.superfun.game.CarControls.CarController;
 import car.superfun.game.CarSuperFun;
+import car.superfun.game.TrackBuilder;
 import car.superfun.game.observerPattern.Observer;
 import car.superfun.game.observerPattern.Subject;
 
@@ -31,8 +32,8 @@ public class LocalCar implements Observer {
 
     private float frameRotation;
 
-    Body body;
-    Sprite sprite;
+    private Body body;
+    private Sprite sprite;
 
     public LocalCar(Vector2 position, Sprite sprite, CarController carController, World world){
 
@@ -56,7 +57,11 @@ public class LocalCar implements Observer {
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
 
-        body.createFixture(fixtureDef);
+        fixtureDef.filter.categoryBits = TrackBuilder.USER_ENTITY;
+        fixtureDef.filter.maskBits = TrackBuilder.ALL_ENTITIES;
+
+        body.createFixture(fixtureDef).setUserData(this);
+
         shape.dispose();
 
         acceleration = 850.0f;
@@ -133,6 +138,8 @@ public class LocalCar implements Observer {
     }
 
     public Vector2 getDirectionVector() { return new Vector2(0,1).rotateRad(body.getAngle()); }
+
+    public Body getBody() { return body; }
 
     public float getDirectionFloat() { return body.getAngle(); }
     public float getFrameRotation() {
