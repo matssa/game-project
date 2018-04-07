@@ -19,6 +19,7 @@ import car.superfun.game.CarControls.CarController;
 import car.superfun.game.CarSuperFun;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
+import car.superfun.game.UserDataCreater;
 import car.superfun.game.physicalObjects.BasicContactListener;
 import car.superfun.game.physicalObjects.LocalCar;
 
@@ -33,6 +34,18 @@ public class PlayState extends GameMode{
 
     private CarController carController;
     private LocalCar localCar;
+
+    private class checkpointUserData implements UserDataCreater {
+        private int id;
+
+        public checkpointUserData() {
+            id = 0;
+        }
+
+        public Object getUserData() {
+            return id++;
+        }
+    }
 
     public PlayState() {
         super();
@@ -52,11 +65,18 @@ public class PlayState extends GameMode{
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
 
         FixtureDef goalDef = new FixtureDef();
-        goalDef.filter.categoryBits = PlayState.GOAL_ENTITY;
+        goalDef.filter.categoryBits = GOAL_ENTITY;
         goalDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         goalDef.isSensor = true;
 
         TrackBuilder.buildLayer(tiledMap, world, "goal_line", goalDef);
+
+        FixtureDef checkpointDef = new FixtureDef();
+        checkpointDef.filter.categoryBits = CHECKPOINT_ENTITY;
+        checkpointDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+        checkpointDef.isSensor = true;
+
+        TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData());
 
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap

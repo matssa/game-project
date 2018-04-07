@@ -34,6 +34,11 @@ public class BasicContactListener implements ContactListener {
         if ((bothCategoryBits & PlayState.GOAL_ENTITY) == PlayState.GOAL_ENTITY) {
             beginGoalContact(contact);
         }
+
+        // Check if at least one of the fixtures is a checkpoint
+        if ((bothCategoryBits & PlayState.CHECKPOINT_ENTITY) == PlayState.CHECKPOINT_ENTITY) {
+            beginCheckpointContact(contact);
+        }
     }
 
     @Override
@@ -58,7 +63,20 @@ public class BasicContactListener implements ContactListener {
 
         LocalCar localCar = (fixtureA.getUserData() instanceof LocalCar) ? (LocalCar) fixtureA.getUserData() : (LocalCar) fixtureB.getUserData();
 
-        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);
-        Gdx.app.log("Entity B:", "" + fixtureB.getFilterData().categoryBits);
+//        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);
+//        Gdx.app.log("Entity B:", "" + fixtureB.getFilterData().categoryBits);
+    }
+
+    private void beginCheckpointContact(Contact contact) {
+        Gdx.app.log("New contact", "checkpoint contact");
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
+
+        LocalCar localCar = (fixtureA.getUserData() instanceof LocalCar) ? (LocalCar) fixtureA.getUserData() : (LocalCar) fixtureB.getUserData();
+        int checkpointId = (fixtureA.getUserData() instanceof LocalCar) ? (int) fixtureB.getUserData() : (int) fixtureA.getUserData();
+
+        Gdx.app.log("checkpoint id", "" + checkpointId);
+//        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);
+//        Gdx.app.log("Entity B:", "" + fixtureB.getFilterData().categoryBits);
     }
 }
