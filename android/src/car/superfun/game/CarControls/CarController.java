@@ -64,13 +64,9 @@ public class CarController extends Subject {
             }
         }
         if (!slider1Touched) {
-//          slider1Position = Gdx.graphics.getHeight() / 2;
-//          slider1Position = (Gdx.graphics.getHeight() / 2) * (1 + forward*0.75f);
             slider1Position = slider1Position - (slider1Position - Gdx.graphics.getHeight() / 2) / 5;
         }
         if (!slider2Touched) {
-//          slider2Position = Gdx.graphics.getHeight() / 2;
-//          slider2Position = (Gdx.graphics.getHeight() / 2) * (1 + forward*0.75f);
             slider2Position = slider2Position - (slider2Position - Gdx.graphics.getHeight() / 2) / 5;
         }
 
