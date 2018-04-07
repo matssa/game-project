@@ -3,9 +3,6 @@ package car.superfun.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
-/**
- * Created by gustav on 07.04.18.
- */
 
 public final class GlobalVariables {
 
