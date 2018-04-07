@@ -29,7 +29,6 @@ public class LocalGladiatorCar {
     private float steering;
     private float grip;
 //    private BitmapFont font;
-    private Sound dustWallCrash;
 
     private CarController carController;
 
@@ -46,7 +45,7 @@ public class LocalGladiatorCar {
         Gdx.app.log("log: ", string);
     }
 
-    public LocalGladiatorCar(Vector2 position, Sprite sprite, CarController carController, World world, Integer score, Sound dustWallCrash, Sound carSound){
+    public LocalGladiatorCar(Vector2 position, Sprite sprite, CarController carController, World world, Integer score){
 
 //        font = new BitmapFont();
 //        font.setColor(Color.BLACK);
@@ -55,7 +54,6 @@ public class LocalGladiatorCar {
         this.score = score;
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
-        this.dustWallCrash = dustWallCrash;
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -89,28 +87,22 @@ public class LocalGladiatorCar {
         lostGrip = false;
     }
 
-    public LocalGladiatorCar(Vector2 position, CarController carController, World world, Integer score, Sound dustWallCrash, Sound carSound) {
+    public LocalGladiatorCar(Vector2 position, CarController carController, World world, Integer score) {
         this(position,
                 new Sprite(new Texture("black_car.png")),
                 carController,
                 world,
-                score,
-                dustWallCrash,
-                carSound);
+                score);
     }
 
     public void hitDeathWalls() {
         score -= 1;
-        dustWallCrash.play(0.8f);
-        Gdx.app.log("yolo", "swag");
-        Gdx.app.log("score = ", String.valueOf(score));
-        Gdx.app.log("body x vel", String.valueOf(body.getLinearVelocity().x));
-        Gdx.app.log("body y vel", String.valueOf(body.getLinearVelocity().y));
+        GlobalVariables.dustWallCrash.play(0.8f);
         getRebound();
     }
 
     public void hitByCar() {
-        Gdx.app.log("hit: ", "hit front");
+        // TODO: Let the cars crash and bounce.
     }
 
 

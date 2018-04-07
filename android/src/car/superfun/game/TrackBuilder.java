@@ -24,10 +24,6 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 
-/**
- * Created by gustav on 06.03.18.
- */
-
 public class TrackBuilder {
 
     static float pixelsPerTile;
@@ -118,7 +114,7 @@ public class TrackBuilder {
             fixtureDef.shape = shape;
 
             body = world.createBody(bodyDef);
-            body.createFixture(fixtureDef).setDensity(0.5f);
+            body.createFixture(fixtureDef);
             bodies.add(body);
             shape.dispose();
         }

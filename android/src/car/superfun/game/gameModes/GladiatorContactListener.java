@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.physicalObjects.LocalGladiatorCar;
 
 /**
@@ -24,7 +25,7 @@ public class GladiatorContactListener implements ContactListener {
         }
 
         // Set localCar to user.
-        Fixture user = fixtureA.getDensity() == 1f ? fixtureA : fixtureB;
+        Fixture user = fixtureA.getFilterData().categoryBits == GlobalVariables.PLAYER_ENTITY ? fixtureA : fixtureB;
 
         // Set the other fixture.
         Fixture other = fixtureA.getDensity() == 1f ? fixtureB : fixtureA;

@@ -34,11 +34,9 @@ public class GladiatorMode extends GameMode {
     public GladiatorMode() {
         super();
 
-        dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
-
         score = 5;
         carController = new CarController();
-        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), carController, world, score, dustWallCrash, carSound);
+        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), carController, world, score);
         tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         world.setContactListener(new GladiatorContactListener());
