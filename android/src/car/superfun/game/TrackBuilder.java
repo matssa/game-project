@@ -25,12 +25,59 @@ import com.badlogic.gdx.utils.Array;
 import java.util.ArrayList;
 
 import car.superfun.game.gameModes.GladiatorMode;
+import car.superfun.game.gameModes.PlayState;
 
 
 public class TrackBuilder {
 
     static float pixelsPerTile;
 
+    public static Array<Body> buildGoalLine(Map map, float pixels, World world) {
+
+        MapObjects mapObjects;
+        Array<Body> bodies;
+        Shape shape;
+        BodyDef bodyDef;
+        Body body;
+        FixtureDef fixtureDef;
+
+        pixelsPerTile = pixels;
+        mapObjects = map.getLayers().get("goal_line").getObjects();
+        bodies = new Array<Body>();
+
+        for (MapObject object : mapObjects) {
+            if (object instanceof TextureMapObject) {
+                shape = getRectangle((RectangleMapObject) object);
+            }
+            else if (object instanceof PolygonMapObject) {
+                shape = getPolygon((PolygonMapObject)object);
+            }
+            else if (object instanceof PolylineMapObject) {
+                shape = getPolyline((PolylineMapObject)object);
+            }
+            else if (object instanceof CircleMapObject) {
+                shape = getCircle((CircleMapObject)object);
+            }
+            else {
+                continue;
+            }
+
+            bodyDef = new BodyDef();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+
+            fixtureDef = new FixtureDef();
+            fixtureDef.filter.categoryBits = PlayState.GOAL_ENTITY;
+            fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+            fixtureDef.shape = shape;
+            fixtureDef.isSensor = true;
+
+            body = world.createBody(bodyDef);
+            body.createFixture(fixtureDef).setDensity(0.5f);
+            bodies.add(body);
+            shape.dispose();
+        }
+        return bodies;
+    }
 
     public static Array<Body> buildWalls(Map map, float pixels, World world) {
 
