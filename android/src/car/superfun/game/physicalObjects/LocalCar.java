@@ -7,51 +7,33 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import car.superfun.game.CarControls.CarController;
 import car.superfun.game.CarSuperFun;
+import car.superfun.game.GlobalVariables;
+import car.superfun.game.TrackBuilder;
 import car.superfun.game.observerPattern.Observer;
 import car.superfun.game.observerPattern.Subject;
 
 import static java.lang.Math.abs;
 
-/**
- * Created by kristian on 06.03.18.
- */
 
 public class LocalCar implements Observer {
-//    private int maxSpeed;
     private float acceleration;
     private float steering;
     private float grip;
-
-    private final short USER_ENTITY;
-    private final short WALL_ENTITY;
 
     private CarController carController;
 
     private float frameRotation;
 
-    Body body;
-    Sprite sprite;
-
-    private float normalFriction;
-    private boolean lostGrip;
-
-    private void log(String string) {
-        Gdx.app.log("log: ", string);
-    }
+    protected Body body;
+    protected Sprite sprite;
 
     public LocalCar(Vector2 position, Sprite sprite, CarController carController, World world){
-//        super(position, sprite, new Vector2(0,0));
-
-        USER_ENTITY = 0x0001;
-        WALL_ENTITY = 0x0002;
-
 
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
@@ -64,8 +46,6 @@ public class LocalCar implements Observer {
         bodyDef.angularDamping = 0.9f;
         bodyDef.linearDamping = 0.5f;
 
-//        bodyDef.angularDamping
-
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
@@ -74,22 +54,21 @@ public class LocalCar implements Observer {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
-        fixtureDef.filter.categoryBits = USER_ENTITY;
-        fixtureDef.filter.maskBits = WALL_ENTITY;
 
-        body.createFixture(fixtureDef);
+        fixtureDef.filter.categoryBits = GlobalVariables.PLAYER_ENTITY;
+        fixtureDef.filter.maskBits = GlobalVariables.ALL_ENTITIES;
+        fixtureDef.restitution = 0.2f;
+
+        body.createFixture(fixtureDef).setUserData(this);
+
         shape.dispose();
 
-//        maxSpeed = 2500;
-        acceleration = 1000.0f;
-        steering = 200.0f;
+        acceleration = 850.0f;
+        steering = 175.0f;
         grip = 10;
 
         this.carController = carController;
         frameRotation = 0;
-
-//        normalFriction = friction;
-        lostGrip = false;
     }
 
     public LocalCar(Vector2 position, CarController carController, World world) {
@@ -107,24 +86,14 @@ public class LocalCar implements Observer {
         float traction = abs(body.getLinearVelocity().dot(direction.cpy().rotate(90 + 45 * carController.rotation)));
         float sidewaysVelocityDampening = (body.getLinearVelocity().len() > 0.1) ? (abs(body.getLinearVelocity().dot(direction) / body.getLinearVelocity().len()) / 4) + 0.75f : 1;
 
-//        Gdx.app.log("sideways velocity dampening", ": " + sidewaysVelocityDampening);
-
         if (traction < grip) {
             body.setLinearVelocity(body.getLinearVelocity().rotate(frameRotation).scl(sidewaysVelocityDampening));
-//            if (lostGrip) {
-//                lostGrip = false;
-//                log("--- grip regained ---");
-//            }
         } else {
             float velocityRotator = frameRotation * (float) (Math.exp(grip / traction) / Math.exp(traction / grip));
-            frameRotation = frameRotation * (grip / traction);
-//            Gdx.app.log("traction: ", "" + traction);
-//            Gdx.app.log("frameRotation: ", "" + frameRotation);
+
+            frameRotation = frameRotation * (float) (Math.log(grip) / Math.log(traction));
+
             body.setLinearVelocity(body.getLinearVelocity().rotate(velocityRotator).scl(sidewaysVelocityDampening));
-//            velocity.rotate(frameRotation * 0.15f);
-//            Gdx.app.log("lost grip", "" + traction);
-//            friction = 2f * normalFriction;
-            lostGrip = true;
         }
 
         body.applyForceToCenter(direction.scl(carController.forward * acceleration * dt), true);
@@ -155,14 +124,10 @@ public class LocalCar implements Observer {
     }
 
     public Vector2 getVelocity() {
-//        return velocity.cpy();
-//        Gdx.app.log("localCar velocity: ", "(" + body.getLinearVelocity().x + ", " + body.getLinearVelocity().y + ")");
         return body.getLinearVelocity();
     }
 
     public Vector2 getPosition() {
-//        return position.cpy();
-//        Gdx.app.log("localCar position: ", "(" + body.getPosition().x + ", " + body.getPosition().y + ")");
         return new Vector2(sprite.getX(), sprite.getY());
     }
 
@@ -172,8 +137,10 @@ public class LocalCar implements Observer {
     }
 
     public Vector2 getDirectionVector() { return new Vector2(0,1).rotateRad(body.getAngle()); }
-    public float getDirectionFloat() { return body.getAngle(); }
 
+    public Body getBody() { return body; }
+
+    public float getDirectionFloat() { return body.getAngle(); }
     public float getFrameRotation() {
         return frameRotation;
     }

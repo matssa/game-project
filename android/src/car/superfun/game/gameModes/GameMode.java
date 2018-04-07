@@ -21,6 +21,7 @@ public abstract class GameMode extends State {
         super();
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
+        camera.zoom = camera.zoom * 1.4f;
         camera.update();
 
         camBatch = new SpriteBatch();

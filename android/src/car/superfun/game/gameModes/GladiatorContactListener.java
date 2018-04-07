@@ -7,11 +7,9 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.physicalObjects.LocalGladiatorCar;
 
-/**
- * Created by matss on 22-Mar-18.
- */
 
 public class GladiatorContactListener implements ContactListener {
     @Override
@@ -24,17 +22,17 @@ public class GladiatorContactListener implements ContactListener {
         }
 
         // Set localCar to user.
-        Fixture user = fixtureA.getDensity() == 1f ? fixtureA : fixtureB;
-        // Set the death barrier to dirtWall.
-        Fixture dirtWall = fixtureA.getDensity() == 1f ? fixtureB : fixtureA;
-        
+        Fixture user = fixtureA.getFilterData().categoryBits == GlobalVariables.PLAYER_ENTITY ? fixtureA : fixtureB;
+
+        // Set the other fixture.
+        Fixture other = fixtureA.getDensity() == 1f ? fixtureB : fixtureA;
+
         if (user.getUserData() instanceof LocalGladiatorCar) {
-            ((LocalGladiatorCar) user.getUserData()).hitDeathWalls();
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                Gdx.app.log("InterruptedException e: ", "Exception");
-//            }
+            if (other.getDensity() == 1f) {
+                ((LocalGladiatorCar) user.getUserData()).hitByCar();
+            } else {
+                ((LocalGladiatorCar) user.getUserData()).hitDeathWalls();
+            }
         }
 
     }
@@ -55,7 +53,7 @@ public class GladiatorContactListener implements ContactListener {
     }
 
     public boolean isWalls(Fixture fixtureA, Fixture fixtureB) {
-        if (fixtureA.getDensity() == 0.9f || fixtureB.getDensity() == 0.9f) {
+        if (fixtureA.getFilterData().categoryBits == GlobalVariables.WALL_ENTITY || fixtureB.getFilterData().categoryBits == GlobalVariables.WALL_ENTITY) {
             return true;
         }
         return false;

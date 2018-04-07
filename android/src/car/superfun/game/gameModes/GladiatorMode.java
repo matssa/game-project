@@ -9,23 +9,27 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import car.superfun.game.CarControls.CarController;
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.physicalObjects.LocalGladiatorCar;
 
 import static com.badlogic.gdx.Gdx.app;
 
-/**
- * Created by matss on 21-Mar-18.
- */
 
 public class GladiatorMode extends GameMode {
 
+    // Filters
+    public static final short DEATH_ENTITY = 0x0032;
+
+    // Music and sounds
+    public static final Sound dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
+
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
-    Sound dustWallCrash;
-    Sound carSound;
 
     private CarController carController;
     private LocalGladiatorCar localCar;
@@ -34,17 +38,25 @@ public class GladiatorMode extends GameMode {
     public GladiatorMode() {
         super();
 
-        dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
-        carSound = Gdx.audio.newSound(Gdx.files.internal("sounds/car_sound.ogg"));
-
         score = 5;
         carController = new CarController();
-        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), carController, world, score, dustWallCrash, carSound);
+        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), carController, world, score);
         tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         world.setContactListener(new GladiatorContactListener());
-        TrackBuilder.buildWalls(tiledMap, 100f, world);
-        TrackBuilder.buildDeathZone(tiledMap, 100f, world);
+
+        FixtureDef wallDef = new FixtureDef();
+        wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
+        wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+
+        TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
+
+        FixtureDef deathZoneDef = new FixtureDef();
+        deathZoneDef.restitution = 2f;
+        deathZoneDef.filter.categoryBits = GladiatorMode.DEATH_ENTITY;
+        deathZoneDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+
+        TrackBuilder.buildLayer(tiledMap, world, "dirt_barrier", deathZoneDef);
     }
 
     @Override
@@ -80,7 +92,6 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void dispose() {
-        carSound.dispose();
     }
 
     @Override
