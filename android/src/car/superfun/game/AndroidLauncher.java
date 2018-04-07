@@ -106,6 +106,9 @@ public class AndroidLauncher extends AndroidApplication {
                     }
                 });
     }
+    public boolean isSignedIn() {
+        return GoogleSignIn.getLastSignedInAccount(this) != null;
+    }
 
 }
 

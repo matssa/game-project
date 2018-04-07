@@ -19,24 +19,25 @@ public class MainMenu extends State {
     private AndroidLauncher androidLauncher;
 
     public MainMenu(AndroidLauncher androidLauncher){
+        this.androidLauncher = androidLauncher;
         background = new Texture("background.png");
         hostButton = new Texture("menu-buttons/host.png");
         joinButton = new Texture("menu-buttons/join.png");
         settings = new Texture("menu-buttons/settings.png");
-        this.androidLauncher = androidLauncher;
     }
 
     @Override
     public void handleInput() {
         if(Gdx.input.justTouched()){
             if(isOnSettings()){
-                GameStateManager.getInstance().push(new SettingsMenu(androidLauncher));
+                androidLauncher.signOut();
+                GameStateManager.getInstance().push(new SettingsMenu());
             }
             if(isOnJoin()){
                 GameStateManager.getInstance().push(new GameBrowser());
             }
             if(isOnHost()){
-                GameStateManager.getInstance().push(new HostMenu(androidLauncher));
+                GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
                 // GameStateManager.getInstance().push(new PlayState());
             }

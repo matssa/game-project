@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import car.superfun.game.menus.MainMenu;
+import car.superfun.game.menus.LoginMenu;
 import car.superfun.game.states.GameStateManager;
 
 
@@ -40,7 +40,7 @@ public class CarSuperFun extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 1, 1);
 
         // Starts the game in MainMenu
-        gsm.push(new MainMenu(androidLauncher));
+        gsm.push(new LoginMenu(androidLauncher));
       
         // Starts the game in playstate
 //        gsm.push(new PlayState(camera));
