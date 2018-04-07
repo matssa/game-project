@@ -26,8 +26,11 @@ public class PlayState extends GameMode{
         super();
 
         carController = new CarController();
+
+        // TODO: implement some way to save starting position together with the map
+        // (1600, 11000) is an appropriate starting place in simpleMap
         localCar = new LocalCar(new Vector2(1600, 11000), carController, world);
-//        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController, world);
+
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         TrackBuilder.buildWalls(tiledMap, 100f, world);
