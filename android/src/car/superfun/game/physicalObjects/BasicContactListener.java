@@ -58,7 +58,7 @@ public class BasicContactListener implements ContactListener {
 
         LocalCar localCar = (fixtureA.getUserData() instanceof LocalCar) ? (LocalCar) fixtureA.getUserData() : (LocalCar) fixtureB.getUserData();
 
-//        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);
-//        Gdx.app.log("Entity B:", "" + fixtureB.getFilterData().categoryBits);
+        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);
+        Gdx.app.log("Entity B:", "" + fixtureB.getFilterData().categoryBits);
     }
 }

@@ -30,22 +30,12 @@ import car.superfun.game.gameModes.PlayState;
 
 public class TrackBuilder {
 
-    static float pixelsPerTile;
-
-    public static Array<Body> buildGoalLine(Map map, float pixels, World world) {
-
-        MapObjects mapObjects;
-        Array<Body> bodies;
-        Shape shape;
-        BodyDef bodyDef;
-        Body body;
-        FixtureDef fixtureDef;
-
-        pixelsPerTile = pixels;
-        mapObjects = map.getLayers().get("goal_line").getObjects();
-        bodies = new Array<Body>();
+    public static Array<Body> buildLayer(Map map, World world, String layerName, FixtureDef fixtureDef) {
+        MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
+        Array<Body> bodies = new Array<Body>();
 
         for (MapObject object : mapObjects) {
+            Shape shape;
             if (object instanceof TextureMapObject) {
                 shape = getRectangle((RectangleMapObject) object);
             }
@@ -62,108 +52,12 @@ public class TrackBuilder {
                 continue;
             }
 
-            bodyDef = new BodyDef();
+            BodyDef bodyDef = new BodyDef();
             bodyDef.type = BodyDef.BodyType.StaticBody;
 
-            fixtureDef = new FixtureDef();
-            fixtureDef.filter.categoryBits = PlayState.GOAL_ENTITY;
-            fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
-            fixtureDef.shape = shape;
-            fixtureDef.isSensor = true;
-
-            body = world.createBody(bodyDef);
-            body.createFixture(fixtureDef).setDensity(0.5f);
-            bodies.add(body);
-            shape.dispose();
-        }
-        return bodies;
-    }
-
-    public static Array<Body> buildWalls(Map map, float pixels, World world) {
-
-        MapObjects mapObjects;
-        Array<Body> bodies;
-        Shape shape;
-        BodyDef bodyDef;
-        Body body;
-        FixtureDef fixtureDef;
-
-        pixelsPerTile = pixels;
-        mapObjects = map.getLayers().get("walls").getObjects();
-        bodies = new Array<Body>();
-
-        for (MapObject object : mapObjects) {
-            if (object instanceof TextureMapObject) {
-                shape = getRectangle((RectangleMapObject) object);
-            }
-            else if (object instanceof PolygonMapObject) {
-                shape = getPolygon((PolygonMapObject)object);
-            }
-            else if (object instanceof PolylineMapObject) {
-                shape = getPolyline((PolylineMapObject)object);
-            }
-            else if (object instanceof CircleMapObject) {
-                shape = getCircle((CircleMapObject)object);
-            }
-            else {
-                continue;
-            }
-
-            bodyDef = new BodyDef();
-            bodyDef.type = BodyDef.BodyType.StaticBody;
-
-            fixtureDef = new FixtureDef();
-            fixtureDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
-            fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
             fixtureDef.shape = shape;
 
-            body = world.createBody(bodyDef);
-            body.createFixture(fixtureDef).setDensity(0.9f);
-            bodies.add(body);
-            shape.dispose();
-        }
-        return bodies;
-    }
-
-    public static Array<Body> buildDeathZone(Map map, float pixels, World world) {
-
-        MapObjects mapObjects;
-        Array<Body> bodies;
-        Shape shape;
-        BodyDef bodyDef;
-        Body body;
-        FixtureDef fixtureDef;
-
-        pixelsPerTile = pixels;
-        mapObjects = map.getLayers().get("dirt_barrier").getObjects();
-        bodies = new Array<Body>();
-
-        for (MapObject object : mapObjects) {
-            if (object instanceof TextureMapObject) {
-                shape = getRectangle((RectangleMapObject) object);
-            }
-            else if (object instanceof PolygonMapObject) {
-                shape = getPolygon((PolygonMapObject)object);
-            }
-            else if (object instanceof PolylineMapObject) {
-                shape = getPolyline((PolylineMapObject)object);
-            }
-            else if (object instanceof CircleMapObject) {
-                shape = getCircle((CircleMapObject)object);
-            }
-            else {
-                continue;
-            }
-
-            bodyDef = new BodyDef();
-            bodyDef.type = BodyDef.BodyType.StaticBody;
-
-            fixtureDef = new FixtureDef();
-            fixtureDef.filter.categoryBits = GladiatorMode.DEATH_ENTITY;
-            fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
-            fixtureDef.shape = shape;
-
-            body = world.createBody(bodyDef);
+            Body body = world.createBody(bodyDef);
             body.createFixture(fixtureDef);
             bodies.add(body);
             shape.dispose();
@@ -178,8 +72,8 @@ public class TrackBuilder {
 
         rectangle = rectangleObject.getRectangle();
         polygonShape = new PolygonShape();
-        size = new Vector2((rectangle.x + rectangle.width * 0.5f) / pixelsPerTile,(rectangle.y + rectangle.height * 0.5f ) / pixelsPerTile);
-        polygonShape.setAsBox(rectangle.width * 0.5f / pixelsPerTile, rectangle.height * 0.5f / pixelsPerTile, size, 0.0f);
+        size = new Vector2((rectangle.x + rectangle.width * 0.5f) / CarSuperFun.PIXELS_TO_METERS,(rectangle.y + rectangle.height * 0.5f ) / CarSuperFun.PIXELS_TO_METERS);
+        polygonShape.setAsBox(rectangle.width * 0.5f / CarSuperFun.PIXELS_TO_METERS, rectangle.height * 0.5f / CarSuperFun.PIXELS_TO_METERS, size, 0.0f);
         return polygonShape;
     }
 
@@ -189,8 +83,8 @@ public class TrackBuilder {
 
         circle = circleMapObject.getCircle();
         circleShape = new CircleShape();
-        circleShape.setRadius(circle.radius / pixelsPerTile);
-        circleShape.setPosition(new Vector2(circle.x / pixelsPerTile, circle.y / pixelsPerTile));
+        circleShape.setRadius(circle.radius / CarSuperFun.PIXELS_TO_METERS);
+        circleShape.setPosition(new Vector2(circle.x / CarSuperFun.PIXELS_TO_METERS, circle.y / CarSuperFun.PIXELS_TO_METERS));
         return circleShape;
     }
 
@@ -204,7 +98,7 @@ public class TrackBuilder {
         worldVertices = new float[vertices.length];
 
         for (int i = 0; i < vertices.length; ++i) {
-            worldVertices[i] = vertices[i] / pixelsPerTile;
+            worldVertices[i] = vertices[i] / CarSuperFun.PIXELS_TO_METERS;
         }
 
         polygonShape.set(worldVertices);
@@ -217,8 +111,8 @@ public class TrackBuilder {
 
         for (int i = 0; i < vertices.length / 2; ++i) {
             worldVertices[i] = new Vector2();
-            worldVertices[i].x = vertices[i * 2] / pixelsPerTile;
-            worldVertices[i].y = vertices[i * 2 + 1] / pixelsPerTile;
+            worldVertices[i].x = vertices[i * 2] / CarSuperFun.PIXELS_TO_METERS;
+            worldVertices[i].y = vertices[i * 2 + 1] / CarSuperFun.PIXELS_TO_METERS;
         }
 
         ChainShape chainShape = new ChainShape();
