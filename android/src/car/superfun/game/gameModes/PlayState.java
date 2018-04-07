@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import car.superfun.game.CarControls.CarController;
+import car.superfun.game.TrackBuilder;
 import car.superfun.game.physicalObjects.LocalCar;
 
 
@@ -25,9 +26,14 @@ public class PlayState extends GameMode{
         super();
 
         carController = new CarController();
-        localCar = new LocalCar(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), carController);
+
+        // TODO: implement some way to save starting position together with the map
+        // (1600, 11000) is an appropriate starting place in simpleMap
+        localCar = new LocalCar(new Vector2(1600, 11000), carController, world);
+
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        TrackBuilder.buildShapes(tiledMap, 100f, world);
     }
 
     @Override
@@ -37,10 +43,12 @@ public class PlayState extends GameMode{
 
     @Override
     public void update(float dt) {
+        world.step(1f/60f, 6, 2);
         carController.update();
         localCar.update(dt);
-        camera.position.set(localCar.getPosition().add(localCar.getVelocity().scl(0.12f)), 0);
-        camera.rotate(-localCar.getFrameRotation());
+        camera.position.set(localCar.getPosition(), 0);
+        camera.position.set(localCar.getPosition().add(localCar.getVelocity().scl(10f)), 0);
+        camera.up.set(localCar.getDirectionVector(), 0);
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
