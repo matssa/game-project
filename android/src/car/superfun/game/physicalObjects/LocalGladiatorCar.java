@@ -49,17 +49,10 @@ public class LocalGladiatorCar extends LocalCar{
 
 
     public void getRebound() {
-        if (body.getLinearVelocity().x < 0) {
-            body.setLinearVelocity(20f, body.getLinearVelocity().y);
-        } else {
-            body.setLinearVelocity(-20f, body.getLinearVelocity().y);
-        }
+        Gdx.app.log("vel x", String.valueOf(body.getLinearVelocity().x));
+        Gdx.app.log("vel y", String.valueOf(body.getLinearVelocity().y));
 
-        if (body.getLinearVelocity().y < 0) {
-            body.setLinearVelocity(body.getLinearVelocity().x, 20f);
-        } else {
-            body.setLinearVelocity(body.getLinearVelocity().x, -20f);
-        }
+        body.setLinearVelocity(body.getLinearVelocity().scl(2f, 2f));
     }
 
 
