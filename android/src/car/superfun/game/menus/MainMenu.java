@@ -65,28 +65,16 @@ public class MainMenu extends State {
 
     public boolean isOnJoin(){
         Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-joinButton.getWidth()/2), (Gdx.graphics.getHeight()/2+(joinButton.getHeight()/2)-350), (joinButton.getWidth()), joinButton.getHeight());
-        if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
-            return true;
-        }else{
-            return false;
-        }
+        return(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY()));
     }
 
     public boolean isOnHost(){
         Rectangle textureBounds = new Rectangle((Gdx.graphics.getWidth()/2-hostButton.getWidth()/2), (Gdx.graphics.getHeight()/2+(hostButton.getHeight()/2)-50), (hostButton.getWidth()), hostButton.getHeight());
-        if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
-            return true;
-        }else{
-            return false;
-        }
+        return(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY()));
     }
 
     public boolean isOnSettings(){
         Circle textureBounds = new Circle(1600+settings.getWidth()/2, (Gdx.graphics.getHeight() - 890)-settings.getHeight()/2, settings.getWidth()/2);
-        if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
-            return true;
-        }else{
-            return false;
-        }
+        return(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY()));
     }
 }
