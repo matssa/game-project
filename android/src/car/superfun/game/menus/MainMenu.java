@@ -1,13 +1,11 @@
 package car.superfun.game.menus;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
-import car.superfun.game.CarSuperFun;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -36,6 +34,8 @@ public class MainMenu extends State {
             }
             if(isOnHost()){
                 GameStateManager.getInstance().push(new HostMenu());
+                // starting PlayState instead, so that we can test the game
+                // GameStateManager.getInstance().push(new PlayState());
             }
         }
     }
