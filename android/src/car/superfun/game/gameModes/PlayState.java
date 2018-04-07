@@ -8,13 +8,25 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 
 import car.superfun.game.CarControls.CarController;
+import car.superfun.game.CarSuperFun;
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
+import car.superfun.game.physicalObjects.BasicContactListener;
 import car.superfun.game.physicalObjects.LocalCar;
 
 
 public class PlayState extends GameMode{
+
+    public static final int GOAL_ENTITY = 0b0100;
+    public static final int CHECKPOINT_ENTITY = 0b1000;
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
@@ -25,15 +37,30 @@ public class PlayState extends GameMode{
     public PlayState() {
         super();
 
+        world.setContactListener(new BasicContactListener());
+
         carController = new CarController();
+
+
+        tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+        FixtureDef wallDef = new FixtureDef();
+        wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
+        wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+
+        TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
+
+        FixtureDef goalDef = new FixtureDef();
+        goalDef.filter.categoryBits = PlayState.GOAL_ENTITY;
+        goalDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+        goalDef.isSensor = true;
+
+        TrackBuilder.buildLayer(tiledMap, world, "goal_line", goalDef);
 
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
         localCar = new LocalCar(new Vector2(1600, 11000), carController, world);
-
-        tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        TrackBuilder.buildWalls(tiledMap, 100f, world);
     }
 
     @Override
