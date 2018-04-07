@@ -17,12 +17,18 @@ public class CarSuperFun extends ApplicationAdapter {
 
     private GameStateManager gsm;
     private SpriteBatch batch;
+    private AndroidLauncher androidLauncher;
 
     private boolean justPressedBack;
 
     /**
      * Sets up the app
      */
+
+    public CarSuperFun(AndroidLauncher androidLauncher) {
+        this.androidLauncher = androidLauncher;
+    }
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -34,7 +40,7 @@ public class CarSuperFun extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 1, 1);
 
         // Starts the game in MainMenu
-        gsm.push(new MainMenu());
+        gsm.push(new MainMenu(androidLauncher));
       
         // Starts the game in playstate
 //        gsm.push(new PlayState(camera));

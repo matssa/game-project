@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 
+import car.superfun.game.AndroidLauncher;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -15,7 +16,8 @@ import car.superfun.game.states.State;
 public class SettingsMenu extends State {
     private Texture background, backButton;
 
-    public SettingsMenu(){
+    public SettingsMenu(AndroidLauncher androidLauncher){
+        androidLauncher.signOut();
         background = new Texture("background.png");
         backButton = new Texture("menu-buttons/back.png");
     }
