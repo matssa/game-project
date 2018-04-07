@@ -20,30 +20,20 @@ import car.superfun.game.observerPattern.Subject;
 
 import static java.lang.Math.abs;
 
-/**
- * Created by kristian on 06.03.18.
- */
 
 public class LocalCar implements Observer {
     private float acceleration;
     private float steering;
     private float grip;
 
-    private final short USER_ENTITY;
-    private final short WALL_ENTITY;
-
     private CarController carController;
 
     private float frameRotation;
 
-    private Body body;
-    private Sprite sprite;
+    protected Body body;
+    protected Sprite sprite;
 
     public LocalCar(Vector2 position, Sprite sprite, CarController carController, World world){
-
-        USER_ENTITY = 0x0001;
-        WALL_ENTITY = 0x0002;
-
 
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
@@ -64,8 +54,6 @@ public class LocalCar implements Observer {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
-        fixtureDef.filter.categoryBits = USER_ENTITY;
-        fixtureDef.filter.maskBits = WALL_ENTITY;
 
         fixtureDef.filter.categoryBits = GlobalVariables.PLAYER_ENTITY;
         fixtureDef.filter.maskBits = GlobalVariables.ALL_ENTITIES;
