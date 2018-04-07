@@ -20,13 +20,14 @@ public class CarSuperFun extends ApplicationAdapter {
 
     private boolean justPressedBack;
 
+    public static final float PIXELS_TO_METERS = 100f;
+
     /**
      * Sets up the app
      */
     @Override
     public void create() {
         batch = new SpriteBatch();
-//        hud = new SpriteBatch();
 
         gsm = GameStateManager.getInstance();
 
@@ -35,9 +36,6 @@ public class CarSuperFun extends ApplicationAdapter {
 
         // Starts the game in MainMenu
         gsm.push(new MainMenu());
-      
-        // Starts the game in playstate
-//        gsm.push(new PlayState(camera));
 
         // Take control of the back button
         Gdx.input.setCatchBackKey(true);
