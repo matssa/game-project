@@ -40,26 +40,10 @@ public class LocalGladiatorCar extends LocalCar{
     public void hitDeathWalls() {
         score -= 1;
         GladiatorMode.dustWallCrash.play(0.8f);
-        getRebound();
     }
 
     public void hitByCar() {
         // TODO: Let the cars crash and bounce.
-    }
-
-
-    public void getRebound() {
-        if (body.getLinearVelocity().x < 0) {
-            body.setLinearVelocity(20f, body.getLinearVelocity().y);
-        } else {
-            body.setLinearVelocity(-20f, body.getLinearVelocity().y);
-        }
-
-        if (body.getLinearVelocity().y < 0) {
-            body.setLinearVelocity(body.getLinearVelocity().x, 20f);
-        } else {
-            body.setLinearVelocity(body.getLinearVelocity().x, -20f);
-        }
     }
 
 
