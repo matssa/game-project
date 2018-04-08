@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
-import car.superfun.game.gameModes.GladiatorMode;
+import car.superfun.game.AndroidLauncher;
 import car.superfun.game.gameModes.PlayState;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
@@ -17,8 +17,10 @@ import car.superfun.game.states.State;
 
 public class MainMenu extends State {
     private Texture background, hostButton, joinButton, settings;
+    private AndroidLauncher androidLauncher;
 
-    public MainMenu(){
+    public MainMenu(AndroidLauncher androidLauncher){
+        this.androidLauncher = androidLauncher;
         background = new Texture("background.png");
         hostButton = new Texture("menu-buttons/host.png");
         joinButton = new Texture("menu-buttons/join.png");
@@ -29,7 +31,9 @@ public class MainMenu extends State {
     public void handleInput() {
         if(Gdx.input.justTouched()){
             if(isOnSettings()){
-                GameStateManager.getInstance().push(new GladiatorMode());
+                androidLauncher.signOut();
+                GameStateManager.getInstance().push(new SettingsMenu());
+                //GameStateManager.getInstance().push(new GladiatorMode());
             }
             if(isOnJoin()){
                 GameStateManager.getInstance().push(new GameBrowser());
