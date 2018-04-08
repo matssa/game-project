@@ -50,26 +50,21 @@ public class RaceContactListener implements ContactListener {
     }
 
     private void beginGoalContact(Contact contact) {
-        Gdx.app.log("New contact", "goal contact");
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
         LocalRaceCar localRaceCar = (fixtureA.getUserData() instanceof LocalRaceCar) ? (LocalRaceCar) fixtureA.getUserData() : (LocalRaceCar) fixtureB.getUserData();
 
-//        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);
-//        Gdx.app.log("Entity B:", "" + fixtureB.getFilterData().categoryBits);
+        localRaceCar.passGoal();
     }
 
     private void beginCheckpointContact(Contact contact) {
-        Gdx.app.log("New contact", "checkpoint contact");
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
         LocalRaceCar localRaceCar = (fixtureA.getUserData() instanceof LocalRaceCar) ? (LocalRaceCar) fixtureA.getUserData() : (LocalRaceCar) fixtureB.getUserData();
         int checkpointId = (fixtureA.getUserData() instanceof LocalRaceCar) ? (int) fixtureB.getBody().getUserData() : (int) fixtureA.getBody().getUserData();
 
-        Gdx.app.log("checkpoint id", "" + checkpointId);
-//        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);
-//        Gdx.app.log("Entity B:", "" + fixtureB.getFilterData().categoryBits);
+        localRaceCar.passCheckpoint(checkpointId);
     }
 }

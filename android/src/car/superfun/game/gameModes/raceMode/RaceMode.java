@@ -73,14 +73,10 @@ public class RaceMode extends GameMode {
         checkpointDef.isSensor = true;
 
         Array<Body> bodies = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData());
-        int[] checkpoints = new int[bodies.size];
-        for (int i = 0; i < bodies.size; i++) {
-            checkpoints[i] = (int) bodies.get(i).getUserData();
-        }
 
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
-        localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), carController, world, checkpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), carController, world, bodies.size);
     }
 
     @Override
