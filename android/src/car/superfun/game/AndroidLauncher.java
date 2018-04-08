@@ -10,6 +10,7 @@ import android.view.WindowManager;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.math.Vector2;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -37,7 +38,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class AndroidLauncher extends AndroidApplication {
@@ -67,6 +72,9 @@ public class AndroidLauncher extends AndroidApplication {
     String mMyId = null;
 
     private CarSuperFun carSuperFun;
+
+    // Message buffer for sending messages
+    byte[] mMsgBuf = new byte[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,12 +299,6 @@ public class AndroidLauncher extends AndroidApplication {
 
     }
 
-    OnRealTimeMessageReceivedListener mMessageReceivedHandler = new OnRealTimeMessageReceivedListener() {
-        @Override
-        public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
-            // TODO SEND DATA
-        }
-    };
 
     private OnFailureListener createFailureListener(final String string) {
         return new OnFailureListener() {
@@ -490,6 +492,114 @@ public class AndroidLauncher extends AndroidApplication {
                 .show();
     }
 
+       /*
+     * COMMUNICATIONS SECTION. Methods that implement the game's network
+     * protocol.
+     */
+
+    // Score of other participants. We update this as we receive their scores
+    // from the network.
+    Map<String, Integer> mParticipantScore = new HashMap<>();
+
+    Map<String, Vector2> mParticipantPosition = new HashMap<>();
+
+    // Participants who sent us their final score.
+    Set<String> mFinishedParticipants = new HashSet<>();
+
+    // Called when we receive a real-time message from the network.
+    // Messages in our game are made up of 2 bytes: the first one is 'F' or 'U'
+    // indicating
+    // whether it's a final or interim score. The second byte is the score.
+    // There is also the
+    // 'S' message, which indicates that the game should start.
+    OnRealTimeMessageReceivedListener mMessageReceivedHandler = new OnRealTimeMessageReceivedListener() {
+        @Override
+        public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+            byte[] buf = realTimeMessage.getMessageData();
+            String sender = realTimeMessage.getSenderParticipantId();
+            Log.d(TAG, "Message received: " + (char) buf[0] + "/" + (int) buf[1]);
+
+            if (buf[0] == 'F' || buf[0] == 'U') {
+                // score update.
+                int existingScore = mParticipantScore.containsKey(sender) ?
+                        mParticipantScore.get(sender) : 0;
+                int thisScore = (int) buf[1];
+                Vector2 position = new Vector2 ((int) buf[2], (int) buf[3]);
+
+                if (thisScore > existingScore) {
+                    // this check is necessary because packets may arrive out of
+                    // order, so we
+                    // should only ever consider the highest score we received, as
+                    // we know in our
+                    // game there is no way to lose points. If there was a way to
+                    // lose points,
+                    // we'd have to add a "serial number" to the packet.
+                    mParticipantScore.put(sender, thisScore);
+                    mParticipantPosition.put(sender, position);
+                }
+
+                updatePosition(position);
+                // if it's a final score, mark this participant as having finished
+                // the game
+                if ((char) buf[0] == 'F') {
+                    mFinishedParticipants.add(realTimeMessage.getSenderParticipantId());
+                }
+            }
+        }
+    };
+
+    private void updatePosition(Vector2 position){
+
+
+    }
+
+    private void broadcastScore(boolean finalScore, int score, Vector2 position) {
+
+        // First byte in message indicates whether it's a final score or not
+        mMsgBuf[0] = (byte) (finalScore ? 'F' : 'U');
+
+        // Second byte is the score.
+        mMsgBuf[1] = (byte) score;
+
+        // Third byte is the x position.
+        mMsgBuf[3] = (byte) position.x;
+
+        // Fourth byte is the y position.
+        mMsgBuf[2] = (byte) position.y;
+
+        // Send to every other participant.
+        for (Participant p : mParticipants) {
+            if (p.getParticipantId().equals(mMyId)) {
+                continue;
+            }
+            if (p.getStatus() != Participant.STATUS_JOINED) {
+                continue;
+            }
+            if (finalScore) {
+                // final score notification must be sent via reliable message
+                mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
+                        mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
+                            @Override
+                            public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
+                                Log.d(TAG, "RealTime message sent");
+                                Log.d(TAG, "  statusCode: " + statusCode);
+                                Log.d(TAG, "  tokenId: " + tokenId);
+                                Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                            }
+                        })
+                        .addOnSuccessListener(new OnSuccessListener<Integer>() {
+                            @Override
+                            public void onSuccess(Integer tokenId) {
+                                Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                            }
+                        });
+            } else {
+                // it's an interim score notification, so we can use unreliable
+                mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
+                        p.getParticipantId());
+            }
+        }
+    }
 
 }
 
