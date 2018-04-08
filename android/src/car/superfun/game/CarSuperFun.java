@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import car.superfun.game.menus.MainMenu;
+import car.superfun.game.menus.LoginMenu;
 import car.superfun.game.states.GameStateManager;
 
 
@@ -17,6 +17,7 @@ public class CarSuperFun extends ApplicationAdapter {
 
     private GameStateManager gsm;
     private SpriteBatch batch;
+    private AndroidLauncher androidLauncher;
 
     private boolean justPressedBack;
 
@@ -25,6 +26,11 @@ public class CarSuperFun extends ApplicationAdapter {
     /**
      * Sets up the app
      */
+
+    public CarSuperFun(AndroidLauncher androidLauncher) {
+        this.androidLauncher = androidLauncher;
+    }
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -35,7 +41,8 @@ public class CarSuperFun extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 1, 1);
 
         // Starts the game in MainMenu
-        gsm.push(new MainMenu());
+
+        gsm.push(new LoginMenu(androidLauncher));
 
         // Take control of the back button
         Gdx.input.setCatchBackKey(true);
