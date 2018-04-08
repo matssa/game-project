@@ -1,6 +1,7 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,6 +28,7 @@ public class GladiatorMode extends GameMode {
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
+    Music gladiatorSong;
 
     private CarController carController;
     private LocalGladiatorCar localCar;
