@@ -13,20 +13,19 @@ import static java.lang.Math.abs;
 public class LocalGladiatorCar extends LocalCar {
 
     private int score;
-
-    private void log(String string) {
-        Gdx.app.log("log: ", string);
-    }
+    
 
     public LocalGladiatorCar(Vector2 position, CarController carController, World world, Integer score){
         super(position, carController, world);
         this.score = score;
     }
+    
 
     public void hitDeathWalls() {
         score -= 1;
         GladiatorMode.dustWallCrash.play(0.8f);
     }
+    
 
     public void hitByCar() {
         // TODO: Let the cars crash and bounce.
