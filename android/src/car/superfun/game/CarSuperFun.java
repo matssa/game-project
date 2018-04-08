@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import car.superfun.game.menus.LoginMenu;
+import car.superfun.game.menus.MainMenu;
 import car.superfun.game.states.GameStateManager;
 
 
@@ -42,7 +43,8 @@ public class CarSuperFun extends ApplicationAdapter {
 
         // Starts the game in MainMenu
 
-        gsm.push(new LoginMenu(androidLauncher));
+        //gsm.push(new LoginMenu(androidLauncher));
+        gsm.push(new MainMenu(androidLauncher));
 
         // Take control of the back button
         Gdx.input.setCatchBackKey(true);
