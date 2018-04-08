@@ -1,17 +1,11 @@
-package car.superfun.game.CarControls;
+package car.superfun.game.Car;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-import car.superfun.game.observerPattern.Subject;
-
-/**
- * Created by kristian on 06.03.18.
- */
-
-public class CarController extends Subject {
+public class CarController {
     public float slider1Position;
     public float slider2Position;
 
@@ -45,7 +39,7 @@ public class CarController extends Subject {
         for (int i = 0; i < 5; i++) {
             if (Gdx.input.isTouched(i)) {
                 Vector2 justTouched = new Vector2(Gdx.input.getX(i), Gdx.input.getY(i) * (-1) + Gdx.graphics.getHeight());
-                if (justTouched.x < Gdx.graphics.getWidth() / 8) {
+                if (justTouched.x < Gdx.graphics.getWidth() / 4) {
                     slider1Touched = true;
                     slider1Position =
                             (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
@@ -53,7 +47,7 @@ public class CarController extends Subject {
                                     ? justTouched.y :
                                     Gdx.graphics.getHeight() / 2;
                 }
-                if (justTouched.x > 7 * Gdx.graphics.getWidth() / 8) {
+                if (justTouched.x > 3 * Gdx.graphics.getWidth() / 4) {
                     slider2Touched = true;
                     slider2Position =
                             (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
@@ -64,20 +58,14 @@ public class CarController extends Subject {
             }
         }
         if (!slider1Touched) {
-//          slider1Position = Gdx.graphics.getHeight() / 2;
-//          slider1Position = (Gdx.graphics.getHeight() / 2) * (1 + forward*0.75f);
             slider1Position = slider1Position - (slider1Position - Gdx.graphics.getHeight() / 2) / 5;
         }
         if (!slider2Touched) {
-//          slider2Position = Gdx.graphics.getHeight() / 2;
-//          slider2Position = (Gdx.graphics.getHeight() / 2) * (1 + forward*0.75f);
             slider2Position = slider2Position - (slider2Position - Gdx.graphics.getHeight() / 2) / 5;
         }
 
         forward = Math.max(-1f, Math.min(1f, (slider1Position + slider2Position - Gdx.graphics.getHeight()) / (Gdx.graphics.getHeight() * 0.8f)));
         rotation = Math.max(-1f, Math.min(1f, (slider2Position - slider1Position) / (Gdx.graphics.getHeight() * 0.8f)));
-
-        notifyObservers();
     }
 
     public void render(SpriteBatch sb) {
