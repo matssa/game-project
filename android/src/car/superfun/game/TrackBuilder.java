@@ -71,7 +71,8 @@ public class TrackBuilder {
             fixtureDef.shape = shape;
 
             Body body = world.createBody(bodyDef);
-            body.createFixture(fixtureDef).setUserData(userDataCreater.getUserData());
+            body.setUserData(userDataCreater.getUserData());
+            body.createFixture(fixtureDef);
             bodies.add(body);
             shape.dispose();
         }

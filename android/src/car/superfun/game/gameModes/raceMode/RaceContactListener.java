@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.car.LocalCar;
 
 public class RaceContactListener implements ContactListener {
 
@@ -55,7 +54,7 @@ public class RaceContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        LocalCar localCar = (fixtureA.getUserData() instanceof LocalCar) ? (LocalCar) fixtureA.getUserData() : (LocalCar) fixtureB.getUserData();
+        LocalRaceCar localRaceCar = (fixtureA.getUserData() instanceof LocalRaceCar) ? (LocalRaceCar) fixtureA.getUserData() : (LocalRaceCar) fixtureB.getUserData();
 
 //        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);
 //        Gdx.app.log("Entity B:", "" + fixtureB.getFilterData().categoryBits);
@@ -66,8 +65,8 @@ public class RaceContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        LocalCar localCar = (fixtureA.getUserData() instanceof LocalCar) ? (LocalCar) fixtureA.getUserData() : (LocalCar) fixtureB.getUserData();
-        int checkpointId = (fixtureA.getUserData() instanceof LocalCar) ? (int) fixtureB.getUserData() : (int) fixtureA.getUserData();
+        LocalRaceCar localRaceCar = (fixtureA.getUserData() instanceof LocalRaceCar) ? (LocalRaceCar) fixtureA.getUserData() : (LocalRaceCar) fixtureB.getUserData();
+        int checkpointId = (fixtureA.getUserData() instanceof LocalRaceCar) ? (int) fixtureB.getBody().getUserData() : (int) fixtureA.getBody().getUserData();
 
         Gdx.app.log("checkpoint id", "" + checkpointId);
 //        Gdx.app.log("Entity A:", "" + fixtureA.getFilterData().categoryBits);

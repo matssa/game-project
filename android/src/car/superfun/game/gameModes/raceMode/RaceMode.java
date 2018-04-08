@@ -1,5 +1,6 @@
 package car.superfun.game.gameModes.raceMode;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import car.superfun.game.car.CarController;
@@ -16,6 +18,7 @@ import car.superfun.game.UserDataCreater;
 import car.superfun.game.gameModes.GameMode;
 import car.superfun.game.car.LocalCar;
 
+import com.badlogic.gdx.utils.Array;
 
 public class RaceMode extends GameMode {
 
@@ -69,11 +72,15 @@ public class RaceMode extends GameMode {
         checkpointDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         checkpointDef.isSensor = true;
 
-        TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData());
+        Array<Body> bodies = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData());
+        int[] checkpoints = new int[bodies.size];
+        for (int i = 0; i < bodies.size; i++) {
+            checkpoints[i] = (int) bodies.get(i).getUserData();
+        }
 
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
-        localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), carController, world);
+        localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), carController, world, checkpoints);
     }
 
     @Override
