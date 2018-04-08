@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 
 public class ButtonActor extends Actor {
 
-    Sprite sprite;
+    private Sprite sprite;
 
     public ButtonActor(Sprite sprite){
         this.sprite = sprite;
