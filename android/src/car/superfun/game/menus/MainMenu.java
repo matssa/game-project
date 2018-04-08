@@ -13,7 +13,7 @@ import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
 public class MainMenu extends State {
-    private Texture background, hostButton, joinButton, settings;
+    private Texture background, hostButton, joinButton, settings, extraSettings;
     private AndroidLauncher androidLauncher;
 
     public MainMenu(AndroidLauncher androidLauncher){
@@ -22,6 +22,7 @@ public class MainMenu extends State {
         hostButton = new Texture("menu-buttons/host.png");
         joinButton = new Texture("menu-buttons/join.png");
         settings = new Texture("menu-buttons/settings.png");
+        extraSettings = new Texture(("menu-buttons/settings.png"));
     }
 
     @Override
@@ -41,6 +42,9 @@ public class MainMenu extends State {
                 // starting PlayState instead, so that we can test the game
                 GameStateManager.getInstance().push(new RaceMode());
             }
+            if(isOnExtraSettings()){
+                GameStateManager.getInstance().push(new GladiatorMode());
+            }
         }
     }
 
@@ -56,12 +60,14 @@ public class MainMenu extends State {
         sb.draw(joinButton, Gdx.graphics.getWidth()/2-joinButton.getWidth()/2, Gdx.graphics.getHeight()/2-(joinButton.getHeight()/2)+150);
         sb.draw(hostButton, Gdx.graphics.getWidth()/2-hostButton.getWidth()/2, Gdx.graphics.getHeight()/2-(hostButton.getHeight()/2)-150);
         sb.draw(settings, 1600, 890);
+        sb.draw(extraSettings, 1400, 890);
         sb.end();
     }
 
     @Override
     public void dispose() {
         settings.dispose();
+        extraSettings.dispose();
         hostButton.dispose();
         joinButton.dispose();
         background.dispose();
@@ -87,6 +93,15 @@ public class MainMenu extends State {
 
     public boolean isOnSettings(){
         Circle textureBounds = new Circle(1600+settings.getWidth()/2, (Gdx.graphics.getHeight() - 890)-settings.getHeight()/2, settings.getWidth()/2);
+        if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean isOnExtraSettings(){
+        Circle textureBounds = new Circle(1400+settings.getWidth()/2, (Gdx.graphics.getHeight() - 890)-settings.getHeight()/2, settings.getWidth()/2);
         if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
             return true;
         }else{

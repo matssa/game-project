@@ -98,12 +98,13 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void dispose() {
+        gladiatorSong.stop();
         gladiatorSong.dispose();
-        localCar = null;
     }
 
     @Override
     public void endGame() {
+        // TODO: send data to leaderboard
         this.dispose();
     }
 }
