@@ -1,6 +1,6 @@
 package car.superfun.game;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -22,34 +22,20 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.ArrayList;
-
-import car.superfun.game.gameModes.GladiatorMode;
-import car.superfun.game.gameModes.PlayState;
-
 
 public class TrackBuilder {
 
     public static Array<Body> buildLayer(Map map, World world, String layerName, FixtureDef fixtureDef) {
         MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
-        Array<Body> bodies = new Array<Body>();
+        Array<Body> bodies = new Array<>();
 
-        for (MapObject object : mapObjects) {
+        for (MapObject mapObject : mapObjects) {
             Shape shape;
-            if (object instanceof TextureMapObject) {
-                shape = getRectangle((RectangleMapObject) object);
-            }
-            else if (object instanceof PolygonMapObject) {
-                shape = getPolygon((PolygonMapObject)object);
-            }
-            else if (object instanceof PolylineMapObject) {
-                shape = getPolyline((PolylineMapObject)object);
-            }
-            else if (object instanceof CircleMapObject) {
-                shape = getCircle((CircleMapObject)object);
-            }
-            else {
-                continue;
+            try {
+                shape = getShape(mapObject);
+            } catch (ClassNotFoundException ex) {
+                Gdx.app.error("Can't find class for mapObject", mapObject.toString());
+                return bodies;
             }
 
             BodyDef bodyDef = new BodyDef();
@@ -62,7 +48,54 @@ public class TrackBuilder {
             bodies.add(body);
             shape.dispose();
         }
+
         return bodies;
+    }
+
+    public static Array<Body> buildLayerWithUserData(Map map, World world, String layerName, FixtureDef fixtureDef, UserDataCreater userDataCreater) {
+        MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
+        Array<Body> bodies = new Array<>();
+
+        for (MapObject mapObject : mapObjects) {
+            Shape shape;
+            try {
+                shape = getShape(mapObject);
+            } catch (ClassNotFoundException ex) {
+                Gdx.app.error("Can't find class for mapObject", mapObject.toString());
+                return bodies;
+            }
+
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+
+            fixtureDef.shape = shape;
+
+            Body body = world.createBody(bodyDef);
+            body.createFixture(fixtureDef).setUserData(userDataCreater.getUserData());
+            bodies.add(body);
+            shape.dispose();
+        }
+
+        return bodies;
+    }
+
+    private static Shape getShape(MapObject mapObject) throws ClassNotFoundException {
+        Shape shape;
+        if (mapObject instanceof TextureMapObject) {
+            shape = getRectangle((RectangleMapObject) mapObject);
+        }
+        else if (mapObject instanceof PolygonMapObject) {
+            shape = getPolygon((PolygonMapObject)mapObject);
+        }
+        else if (mapObject instanceof PolylineMapObject) {
+            shape = getPolyline((PolylineMapObject)mapObject);
+        }
+        else if (mapObject instanceof CircleMapObject) {
+            shape = getCircle((CircleMapObject)mapObject);
+        } else {
+            throw new ClassNotFoundException("Cannot find class for mapObject");
+        }
+        return shape;
     }
 
     private static PolygonShape getRectangle(RectangleMapObject rectangleObject) {

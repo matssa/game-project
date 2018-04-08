@@ -1,6 +1,5 @@
-package car.superfun.game.gameModes;
+package car.superfun.game.gameModes.raceMode;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -8,22 +7,17 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Manifold;
 
-import car.superfun.game.CarControls.CarController;
-import car.superfun.game.CarSuperFun;
+import car.superfun.game.Car.CarController;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
-import car.superfun.game.physicalObjects.BasicContactListener;
-import car.superfun.game.physicalObjects.LocalCar;
+import car.superfun.game.UserDataCreater;
+import car.superfun.game.gameModes.GameMode;
+import car.superfun.game.Car.LocalCar;
 
 
-public class PlayState extends GameMode{
+public class RaceMode extends GameMode {
 
     public static final int GOAL_ENTITY = 0b0100;
     public static final int CHECKPOINT_ENTITY = 0b1000;
@@ -34,10 +28,22 @@ public class PlayState extends GameMode{
     private CarController carController;
     private LocalCar localCar;
 
-    public PlayState() {
+    private class checkpointUserData implements UserDataCreater {
+        private int id;
+
+        public checkpointUserData() {
+            id = 0;
+        }
+
+        public Object getUserData() {
+            return id++;
+        }
+    }
+
+    public RaceMode() {
         super();
 
-        world.setContactListener(new BasicContactListener());
+        world.setContactListener(new RaceContactListener());
 
         carController = new CarController();
 
@@ -52,11 +58,18 @@ public class PlayState extends GameMode{
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
 
         FixtureDef goalDef = new FixtureDef();
-        goalDef.filter.categoryBits = PlayState.GOAL_ENTITY;
+        goalDef.filter.categoryBits = GOAL_ENTITY;
         goalDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         goalDef.isSensor = true;
 
         TrackBuilder.buildLayer(tiledMap, world, "goal_line", goalDef);
+
+        FixtureDef checkpointDef = new FixtureDef();
+        checkpointDef.filter.categoryBits = CHECKPOINT_ENTITY;
+        checkpointDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+        checkpointDef.isSensor = true;
+
+        TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData());
 
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
