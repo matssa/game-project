@@ -54,7 +54,7 @@ public class GameStateManager {
     public void set(State state) {
         states.pop();
         states.push(state);
-    }
+    }   
 
     /**
      * updates the states
