@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -23,22 +24,21 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 
-/**
- * Created by gustav on 06.03.18.
- */
+import car.superfun.game.gameModes.GladiatorMode;
 
 public class TrackBuilder {
 
     static float pixelsPerTile;
 
 
-    public static Array<Body> buildShapes(Map map, float pixels, World world) {
+    public static Array<Body> buildWalls(Map map, float pixels, World world) {
 
         MapObjects mapObjects;
         Array<Body> bodies;
         Shape shape;
         BodyDef bodyDef;
         Body body;
+        FixtureDef fixtureDef;
 
         pixelsPerTile = pixels;
         mapObjects = map.getLayers().get("walls").getObjects();
@@ -63,8 +63,60 @@ public class TrackBuilder {
 
             bodyDef = new BodyDef();
             bodyDef.type = BodyDef.BodyType.StaticBody;
+
+            fixtureDef = new FixtureDef();
+            fixtureDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
+            fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+            fixtureDef.shape = shape;
+
             body = world.createBody(bodyDef);
-            body.createFixture(shape, 1);
+            body.createFixture(fixtureDef).setDensity(0.9f);
+            bodies.add(body);
+            shape.dispose();
+        }
+        return bodies;
+    }
+
+    public static Array<Body> buildDeathZone(Map map, float pixels, World world) {
+
+        MapObjects mapObjects;
+        Array<Body> bodies;
+        Shape shape;
+        BodyDef bodyDef;
+        Body body;
+        FixtureDef fixtureDef;
+
+        pixelsPerTile = pixels;
+        mapObjects = map.getLayers().get("dirt_barrier").getObjects();
+        bodies = new Array<Body>();
+
+        for (MapObject object : mapObjects) {
+            if (object instanceof TextureMapObject) {
+                shape = getRectangle((RectangleMapObject) object);
+            }
+            else if (object instanceof PolygonMapObject) {
+                shape = getPolygon((PolygonMapObject)object);
+            }
+            else if (object instanceof PolylineMapObject) {
+                shape = getPolyline((PolylineMapObject)object);
+            }
+            else if (object instanceof CircleMapObject) {
+                shape = getCircle((CircleMapObject)object);
+            }
+            else {
+                continue;
+            }
+
+            bodyDef = new BodyDef();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+
+            fixtureDef = new FixtureDef();
+            fixtureDef.filter.categoryBits = GladiatorMode.DEATH_ENTITY;
+            fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+            fixtureDef.shape = shape;
+
+            body = world.createBody(bodyDef);
+            body.createFixture(fixtureDef);
             bodies.add(body);
             shape.dispose();
         }

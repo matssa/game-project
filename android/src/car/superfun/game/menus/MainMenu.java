@@ -33,14 +33,15 @@ public class MainMenu extends State {
             if(isOnSettings()){
                 androidLauncher.signOut();
                 GameStateManager.getInstance().push(new SettingsMenu());
+                //GameStateManager.getInstance().push(new GladiatorMode());
             }
             if(isOnJoin()){
                 GameStateManager.getInstance().push(new GameBrowser());
             }
             if(isOnHost()){
-//                GameStateManager.getInstance().push(new HostMenu());
+//              GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                 GameStateManager.getInstance().push(new PlayState());
+                GameStateManager.getInstance().push(new PlayState());
             }
         }
     }
