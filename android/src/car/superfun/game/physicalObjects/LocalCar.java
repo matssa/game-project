@@ -57,6 +57,7 @@ public class LocalCar implements Observer {
 
         fixtureDef.filter.categoryBits = GlobalVariables.PLAYER_ENTITY;
         fixtureDef.filter.maskBits = GlobalVariables.ALL_ENTITIES;
+        fixtureDef.restitution = 0.2f;
 
         body.createFixture(fixtureDef).setUserData(this);
 
