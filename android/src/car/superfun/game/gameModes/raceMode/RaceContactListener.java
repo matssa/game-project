@@ -8,8 +8,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.gameModes.raceMode.RaceMode;
-import car.superfun.game.physicalObjects.LocalCar;
+import car.superfun.game.Car.LocalCar;
 
 /**
  * Created by kristian on 07.04.18.

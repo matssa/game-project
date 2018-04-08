@@ -1,6 +1,5 @@
-package car.superfun.game.physicalObjects;
+package car.superfun.game.Car;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,10 +10,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-import car.superfun.game.CarControls.CarController;
+import car.superfun.game.Car.CarController;
 import car.superfun.game.CarSuperFun;
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.TrackBuilder;
 import car.superfun.game.observerPattern.Observer;
 import car.superfun.game.observerPattern.Subject;
 

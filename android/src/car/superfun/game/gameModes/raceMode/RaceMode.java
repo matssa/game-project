@@ -9,12 +9,12 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
-import car.superfun.game.CarControls.CarController;
+import car.superfun.game.Car.CarController;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.UserDataCreater;
 import car.superfun.game.gameModes.GameMode;
-import car.superfun.game.physicalObjects.LocalCar;
+import car.superfun.game.Car.LocalCar;
 
 
 public class RaceMode extends GameMode {

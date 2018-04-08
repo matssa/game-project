@@ -1,4 +1,4 @@
-package car.superfun.game.CarControls;
+package car.superfun.game.Car;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

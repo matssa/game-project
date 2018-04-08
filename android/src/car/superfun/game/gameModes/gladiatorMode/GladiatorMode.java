@@ -1,4 +1,4 @@
-package car.superfun.game.gameModes;
+package car.superfun.game.gameModes.gladiatorMode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -9,15 +9,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
-import car.superfun.game.CarControls.CarController;
+import car.superfun.game.Car.CarController;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
-import car.superfun.game.physicalObjects.LocalGladiatorCar;
-
-import static com.badlogic.gdx.Gdx.app;
+import car.superfun.game.gameModes.GameMode;
 
 
 public class GladiatorMode extends GameMode {

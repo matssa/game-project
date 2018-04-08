@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
-import car.superfun.game.gameModes.GladiatorMode;
+import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
