@@ -5,13 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-import car.superfun.game.observerPattern.Subject;
-
-/**
- * Created by kristian on 06.03.18.
- */
-
-public class CarController extends Subject {
+public class CarController {
     public float slider1Position;
     public float slider2Position;
 
@@ -72,8 +66,6 @@ public class CarController extends Subject {
 
         forward = Math.max(-1f, Math.min(1f, (slider1Position + slider2Position - Gdx.graphics.getHeight()) / (Gdx.graphics.getHeight() * 0.8f)));
         rotation = Math.max(-1f, Math.min(1f, (slider2Position - slider1Position) / (Gdx.graphics.getHeight() * 0.8f)));
-
-        notifyObservers();
     }
 
     public void render(SpriteBatch sb) {
