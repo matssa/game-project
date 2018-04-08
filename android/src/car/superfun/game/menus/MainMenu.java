@@ -36,6 +36,7 @@ public class MainMenu extends State {
                 //GameStateManager.getInstance().push(new GladiatorMode());
             }
             if(isOnJoin()){
+                androidLauncher.startQuickGame();
                 GameStateManager.getInstance().push(new GameBrowser());
             }
             if(isOnHost()){

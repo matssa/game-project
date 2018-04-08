@@ -36,7 +36,6 @@ public class LoginMenu extends State{
     }
 
     private void tryNextWindow() {
-        System.out.println(androidLauncher.isSignedIn());
         if(androidLauncher.isSignedIn()) {
             GameStateManager.getInstance().push(new MainMenu(androidLauncher));
         }
