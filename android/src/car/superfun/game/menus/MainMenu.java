@@ -6,14 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
+import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
+import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.AndroidLauncher;
-import car.superfun.game.gameModes.PlayState;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
-
-/**
- * Created by Jonas on 06.03.2018.
- */
 
 public class MainMenu extends State {
     private Texture background, hostButton, joinButton, settings;
@@ -42,7 +39,7 @@ public class MainMenu extends State {
             if(isOnHost()){
 //              GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                GameStateManager.getInstance().push(new PlayState());
+                GameStateManager.getInstance().push(new RaceMode());
             }
         }
     }
