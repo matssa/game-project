@@ -1,6 +1,7 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -13,17 +14,24 @@ import static java.lang.Math.abs;
 public class LocalGladiatorCar extends LocalCar {
 
     private int score;
+    private Sound dustWallCrash;
+    GladiatorMode gameClass;
     
 
-    public LocalGladiatorCar(Vector2 position, CarController carController, World world, Integer score){
+    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, CarController carController, World world, Integer score, Sound dustWallCrash){
         super(position, carController, world);
         this.score = score;
+        this.dustWallCrash = dustWallCrash;
+        this.gameClass = gameClass;
     }
     
 
     public void hitDeathWalls() {
         score -= 1;
-        GladiatorMode.dustWallCrash.play(0.8f);
+        dustWallCrash.play(0.8f);
+        if (score <= 0) {
+            gameClass.endGame();
+        }
     }
     
 
