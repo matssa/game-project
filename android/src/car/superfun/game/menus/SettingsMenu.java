@@ -1,7 +1,6 @@
 package car.superfun.game.menus;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import car.superfun.game.Actors.ButtonActor;
+import car.superfun.game.actor.ButtonActor;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 

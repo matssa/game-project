@@ -92,4 +92,8 @@ public class CarSuperFun extends ApplicationAdapter {
         gsm.dispose();
         batch.dispose();
     }
+
+    public void startGame() {
+
+    }
 }
