@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
 import car.superfun.game.gameModes.GladiatorMode;
-import car.superfun.game.gameModes.PlayState;
+import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -37,7 +37,7 @@ public class MainMenu extends State {
             if(isOnHost()){
 //              GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                GameStateManager.getInstance().push(new PlayState());
+                GameStateManager.getInstance().push(new RaceMode());
             }
         }
     }

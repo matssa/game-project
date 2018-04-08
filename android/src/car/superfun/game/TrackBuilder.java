@@ -1,7 +1,6 @@
 package car.superfun.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -22,11 +21,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-
-import java.util.ArrayList;
-
-import car.superfun.game.gameModes.GladiatorMode;
-import car.superfun.game.gameModes.PlayState;
 
 
 public class TrackBuilder {
