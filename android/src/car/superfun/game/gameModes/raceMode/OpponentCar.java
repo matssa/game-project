@@ -56,9 +56,9 @@ public class OpponentCar {
     }
 
     public void update(float dt) {
-        sprite.setPosition((getPosition().x * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
-                (getPosition().y * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
-        sprite.setRotation(getFrameRotation());
+        sprite.setPosition((body.getPosition().x * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
+                (body.getPosition().y * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
+        sprite.setRotation((float)Math.toDegrees(body.getAngle()));
     }
 
     public void render(SpriteBatch sb) {
@@ -84,6 +84,10 @@ public class OpponentCar {
     public Vector2 getPosition() {
         // TODO: Get the cars position from GGS
         return new Vector2(sprite.getX(), sprite.getY());
+    }
+
+    public void setPosition(Vector2 position, Float angle) {
+        body.setTransform(position.x, position.y, angle);
     }
 
     public float getFrameRotation() {

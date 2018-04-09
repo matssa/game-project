@@ -120,6 +120,10 @@ public class LocalCar {
         return new Vector2(sprite.getX(), sprite.getY());
     }
 
+    public Vector2 getBodyPosition() {
+        return new Vector2(body.getPosition().x, body.getPosition().y);
+    }
+
     public Vector2 getDirectionVector() { return new Vector2(0,1).rotateRad(body.getAngle()); }
 
     public Body getBody() { return body; }

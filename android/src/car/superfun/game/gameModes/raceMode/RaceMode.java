@@ -78,10 +78,9 @@ public class RaceMode extends GameMode {
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
         localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), carController, world, bodies.size);
-        localRaceCar2 = new LocalRaceCar(new Vector2(1500, 11000), carController, world, bodies.size);
 
 //        Array<OpponentCar> opponentCars = new Array<OpponentCar>();
-//        opponentCar = new OpponentCar(new Vector2(1500, 11000), world);
+        opponentCar = new OpponentCar(new Vector2(1500, 11000), world);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class RaceMode extends GameMode {
         world.step(1f/60f, 6, 2);
         carController.update();
         localRaceCar.update(dt);
-        localRaceCar2.update(dt);
+        opponentCar.setPosition(new Vector2(localRaceCar.getBodyPosition().x - 100, localRaceCar.getBodyPosition().y), localRaceCar.getDirectionFloat());
         opponentCar.update(dt);
         camera.position.set(localRaceCar.getPosition(), 0);
         camera.position.set(localRaceCar.getPosition().add(localRaceCar.getVelocity().scl(10f)), 0);
@@ -107,7 +106,6 @@ public class RaceMode extends GameMode {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         localRaceCar.render(sb);
-        localRaceCar2.render(sb);
         opponentCar.render(sb);
     }
 
