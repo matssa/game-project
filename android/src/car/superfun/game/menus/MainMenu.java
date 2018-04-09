@@ -38,7 +38,7 @@ public class MainMenu extends State {
             if(isOnHost()){
 //              GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                GameStateManager.getInstance().push(new RaceMode(androidLauncher, false));
+                GameStateManager.getInstance().push(new RaceMode(androidLauncher, true));
             }
         }
     }
