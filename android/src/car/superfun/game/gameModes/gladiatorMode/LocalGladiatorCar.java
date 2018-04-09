@@ -1,6 +1,5 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -18,7 +17,7 @@ public class LocalGladiatorCar extends LocalCar {
     GladiatorMode gameClass;
     
 
-    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, CarController localCarController, World world, Integer score, Sound dustWallCrash){
+    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, LocalCarController localCarController, World world, Integer score, Sound dustWallCrash){
         super(position, localCarController, world);
         this.score = score;
         this.dustWallCrash = dustWallCrash;
