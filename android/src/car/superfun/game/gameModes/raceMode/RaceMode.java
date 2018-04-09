@@ -15,7 +15,9 @@ import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.UserDataCreater;
-import car.superfun.game.car.CarController;
+import car.superfun.game.car.LocalCarController;
+import car.superfun.game.car.OpponentCar;
+import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
 
 public class RaceMode extends GameMode {
@@ -28,7 +30,7 @@ public class RaceMode extends GameMode {
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
-    private CarController carController;
+    private LocalCarController localCarController;
     private LocalRaceCar localRaceCar;
     private OpponentCar opponentCar;
     private Array<OpponentCar> opponentCars;
@@ -54,7 +56,7 @@ public class RaceMode extends GameMode {
         this.androidLauncher = androidLauncher;
         world.setContactListener(new RaceContactListener());
 
-        carController = new CarController();
+        localCarController = new LocalCarController();
 
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -84,7 +86,7 @@ public class RaceMode extends GameMode {
     public void setOpponentCars(Array<Vector2> carPositions) {
         opponentCars = new Array<OpponentCar>();
         for (Vector2 carPosition : carPositions) {
-            opponentCars.add(new OpponentCar(carPosition, world));
+            opponentCars.add(new OpponentCar(carPosition, new OpponentCarController(),world));
         }
     }
 
@@ -92,7 +94,7 @@ public class RaceMode extends GameMode {
     public void setLocalRaceCar(Vector2 position) {
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
-        localRaceCar = new LocalRaceCar(position, carController, world, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), localCarController, world, amountOfCheckpoints);
     }
 
     @Override
@@ -103,18 +105,18 @@ public class RaceMode extends GameMode {
     @Override
     public void update(float dt) {
         world.step(1f/60f, 6, 2);
-        carController.update();
+        localCarController.update();
         localRaceCar.update(dt);
+        camera.position.set(localRaceCar.getSpritePosition(), 0);
+        camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
 
         for (OpponentCar car : opponentCars) {
             car.update(dt);
         }
 
-        camera.position.set(localRaceCar.getPosition(), 0);
-        camera.position.set(localRaceCar.getPosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
         if(!singlePlayer){
-            androidLauncher.broadcast(false, 0, localRaceCar.getPosition(), localRaceCar.getDirectionFloat());
+            androidLauncher.broadcast(false, 0, localRaceCar.getSpritePosition(), localRaceCar.getDirectionFloat());
         }
     }
 
@@ -132,7 +134,7 @@ public class RaceMode extends GameMode {
     // Renders objects that have a static position on the screen. Is called by superclass
     @Override
     public void renderHud(SpriteBatch sb) {
-        carController.render(sb);
+        localCarController.render(sb);
     }
 
     @Override
