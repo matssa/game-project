@@ -1,4 +1,4 @@
-package car.superfun.game.car;
+package car.superfun.game.gameModes.raceMode;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,22 +15,19 @@ import car.superfun.game.GlobalVariables;
 
 import static java.lang.Math.abs;
 
-public class LocalCar {
-    private float acceleration;
-    private float steering;
-    private float grip;
 
-    private CarController carController;
+public class OpponentCar {
 
+    private Sprite sprite;
+    private Body body;
     private float frameRotation;
 
-    protected Body body;
-    protected Sprite sprite;
 
-    public LocalCar(Vector2 position, Sprite sprite, CarController carController, World world){
-
-        this.sprite = sprite;
+    public OpponentCar(Vector2 position, World world) {
+        sprite = new Sprite(new Texture("racing-pack/PNG/Cars/car_red_5.png"));
+        frameRotation = 0;
         this.sprite.setPosition(position.x, position.y);
+
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -56,48 +53,16 @@ public class LocalCar {
         body.createFixture(fixtureDef).setUserData(this);
 
         shape.dispose();
-
-        acceleration = 850.0f;
-        steering = 175.0f;
-        grip = 10;
-
-        this.carController = carController;
-        frameRotation = 0;
     }
 
-    public LocalCar(Vector2 position, CarController carController, World world) {
-        this(position,
-                new Sprite(new Texture("racing-pack/PNG/Cars/car_red_5.png")),
-                carController,
-                world);
-    }
-
-    //    @Override
     public void update(float dt) {
-        frameRotation = carController.rotation * steering * dt;
-        Vector2 direction = this.getDirectionVector();
-
-        float traction = abs(body.getLinearVelocity().dot(direction.cpy().rotate(90 + 45 * carController.rotation)));
-        float sidewaysVelocityDampening = (body.getLinearVelocity().len() > 0.1) ? (abs(body.getLinearVelocity().dot(direction) / body.getLinearVelocity().len()) / 4) + 0.75f : 1;
-
-        if (traction < grip) {
-            body.setLinearVelocity(body.getLinearVelocity().rotate(frameRotation).scl(sidewaysVelocityDampening));
-        } else {
-            float velocityRotator = frameRotation * (float) (Math.exp(grip / traction) / Math.exp(traction / grip));
-
-            frameRotation = frameRotation * (float) (Math.log(grip) / Math.log(traction));
-
-            body.setLinearVelocity(body.getLinearVelocity().rotate(velocityRotator).scl(sidewaysVelocityDampening));
-        }
-
-        body.applyForceToCenter(direction.scl(carController.forward * acceleration * dt), true);
-        body.setAngularVelocity(frameRotation);
-    }
-
-    public void render(SpriteBatch sb) {
         sprite.setPosition((body.getTransform().getPosition().x * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
                 (body.getTransform().getPosition().y * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
         sprite.setRotation((float)Math.toDegrees(body.getAngle()));
+    }
+
+    public void render(SpriteBatch sb) {
+
         sb.begin();
         sb.draw(sprite,
                 sprite.getX(),
@@ -117,19 +82,20 @@ public class LocalCar {
     }
 
     public Vector2 getPosition() {
+        // TODO: Get the cars position from GGS
         return new Vector2(sprite.getX(), sprite.getY());
     }
 
-    public Vector2 getBodyPosition() {
-        return new Vector2(body.getPosition().x, body.getPosition().y);
+    public void setPosition(Vector2 position, Float angle) {
+        body.setTransform(position, angle);
     }
 
-    public Vector2 getDirectionVector() { return new Vector2(0,1).rotateRad(body.getAngle()); }
+    public Body getBody() {
+        return body;
+    }
 
-    public Body getBody() { return body; }
-
-    public float getDirectionFloat() { return body.getAngle(); }
     public float getFrameRotation() {
+        // TODO: GET frame rotation from GGS
         return frameRotation;
     }
 }

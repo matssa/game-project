@@ -30,6 +30,8 @@ public class RaceMode extends GameMode {
 
     private CarController carController;
     private LocalRaceCar localRaceCar;
+    private LocalRaceCar localRaceCar2;
+    private OpponentCar opponentCar;
 
     private class checkpointUserData implements UserDataCreater {
         private int id;
@@ -49,7 +51,6 @@ public class RaceMode extends GameMode {
         world.setContactListener(new RaceContactListener());
 
         carController = new CarController();
-
 
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -77,6 +78,9 @@ public class RaceMode extends GameMode {
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
         localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), carController, world, bodies.size);
+
+//        Array<OpponentCar> opponentCars = new Array<OpponentCar>();
+        opponentCar = new OpponentCar(new Vector2(1500, 11000), world);
     }
 
     @Override
@@ -89,6 +93,14 @@ public class RaceMode extends GameMode {
         world.step(1f/60f, 6, 2);
         carController.update();
         localRaceCar.update(dt);
+        if (carController.middle) {
+            Vector2 carPos = localRaceCar.getBody().getTransform().getPosition();
+            Gdx.app.log("localCar position: ", "(" + carPos.x + ", " + carPos.y + ")");
+            opponentCar.setPosition(new Vector2(carPos.x - 5, carPos.y), 0f);
+            Vector2 oppPos = opponentCar.getBody().getTransform().getPosition();
+            Gdx.app.log("opponentCar position: ", "(" + oppPos.x + ", " + oppPos.y + ")");
+        }
+        opponentCar.update(dt);
         camera.position.set(localRaceCar.getPosition(), 0);
         camera.position.set(localRaceCar.getPosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
@@ -100,6 +112,7 @@ public class RaceMode extends GameMode {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         localRaceCar.render(sb);
+        opponentCar.render(sb);
     }
 
     // Renders objects that have a static position on the screen. Is called by superclass
