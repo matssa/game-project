@@ -551,7 +551,6 @@ public class AndroidLauncher extends AndroidApplication {
 
                 angle = ByteBuffer.wrap(bytes).getFloat();
 
-                updatePosition(posX, posY, angle);
 
                 // if it's a final score, mark this participant as having finished
                 // the game
