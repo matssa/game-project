@@ -95,8 +95,8 @@ public class LocalCar {
     }
 
     public void render(SpriteBatch sb) {
-        sprite.setPosition((body.getPosition().x * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
-                (body.getPosition().y * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
+        sprite.setPosition((body.getTransform().getPosition().x * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
+                (body.getTransform().getPosition().y * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
         sprite.setRotation((float)Math.toDegrees(body.getAngle()));
         sb.begin();
         sb.draw(sprite,

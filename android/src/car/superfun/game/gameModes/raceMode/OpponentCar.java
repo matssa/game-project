@@ -56,8 +56,8 @@ public class OpponentCar {
     }
 
     public void update(float dt) {
-        sprite.setPosition((body.getPosition().x * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
-                (body.getPosition().y * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
+        sprite.setPosition((body.getTransform().getPosition().x * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
+                (body.getTransform().getPosition().y * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
         sprite.setRotation((float)Math.toDegrees(body.getAngle()));
     }
 
@@ -87,7 +87,11 @@ public class OpponentCar {
     }
 
     public void setPosition(Vector2 position, Float angle) {
-        body.setTransform(position.x, position.y, angle);
+        body.setTransform(position, angle);
+    }
+
+    public Body getBody() {
+        return body;
     }
 
     public float getFrameRotation() {
