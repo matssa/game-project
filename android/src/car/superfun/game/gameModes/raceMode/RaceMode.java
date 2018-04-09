@@ -22,8 +22,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class RaceMode extends GameMode {
 
-    public static final int GOAL_ENTITY = 0b0100;
-    public static final int CHECKPOINT_ENTITY = 0b1000;
+    public static final int GOAL_ENTITY = 0b1 << 8;
+    public static final int CHECKPOINT_ENTITY = 0b1 << 9;
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
@@ -57,7 +57,7 @@ public class RaceMode extends GameMode {
 
         FixtureDef wallDef = new FixtureDef();
         wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
-        wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+        wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
 
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
 

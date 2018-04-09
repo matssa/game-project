@@ -46,7 +46,7 @@ public class OpponentCar {
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
 
-        fixtureDef.filter.categoryBits = GlobalVariables.PLAYER_ENTITY;
+        fixtureDef.filter.categoryBits = GlobalVariables.OPPONENT_ENTITY;
         fixtureDef.filter.maskBits = GlobalVariables.ALL_ENTITIES;
         fixtureDef.restitution = 0.2f;
 
