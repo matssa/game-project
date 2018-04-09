@@ -564,9 +564,11 @@ public class AndroidLauncher extends AndroidApplication {
     public int getPosX(){
         return posX;
     }
-    public int getPosy() {
+
+    public int getPosY() {
         return posY;
     }
+
     public float getAngle() {
         return angle;
     }
