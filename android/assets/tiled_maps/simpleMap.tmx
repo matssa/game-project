@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="left-down" width="100" height="100" tilewidth="130" tileheight="130" infinite="0" nextobjectid="52">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="left-down" width="100" height="100" tilewidth="130" tileheight="130" infinite="0" nextobjectid="57">
  <tileset firstgid="1" source="simpleTiles.tsx"/>
  <layer name="grass" width="100" height="100" locked="1">
   <data encoding="csv">
@@ -273,7 +273,7 @@
    <polyline points="0,0 0,466"/>
   </object>
  </objectgroup>
- <objectgroup name="checkpoints">
+ <objectgroup name="checkpoints" locked="1">
   <object id="49" x="11335.3" y="2731.33">
    <polyline points="0,0 472,-0.666667"/>
   </object>
@@ -283,5 +283,8 @@
   <object id="51" x="1194" y="10271.3">
    <polyline points="0,0 472,-0.666667"/>
   </object>
+ </objectgroup>
+ <objectgroup name="test">
+  <object id="53" gid="125" x="3639" y="1773" width="354" height="370" rotation="90"/>
  </objectgroup>
 </map>

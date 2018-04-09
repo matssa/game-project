@@ -1,6 +1,7 @@
 package car.superfun.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
+import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -83,7 +85,9 @@ public class TrackBuilder {
     private static Shape getShape(MapObject mapObject) throws ClassNotFoundException {
         Shape shape;
         if (mapObject instanceof TextureMapObject) {
-            shape = getRectangle((RectangleMapObject) mapObject);
+            Gdx.app.log("mapObject", "is instance of textureMapObject");
+            shape = getTile((TiledMapTileMapObject) mapObject);
+//            shape = getRectangle((RectangleMapObject) mapObject);
         }
         else if (mapObject instanceof PolygonMapObject) {
             shape = getPolygon((PolygonMapObject)mapObject);
@@ -96,6 +100,30 @@ public class TrackBuilder {
         } else {
             throw new ClassNotFoundException("Cannot find class for mapObject");
         }
+        return shape;
+    }
+
+    private static PolygonShape getTile(TiledMapTileMapObject tileObject) {
+//        Sprite sprite;
+//        tileObject.getTile().getTextureRegion().getTexture();
+
+//        float x = tileObject.
+        Gdx.app.log("in method", "PolygonShape");
+
+        Gdx.app.log("getX()", "" + tileObject.getX());
+        Gdx.app.log("getScaleX()", "" + tileObject.getScaleX());
+        Gdx.app.log("getRegionWidth()", "" + tileObject.getTile().getTextureRegion().getRegionWidth());
+
+//        shape.setAsBox(tileObject.getTile().getTextureRegion().getRegionWidth() );
+//        shape.setAsBox((sprite.getWidth() / 2) / CarSuperFun.PIXELS_TO_METERS, (sprite.getHeight() / 2) / CarSuperFun.PIXELS_TO_METERS);
+
+        float width = tileObject.getTextureRegion().getRegionWidth() / (2 * CarSuperFun.PIXELS_TO_METERS);
+        float height = tileObject.getTextureRegion().getRegionHeight() / (2 * CarSuperFun.PIXELS_TO_METERS);
+
+        Vector2 center = new Vector2((tileObject.getX() / CarSuperFun.PIXELS_TO_METERS) + width, (tileObject.getY() / CarSuperFun.PIXELS_TO_METERS) + height);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(width, height, center, 0f);
         return shape;
     }
 
