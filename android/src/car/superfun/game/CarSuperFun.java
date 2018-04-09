@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.menus.LoginMenu;
 import car.superfun.game.states.GameStateManager;
 
@@ -91,7 +92,7 @@ public class CarSuperFun extends ApplicationAdapter {
         batch.dispose();
     }
 
-    public void startGame() {
-
+    public void startGame(AndroidLauncher androidLauncher) {
+        gsm.push(new RaceMode(androidLauncher, false));
     }
 }
