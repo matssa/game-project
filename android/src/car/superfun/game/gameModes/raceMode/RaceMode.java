@@ -30,7 +30,6 @@ public class RaceMode extends GameMode {
 
     private CarController carController;
     private LocalRaceCar localRaceCar;
-    private LocalRaceCar localRaceCar2;
     private OpponentCar opponentCar;
 
     private class checkpointUserData implements UserDataCreater {
@@ -93,13 +92,13 @@ public class RaceMode extends GameMode {
         world.step(1f/60f, 6, 2);
         carController.update();
         localRaceCar.update(dt);
-        if (carController.middle) {
-            Vector2 carPos = localRaceCar.getBody().getTransform().getPosition();
-            Gdx.app.log("localCar position: ", "(" + carPos.x + ", " + carPos.y + ")");
-            opponentCar.setPosition(new Vector2(carPos.x - 5, carPos.y), 0f);
-            Vector2 oppPos = opponentCar.getBody().getTransform().getPosition();
-            Gdx.app.log("opponentCar position: ", "(" + oppPos.x + ", " + oppPos.y + ")");
-        }
+
+        Vector2 carPos = localRaceCar.getBody().getTransform().getPosition();
+        Gdx.app.log("localCar position: ", "(" + carPos.x + ", " + carPos.y + ")");
+        opponentCar.setPosition(new Vector2(carPos.x - 5, carPos.y), localRaceCar.getDirectionFloat());
+        Vector2 oppPos = opponentCar.getBody().getTransform().getPosition();
+        Gdx.app.log("opponentCar position: ", "(" + oppPos.x + ", " + oppPos.y + ")");
+
         opponentCar.update(dt);
         camera.position.set(localRaceCar.getPosition(), 0);
         camera.position.set(localRaceCar.getPosition().add(localRaceCar.getVelocity().scl(10f)), 0);
