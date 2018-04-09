@@ -32,7 +32,6 @@ public class RaceMode extends GameMode {
 
     private LocalCarController localCarController;
     private LocalRaceCar localRaceCar;
-    private OpponentCar opponentCar;
     private Array<OpponentCar> opponentCars;
     private int amountOfCheckpoints;
     private boolean singlePlayer;
@@ -107,10 +106,12 @@ public class RaceMode extends GameMode {
         world.step(1f/60f, 6, 2);
         localCarController.update();
         localRaceCar.update(dt);
+
         camera.position.set(localRaceCar.getSpritePosition(), 0);
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
 
         for (OpponentCar car : opponentCars) {
+            car.setPositionAndAngle(androidLauncher.getPosX(), androidLauncher.getPosY(), androidLauncher.getAngle());
             car.update(dt);
         }
 
