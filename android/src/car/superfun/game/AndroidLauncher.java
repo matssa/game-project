@@ -533,20 +533,20 @@ public class AndroidLauncher extends AndroidApplication {
 
                 byte[] bytes = new byte[4];
 
-                for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
-                    bytes[byteValue] = buf[1+byteValue];
+                for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
+                    bytes[byteValue] = buf[2+byteValue];
                 }
 
                 posX = ByteBuffer.wrap(bytes).getInt();
 
-                for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
-                    bytes[byteValue] = buf[5+byteValue];
+                for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
+                    bytes[byteValue] = buf[6+byteValue];
                 }
 
                 posY = ByteBuffer.wrap(bytes).getInt();
 
-                for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
-                    bytes[byteValue] = buf[9+byteValue];
+                for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
+                    bytes[byteValue] = buf[10+byteValue];
                 }
 
                 angle = ByteBuffer.wrap(bytes).getFloat();
@@ -584,21 +584,22 @@ public class AndroidLauncher extends AndroidApplication {
         // Third byte is the x position.
         byte[] bytes = ByteBuffer.allocate(4).putInt((int) position.x).array();
 
-        for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
-            mMsgBuf[1+byteValue] = bytes[byteValue];
+        for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
+            mMsgBuf[2+byteValue] = bytes[byteValue];
         }
 
         // Third byte is the x position.
         bytes = ByteBuffer.allocate(4).putInt((int) position.y).array();
 
-        for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
-            mMsgBuf[5+byteValue] = bytes[byteValue];
+        for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
+            mMsgBuf[6+byteValue] = bytes[byteValue];
         }
 
+        Log.d(TAG, Float.toString(angle));
         bytes = ByteBuffer.allocate(4).putFloat(angle).array();;
 
-        for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
-            mMsgBuf[9+byteValue] = bytes[byteValue];
+        for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
+            mMsgBuf[10+byteValue] = bytes[byteValue];
         }
 
         // Log.d(TAG,"x: " +  Float.toString(position.x) + " y. " + Float.toString(position.y));

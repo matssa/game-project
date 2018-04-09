@@ -95,6 +95,7 @@ public class RaceMode extends GameMode {
         world.step(1f/60f, 6, 2);
         carController.update();
         localRaceCar.update(dt);
+        opponentCar.setPositionAndAngle(androidLauncher.getPosX(), androidLauncher.getPosY(), androidLauncher.getAngle());
         opponentCar.update(dt);
         camera.position.set(localRaceCar.getPosition(), 0);
         camera.position.set(localRaceCar.getPosition().add(localRaceCar.getVelocity().scl(10f)), 0);
