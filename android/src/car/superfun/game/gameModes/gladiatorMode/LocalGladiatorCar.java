@@ -5,7 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import car.superfun.game.car.CarController;
+import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.LocalCar;
 
 import static java.lang.Math.abs;
@@ -18,8 +18,8 @@ public class LocalGladiatorCar extends LocalCar {
     GladiatorMode gameClass;
     
 
-    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, CarController carController, World world, Integer score, Sound dustWallCrash){
-        super(position, carController, world);
+    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, CarController localCarController, World world, Integer score, Sound dustWallCrash){
+        super(position, localCarController, world);
         this.score = score;
         this.dustWallCrash = dustWallCrash;
         this.gameClass = gameClass;

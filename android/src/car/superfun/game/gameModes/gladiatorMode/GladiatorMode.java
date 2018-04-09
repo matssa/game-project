@@ -12,7 +12,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
-import car.superfun.game.car.CarController;
+import car.superfun.game.car.LocalCarController;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.gameModes.GameMode;
@@ -30,7 +30,7 @@ public class GladiatorMode extends GameMode {
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
-    private CarController carController;
+    private LocalCarController localCarController;
     private LocalGladiatorCar localCar;
     private int score;
 
@@ -45,8 +45,9 @@ public class GladiatorMode extends GameMode {
         gladiatorSong.play();
 
         score = 5;
-        carController = new CarController();
-        localCar = new LocalGladiatorCar(this, new Vector2(6000, 6000), carController, world, score, dustWallCrash);
+        localCarController = new LocalCarController();
+        localCar = new LocalGladiatorCar(this, new Vector2(6000, 6000), localCarController, world, score, dustWallCrash);
+
         tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         world.setContactListener(new GladiatorContactListener());
@@ -74,10 +75,10 @@ public class GladiatorMode extends GameMode {
     @Override
     public void update(float dt) {
         world.step(1f/60f, 6, 2);
-        carController.update();
+        localCarController.update();
         localCar.update(dt);
-        camera.position.set(localCar.getPosition(), 0);
-        camera.position.set(localCar.getPosition().add(localCar.getVelocity().scl(10f)), 0);
+        camera.position.set(localCar.getSpritePosition(), 0);
+        camera.position.set(localCar.getSpritePosition().add(localCar.getVelocity().scl(10f)), 0);
         camera.up.set(localCar.getDirectionVector(), 0);
     }
 
@@ -93,7 +94,7 @@ public class GladiatorMode extends GameMode {
     // Renders objects that have a static position on the screen. Is called by superclass
     @Override
     public void renderHud(SpriteBatch sb) {
-        carController.render(sb);
+        localCarController.render(sb);
     }
 
     @Override
