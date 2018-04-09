@@ -46,7 +46,7 @@ public class OpponentCar {
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
 
-        fixtureDef.filter.categoryBits = GlobalVariables.PLAYER_ENTITY;
+        fixtureDef.filter.categoryBits = GlobalVariables.OPPONENT_ENTITY;
         fixtureDef.filter.maskBits = GlobalVariables.ALL_ENTITIES;
         fixtureDef.restitution = 0.2f;
 
@@ -82,12 +82,14 @@ public class OpponentCar {
     }
 
     public Vector2 getPosition() {
-        // TODO: Get the cars position from GGS
         return new Vector2(sprite.getX(), sprite.getY());
     }
 
-    public void setPosition(Vector2 position, Float angle) {
-        body.setTransform(position, angle);
+    // Set the position of the car using values from libGDX coordinate system
+    public void setPositionAndAngle(int xCoordinate, int yCoordinate, float angle) {
+        float x = (xCoordinate + sprite.getWidth() / 2) / CarSuperFun.PIXELS_TO_METERS;
+        float y = (yCoordinate + sprite.getHeight() / 2) / CarSuperFun.PIXELS_TO_METERS;
+        body.setTransform(x, y, angle);
     }
 
     public Body getBody() {
@@ -95,7 +97,6 @@ public class OpponentCar {
     }
 
     public float getFrameRotation() {
-        // TODO: GET frame rotation from GGS
         return frameRotation;
     }
 }

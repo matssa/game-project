@@ -8,9 +8,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
-import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.AndroidLauncher;
+import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -41,7 +40,7 @@ public class MainMenu extends State {
             if(isOnHost()){
 //              GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                RaceMode race = new RaceMode();
+                RaceMode race = new RaceMode(androidLauncher, false);
 
                 race.setLocalRaceCar(new Vector2(1600, 11000));
                 Array<Vector2> opponentCars = new Array<Vector2>();

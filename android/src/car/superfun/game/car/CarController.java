@@ -11,7 +11,6 @@ public class CarController {
 
     public float forward; // Value range is [-1, 1]
     public float rotation; // Value range is [-1, 1], where -1 means left and 1 means right
-    public boolean middle;
 
     private Texture slider1Texture;
     private Texture slider2Texture;
@@ -32,13 +31,11 @@ public class CarController {
 
         knob1Texture = new Texture("slider_knob.png");
         knob2Texture = new Texture("slider_knob.png");
-        middle = false;
     }
 
     public void update() {
         boolean slider1Touched = false;
         boolean slider2Touched = false;
-        middle = false;
         for (int i = 0; i < 5; i++) {
             if (Gdx.input.isTouched(i)) {
                 Vector2 justTouched = new Vector2(Gdx.input.getX(i), Gdx.input.getY(i) * (-1) + Gdx.graphics.getHeight());
@@ -57,8 +54,6 @@ public class CarController {
                                     || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
                                     ? justTouched.y :
                                     Gdx.graphics.getHeight() / 2;
-                } else {
-                    middle = true;
                 }
             }
         }
@@ -84,5 +79,4 @@ public class CarController {
 
         sb.end();
     }
-
 }
