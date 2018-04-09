@@ -1,6 +1,7 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,10 +21,11 @@ import car.superfun.game.gameModes.GameMode;
 public class GladiatorMode extends GameMode {
 
     // Filters
-    public static final short DEATH_ENTITY = 0x0032;
+    static final short DEATH_ENTITY = 0x0032;
 
     // Music and sounds
-    public static final Sound dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
+    private final Sound dustWallCrash;
+    private final Music gladiatorSong;
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
@@ -35,9 +37,17 @@ public class GladiatorMode extends GameMode {
     public GladiatorMode() {
         super();
 
+        gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
+        dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
+
+        gladiatorSong.setLooping(true);
+        gladiatorSong.setVolume(0.6f);
+        gladiatorSong.play();
+
         score = 5;
         localCarController = new LocalCarController();
-        localCar = new LocalGladiatorCar(new Vector2(6000, 6000), localCarController, world, score);
+        localCar = new LocalGladiatorCar(this, new Vector2(6000, 6000), localCarController, world, score, dustWallCrash);
+
         tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         world.setContactListener(new GladiatorContactListener());
@@ -89,10 +99,13 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void dispose() {
+        gladiatorSong.stop();
+        gladiatorSong.dispose();
     }
 
     @Override
     public void endGame() {
-        // TODO: Implement a proper way to exit the game
+        // TODO: send data to leaderboard
+        this.dispose();
     }
 }
