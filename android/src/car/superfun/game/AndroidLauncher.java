@@ -10,6 +10,7 @@ import android.view.WindowManager;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.math.Vector2;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,8 +37,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class AndroidLauncher extends AndroidApplication {
@@ -68,6 +75,13 @@ public class AndroidLauncher extends AndroidApplication {
 
     private CarSuperFun carSuperFun;
 
+    private int posX = 0;
+    private int posY = 0;
+    private float angle = 0;
+
+    // Message buffer for sending messages
+    byte[] mMsgBuf = new byte[14];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +104,6 @@ public class AndroidLauncher extends AndroidApplication {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        Log.d(TAG, "HERE");
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == RC_SIGN_IN) {
             Log.d(TAG, "onActivityResult()");
@@ -110,8 +123,9 @@ public class AndroidLauncher extends AndroidApplication {
             // we got the result from the "waiting room" UI.
             if (resultCode == Activity.RESULT_OK) {
                 // ready to start playing
-                carSuperFun.startGame();
                 Log.d(TAG, "Starting game (waiting room returned OK).");
+
+                // GameStateManager.getInstance().push(new RaceMode(this, false));
 
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 // player indicated that they want to leave the room
@@ -291,12 +305,6 @@ public class AndroidLauncher extends AndroidApplication {
 
     }
 
-    OnRealTimeMessageReceivedListener mMessageReceivedHandler = new OnRealTimeMessageReceivedListener() {
-        @Override
-        public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
-            // TODO SEND DATA
-        }
-    };
 
     private OnFailureListener createFailureListener(final String string) {
         return new OnFailureListener() {
@@ -490,6 +498,144 @@ public class AndroidLauncher extends AndroidApplication {
                 .show();
     }
 
+       /*
+     * COMMUNICATIONS SECTION. Methods that implement the game's network
+     * protocol.
+     */
+
+    // Score of other participants. We update this as we receive their scores
+    // from the network.
+    Map<String, Integer> mParticipantScore = new HashMap<>();
+
+    Map<String, Vector2> mParticipantPosition = new HashMap<>();
+
+    // Participants who sent us their final score.
+    Set<String> mFinishedParticipants = new HashSet<>();
+
+    // Called when we receive a real-time message from the network.
+    // Messages in our game are made up of 2 bytes: the first one is 'F' or 'U'
+    // indicating
+    // whether it's a final or interim score. The second byte is the score.
+    // There is also the
+    // 'S' message, which indicates that the game should start.
+    OnRealTimeMessageReceivedListener mMessageReceivedHandler = new OnRealTimeMessageReceivedListener() {
+        @Override
+        public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+            byte[] buf = realTimeMessage.getMessageData();
+            String sender = realTimeMessage.getSenderParticipantId();
+
+            if (buf[0] == 'F' || buf[0] == 'U') {
+                // score update.
+                int existingScore = mParticipantScore.containsKey(sender) ?
+                        mParticipantScore.get(sender) : 0;
+                int thisScore = (int) buf[1];
+
+
+                byte[] bytes = new byte[4];
+
+                for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
+                    bytes[byteValue] = buf[1+byteValue];
+                }
+
+                posX = ByteBuffer.wrap(bytes).getInt();
+
+                for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
+                    bytes[byteValue] = buf[5+byteValue];
+                }
+
+                posY = ByteBuffer.wrap(bytes).getInt();
+
+                for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
+                    bytes[byteValue] = buf[9+byteValue];
+                }
+
+                angle = ByteBuffer.wrap(bytes).getFloat();
+
+
+                // if it's a final score, mark this participant as having finished
+                // the game
+                if ((char) buf[0] == 'F') {
+                    mFinishedParticipants.add(realTimeMessage.getSenderParticipantId());
+                }
+            }
+        }
+    };
+
+    public int getPosX(){
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public void broadcast(boolean finalScore, int score, Vector2 position, float angle) {
+
+        // First byte in message indicates whether it's a final score or not
+        mMsgBuf[0] = (byte) (finalScore ? 'F' : 'U');
+
+        // Second byte is the score.
+        mMsgBuf[1] = (byte) score;
+
+        // Third byte is the x position.
+        byte[] bytes = ByteBuffer.allocate(4).putInt((int) position.x).array();
+
+        for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
+            mMsgBuf[1+byteValue] = bytes[byteValue];
+        }
+
+        // Third byte is the x position.
+        bytes = ByteBuffer.allocate(4).putInt((int) position.y).array();
+
+        for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
+            mMsgBuf[5+byteValue] = bytes[byteValue];
+        }
+
+        bytes = ByteBuffer.allocate(4).putFloat(angle).array();;
+
+        for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
+            mMsgBuf[9+byteValue] = bytes[byteValue];
+        }
+
+        // Log.d(TAG,"x: " +  Float.toString(position.x) + " y. " + Float.toString(position.y));
+
+        // Send to every other participant.
+        for (Participant p : mParticipants) {
+            if (p.getParticipantId().equals(mMyId)) {
+                continue;
+            }
+            if (p.getStatus() != Participant.STATUS_JOINED) {
+                continue;
+            }
+            if (finalScore) {
+                // final score notification must be sent via reliable message
+                mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
+                        mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
+                            @Override
+                            public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
+                                Log.d(TAG, "RealTime message sent");
+                                Log.d(TAG, "  statusCode: " + statusCode);
+                                Log.d(TAG, "  tokenId: " + tokenId);
+                                Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                            }
+                        })
+                        .addOnSuccessListener(new OnSuccessListener<Integer>() {
+                            @Override
+                            public void onSuccess(Integer tokenId) {
+                                Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                            }
+                        });
+            } else {
+                // it's an interim score notification, so we can use unreliable
+                mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
+                        p.getParticipantId());
+            }
+        }
+    }
 
 }
 

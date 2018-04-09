@@ -1,6 +1,5 @@
 package car.superfun.game.gameModes.raceMode;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -10,31 +9,33 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.utils.Array;
 
-import car.superfun.game.car.CarController;
+import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.UserDataCreater;
+import car.superfun.game.car.CarController;
 import car.superfun.game.gameModes.GameMode;
-import car.superfun.game.car.LocalCar;
-
-import com.badlogic.gdx.utils.Array;
 
 public class RaceMode extends GameMode {
 
     public static final int GOAL_ENTITY = 0b1 << 8;
     public static final int CHECKPOINT_ENTITY = 0b1 << 9;
 
+    private AndroidLauncher androidLauncher;
+
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
     private CarController carController;
     private LocalRaceCar localRaceCar;
-    private LocalRaceCar localRaceCar2;
     private OpponentCar opponentCar;
+    private boolean singlePlayer;
 
     private class checkpointUserData implements UserDataCreater {
         private int id;
+
 
         public checkpointUserData() {
             id = 0;
@@ -45,9 +46,10 @@ public class RaceMode extends GameMode {
         }
     }
 
-    public RaceMode() {
+    public RaceMode(AndroidLauncher androidLauncher, boolean singlePlayer) {
         super();
-
+        this.singlePlayer = singlePlayer;
+        this.androidLauncher = androidLauncher;
         world.setContactListener(new RaceContactListener());
 
         carController = new CarController();
@@ -97,6 +99,9 @@ public class RaceMode extends GameMode {
         camera.position.set(localRaceCar.getPosition(), 0);
         camera.position.set(localRaceCar.getPosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
+        if(!singlePlayer){
+            androidLauncher.broadcast(false, 0, localRaceCar.getPosition(), localRaceCar.getDirectionFloat());
+        }
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
