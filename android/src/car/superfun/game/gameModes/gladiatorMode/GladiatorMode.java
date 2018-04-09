@@ -41,7 +41,7 @@ public class GladiatorMode extends GameMode {
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
 
         gladiatorSong.setLooping(true);
-        gladiatorSong.setVolume(0.5f);
+        gladiatorSong.setVolume(0.6f);
         gladiatorSong.play();
 
         score = 5;
