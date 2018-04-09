@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
@@ -39,7 +41,14 @@ public class MainMenu extends State {
             if(isOnHost()){
 //              GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                GameStateManager.getInstance().push(new RaceMode());
+                RaceMode race = new RaceMode();
+
+                race.setLocalRaceCar(new Vector2(1600, 11000));
+                Array<Vector2> opponentCars = new Array<Vector2>();
+                opponentCars.add(new Vector2(1600, 11050));
+                race.setOpponentCars(opponentCars);
+
+                GameStateManager.getInstance().push(race);
             }
         }
     }
