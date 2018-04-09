@@ -20,8 +20,8 @@ public class OpponentCar extends Car {
 
     // Set the position of the car using values from libGDX coordinate system
     public void setPositionAndAngle(int xCoordinate, int yCoordinate, float angle) {
-        float x = (xCoordinate + sprite.getWidth() / 2) / CarSuperFun.PIXELS_TO_METERS;
-        float y = (yCoordinate + sprite.getHeight() / 2) / CarSuperFun.PIXELS_TO_METERS;
+        float x = (xCoordinate + sprite.getWidth() / 2) / GlobalVariables.PIXELS_TO_METERS;
+        float y = (yCoordinate + sprite.getHeight() / 2) / GlobalVariables.PIXELS_TO_METERS;
         body.setTransform(x, y, angle);
     }
 }
