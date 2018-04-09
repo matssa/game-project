@@ -96,7 +96,7 @@ public class RaceMode extends GameMode {
         camera.position.set(localRaceCar.getPosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
         if(!singlePlayer){
-            androidLauncher.broadcast(false, 0, localRaceCar.getPosition());
+            androidLauncher.broadcast(false, 0, localRaceCar.getPosition(), localRaceCar.getDirectionFloat());
         }
     }
 

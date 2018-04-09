@@ -75,8 +75,12 @@ public class AndroidLauncher extends AndroidApplication {
 
     private CarSuperFun carSuperFun;
 
+    private int posX = 0;
+    private int posY = 0;
+    private float angle = 0;
+
     // Message buffer for sending messages
-    byte[] mMsgBuf = new byte[10];
+    byte[] mMsgBuf = new byte[14];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -533,18 +537,22 @@ public class AndroidLauncher extends AndroidApplication {
                     bytes[byteValue] = buf[1+byteValue];
                 }
 
-                int posX = ByteBuffer.wrap(bytes).getInt();
+                posX = ByteBuffer.wrap(bytes).getInt();
 
                 for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
                     bytes[byteValue] = buf[5+byteValue];
                 }
 
-                int posY = ByteBuffer.wrap(bytes).getInt();
+                posY = ByteBuffer.wrap(bytes).getInt();
 
+                for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
+                    bytes[byteValue] = buf[9+byteValue];
+                }
 
-                Vector2 position = new Vector2 (posX, posY);
+                angle = ByteBuffer.wrap(bytes).getFloat();
 
-                updatePosition(position);
+                updatePosition(posX, posY, angle);
+
                 // if it's a final score, mark this participant as having finished
                 // the game
                 if ((char) buf[0] == 'F') {
@@ -554,11 +562,17 @@ public class AndroidLauncher extends AndroidApplication {
         }
     };
 
-    private void updatePosition(Vector2 position){
-        Log.d(TAG, "Position opponent: " + "x: :" + Float.toString(position.x) +" y: "+ Float.toString(position.y));
+    public int getPosX(){
+        return posX;
+    }
+    public int getPosy() {
+        return posY;
+    }
+    public float getAngle() {
+        return angle;
     }
 
-    public void broadcast(boolean finalScore, int score, Vector2 position) {
+    public void broadcast(boolean finalScore, int score, Vector2 position, float angle) {
 
         // First byte in message indicates whether it's a final score or not
         mMsgBuf[0] = (byte) (finalScore ? 'F' : 'U');
@@ -578,6 +592,12 @@ public class AndroidLauncher extends AndroidApplication {
 
         for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
             mMsgBuf[5+byteValue] = bytes[byteValue];
+        }
+
+        bytes = ByteBuffer.allocate(4).putFloat(angle).array();;
+
+        for (byte byteValue = 1; byteValue<bytes.length; byteValue++) {
+            mMsgBuf[9+byteValue] = bytes[byteValue];
         }
 
         // Log.d(TAG,"x: " +  Float.toString(position.x) + " y. " + Float.toString(position.y));
