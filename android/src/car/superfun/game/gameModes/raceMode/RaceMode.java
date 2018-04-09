@@ -30,6 +30,8 @@ public class RaceMode extends GameMode {
 
     private CarController carController;
     private LocalRaceCar localRaceCar;
+    private LocalRaceCar localRaceCar2;
+    private OpponentCar opponentCar;
 
     private class checkpointUserData implements UserDataCreater {
         private int id;
@@ -49,7 +51,6 @@ public class RaceMode extends GameMode {
         world.setContactListener(new RaceContactListener());
 
         carController = new CarController();
-
 
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -77,6 +78,10 @@ public class RaceMode extends GameMode {
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
         localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), carController, world, bodies.size);
+        localRaceCar2 = new LocalRaceCar(new Vector2(1500, 11000), carController, world, bodies.size);
+
+//        Array<OpponentCar> opponentCars = new Array<OpponentCar>();
+//        opponentCar = new OpponentCar(new Vector2(1500, 11000), world);
     }
 
     @Override
@@ -89,6 +94,8 @@ public class RaceMode extends GameMode {
         world.step(1f/60f, 6, 2);
         carController.update();
         localRaceCar.update(dt);
+        localRaceCar2.update(dt);
+        opponentCar.update(dt);
         camera.position.set(localRaceCar.getPosition(), 0);
         camera.position.set(localRaceCar.getPosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
@@ -100,6 +107,8 @@ public class RaceMode extends GameMode {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         localRaceCar.render(sb);
+        localRaceCar2.render(sb);
+        opponentCar.render(sb);
     }
 
     // Renders objects that have a static position on the screen. Is called by superclass

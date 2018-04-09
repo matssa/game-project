@@ -13,11 +13,11 @@ public class LocalRaceCar extends LocalCar {
     boolean[] passedCheckpoints;
     int completedRounds;
 
-        public LocalRaceCar(Vector2 position, CarController carController, World world, int amountOfCheckpoints) {
-            super(position, carController, world);
-            passedCheckpoints = new boolean[amountOfCheckpoints];
-            Arrays.fill(passedCheckpoints, Boolean.FALSE);
-            completedRounds = 0;
+    public LocalRaceCar(Vector2 position, CarController carController, World world, int amountOfCheckpoints) {
+        super(position, carController, world);
+        passedCheckpoints = new boolean[amountOfCheckpoints];
+        Arrays.fill(passedCheckpoints, Boolean.FALSE);
+        completedRounds = 0;
     }
 
     public void passCheckpoint(int checkpointId) {
