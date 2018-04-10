@@ -1,15 +1,15 @@
 package car.superfun.game.menus;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -47,10 +47,18 @@ public class SettingsMenu extends State {
 
         table.row();
 
-        /*BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/bahnschrift.ttf"));
-        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
-        table.add(new Label("asdasd:",labelStyle));*/
+        //BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/bahnschrift.ttf"));
+        //Label.LabelStyle labelStyle = new Label.LabelStyle("default-font", Color.BLACK);
+        Skin skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        skin.getFont("default-font").getData().setScale(4f,4f);
 
+        CheckBox music = new CheckBox("", skin);
+        CheckBox sounds = new CheckBox("Mute sounds:", skin);
+
+        table.add(new Label("Mute music:",skin));
+        table.add(music);
+        table.row();
+        table.add(sounds);
         stage.addActor(table);
 
         Gdx.input.setInputProcessor(stage);

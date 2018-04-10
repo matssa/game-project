@@ -43,7 +43,8 @@ public class MainMenu extends State {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 //androidLauncher.signOut();
-                GameStateManager.getInstance().push(new SettingsMenu());
+                //GameStateManager.getInstance().push(new SettingsMenu());
+                GameStateManager.getInstance().push(new Leaderboard());
                 return true;
             }
         });
@@ -94,7 +95,7 @@ public class MainMenu extends State {
 
         stage.addActor(table);
 
-        setInputProcessor();
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -112,10 +113,6 @@ public class MainMenu extends State {
         sb.end();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-    }
-
-    public void setInputProcessor(){
-        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
