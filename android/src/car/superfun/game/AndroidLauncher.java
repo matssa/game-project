@@ -8,9 +8,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -46,6 +49,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import car.superfun.game.car.CarController;
+import car.superfun.game.car.OpponentCar;
+import car.superfun.game.car.OpponentCarController;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -80,7 +86,12 @@ public class AndroidLauncher extends AndroidApplication {
     private float angle = 0;
 
     // Message buffer for sending messages
-    byte[] mMsgBuf = new byte[14];
+//    byte[] mMsgBuf = new byte[14];
+
+    Map<String, OpponentCarController> mParticipantCarControllers = null;
+
+    // Participants who sent us their final score.
+    Set<String> mFinishedParticipants = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +99,7 @@ public class AndroidLauncher extends AndroidApplication {
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         this.carSuperFun =  new CarSuperFun(this);
         initialize(carSuperFun, config);
+        mParticipantCarControllers = new HashMap<>();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
     }
@@ -122,10 +134,16 @@ public class AndroidLauncher extends AndroidApplication {
         }  else if (requestCode == RC_WAITING_ROOM) {
             // we got the result from the "waiting room" UI.
             if (resultCode == Activity.RESULT_OK) {
-                // ready to start playing
                 Log.d(TAG, "Starting game (waiting room returned OK).");
+               // GameStateManager.getInstance().push(new RaceMode(this, false));
 
-                // GameStateManager.getInstance().push(new RaceMode(this, false));
+                for(Participant participant : mParticipants) {
+//                    if (participant.getParticipantId() == mMyId) {
+//                        continue;
+//                    }
+                    OpponentCarController oppCC = new OpponentCarController();
+                    mParticipantCarControllers.put(participant.getParticipantId(), oppCC);
+                }
 
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 // player indicated that they want to leave the room
@@ -498,20 +516,6 @@ public class AndroidLauncher extends AndroidApplication {
                 .show();
     }
 
-       /*
-     * COMMUNICATIONS SECTION. Methods that implement the game's network
-     * protocol.
-     */
-
-    // Score of other participants. We update this as we receive their scores
-    // from the network.
-    Map<String, Integer> mParticipantScore = new HashMap<>();
-
-    Map<String, Vector2> mParticipantPosition = new HashMap<>();
-
-    // Participants who sent us their final score.
-    Set<String> mFinishedParticipants = new HashSet<>();
-
     // Called when we receive a real-time message from the network.
     // Messages in our game are made up of 2 bytes: the first one is 'F' or 'U'
     // indicating
@@ -524,38 +528,46 @@ public class AndroidLauncher extends AndroidApplication {
             byte[] buf = realTimeMessage.getMessageData();
             String sender = realTimeMessage.getSenderParticipantId();
 
-            if (buf[0] == 'F' || buf[0] == 'U') {
-                // score update.
-                int existingScore = mParticipantScore.containsKey(sender) ?
-                        mParticipantScore.get(sender) : 0;
-                int thisScore = (int) buf[1];
+            ByteBuffer buffer = ByteBuffer.wrap(buf);
+            if (buffer.getChar(0) == 'U' || buffer.getChar(0) == 'F') {
+//            if (buf[0] == 'F' || buf[0] == 'U') {
+//                byte[] bytes = new byte[4];
 
 
-                byte[] bytes = new byte[4];
+//                Gdx.app.log("participant id: ", "" + realTimeMessage.getSenderParticipantId());
+//                Gdx.app.log("new bytes", "yeye");
+//                for (byte b : buf) {
+//                    Gdx.app.log("byte", "" + b);
+//                }
 
-                for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
-                    bytes[byteValue] = buf[2+byteValue];
+//                float forward = buffer.getFloat(2);
+//                float rotation = buffer.getFloat(6);
+
+                Vector2 velocity = new Vector2(buffer.getFloat(2), buffer.getFloat(6));
+
+                float x = buffer.getFloat(10);
+                float y = buffer.getFloat(14);
+                float angle = buffer.getFloat(18);
+
+                OpponentCarController opponentCarController = mParticipantCarControllers.get(realTimeMessage.getSenderParticipantId());
+//                opponentCarController.setForwardAndRotation(forward, rotation);
+
+                if (opponentCarController.hasControlledCar()) {
+                    opponentCarController.setCarTransform(x, y, angle);
+                    opponentCarController.setCarVelocity(velocity);
+                } else {
+                    Gdx.app.log("opponentCarController missing car", "id: " + realTimeMessage.getSenderParticipantId());
                 }
-
-                posX = ByteBuffer.wrap(bytes).getInt();
-
-                for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
-                    bytes[byteValue] = buf[6+byteValue];
-                }
-
-                posY = ByteBuffer.wrap(bytes).getInt();
-
-                for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
-                    bytes[byteValue] = buf[10+byteValue];
-                }
-
-                angle = ByteBuffer.wrap(bytes).getFloat();
-
 
                 // if it's a final score, mark this participant as having finished
                 // the game
                 if ((char) buf[0] == 'F') {
                     mFinishedParticipants.add(realTimeMessage.getSenderParticipantId());
+                }
+            } else {
+                Gdx.app.log("unknown byte buffer content", "length: " + buf.length);
+                for (byte b : buf) {
+                    Gdx.app.log("byte: ", "" + b);
                 }
             }
         }
@@ -573,36 +585,27 @@ public class AndroidLauncher extends AndroidApplication {
         return angle;
     }
 
-    public void broadcast(boolean finalScore, int score, Vector2 position, float angle) {
+//    public void broadcast(boolean finalScore, int score, Vector2 position, float angle) {
+//    public void broadcast(boolean finalScore, int score, float forward, float rotation, Vector2 position, float angle) {
+    public void broadcast(boolean finalScore, int score, Vector2 velocity, Vector2 position, float angle) {
+
+
+        ByteBuffer messageBuffer = ByteBuffer.allocate(22);
+
 
         // First byte in message indicates whether it's a final score or not
-        mMsgBuf[0] = (byte) (finalScore ? 'F' : 'U');
+//        messageBuffer.putChar(finalScore ? 'F' : 'U');
+        messageBuffer.putChar(0, 'U'); // TODO: put 'F' if final score, and send score
 
-        // Second byte is the score.
-        mMsgBuf[1] = (byte) score;
+//        messageBuffer.putFloat(2, forward);
+//        messageBuffer.putFloat(6, rotation);
 
-        // Third byte is the x position.
-        byte[] bytes = ByteBuffer.allocate(4).putInt((int) position.x).array();
+        messageBuffer.putFloat(2, velocity.x);
+        messageBuffer.putFloat(6, velocity.y);
 
-        for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
-            mMsgBuf[2+byteValue] = bytes[byteValue];
-        }
-
-        // Third byte is the x position.
-        bytes = ByteBuffer.allocate(4).putInt((int) position.y).array();
-
-        for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
-            mMsgBuf[6+byteValue] = bytes[byteValue];
-        }
-
-        Log.d(TAG, Float.toString(angle));
-        bytes = ByteBuffer.allocate(4).putFloat(angle).array();;
-
-        for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
-            mMsgBuf[10+byteValue] = bytes[byteValue];
-        }
-
-        // Log.d(TAG,"x: " +  Float.toString(position.x) + " y. " + Float.toString(position.y));
+        messageBuffer.putFloat(10, position.x);
+        messageBuffer.putFloat(14, position.y);
+        messageBuffer.putFloat(18, angle);
 
         // Send to every other participant.
         for (Participant p : mParticipants) {
@@ -614,7 +617,7 @@ public class AndroidLauncher extends AndroidApplication {
             }
             if (finalScore) {
                 // final score notification must be sent via reliable message
-                mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
+                mRealTimeMultiplayerClient.sendReliableMessage(messageBuffer.array(),
                         mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
                             @Override
                             public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
@@ -632,10 +635,18 @@ public class AndroidLauncher extends AndroidApplication {
                         });
             } else {
                 // it's an interim score notification, so we can use unreliable
-                mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
+                mRealTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), mRoomId,
                         p.getParticipantId());
             }
         }
+    }
+
+    public Array<OpponentCarController> getOpponentCarControllers() {
+        Array<OpponentCarController> opponentCarControllers = new Array<OpponentCarController>(mParticipantCarControllers.size());
+        for (Map.Entry<String, OpponentCarController> entry : mParticipantCarControllers.entrySet()) {
+            opponentCarControllers.add(entry.getValue());
+        }
+        return opponentCarControllers;
     }
 
 }
