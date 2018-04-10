@@ -18,15 +18,13 @@ import car.superfun.game.states.State;
 
 public class MainMenu extends State {
     private Texture background;
-    private Stage stage;
+    public static Stage stage = new Stage(new ScreenViewport());
     private AndroidLauncher androidLauncher;
 
     public MainMenu(AndroidLauncher aLauncher){
         this.androidLauncher = aLauncher;
 
         background = new Texture("background.png");
-
-        stage = new Stage(new ScreenViewport());
 
         Table table = new Table();
         table.setWidth(stage.getWidth());
@@ -39,7 +37,7 @@ public class MainMenu extends State {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 //androidLauncher.signOut();
-                GameStateManager.getInstance().push(new SettingsMenu(stage));
+                GameStateManager.getInstance().push(new SettingsMenu());
                 return true;
             }
         });
@@ -71,7 +69,7 @@ public class MainMenu extends State {
 
         stage.addActor(table);
 
-        Gdx.input.setInputProcessor(stage);
+        setInputProcessor();
     }
 
     @Override
@@ -89,6 +87,10 @@ public class MainMenu extends State {
         sb.end();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+    }
+
+    public void setInputProcessor(){
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override

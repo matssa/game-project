@@ -1,12 +1,15 @@
 package car.superfun.game.menus;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -17,12 +20,11 @@ import car.superfun.game.states.State;
 
 public class SettingsMenu extends State {
     private Texture background;
-    private Stage stage, parentStage;
+    private Stage stage;
 
-    public SettingsMenu(Stage pStage){
+    public SettingsMenu(){
         background = new Texture("background.png");
 
-        this.parentStage = pStage;
         this.stage = new Stage(new ScreenViewport());
 
         Table table = new Table();
@@ -35,14 +37,20 @@ public class SettingsMenu extends State {
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                GameStateManager.getInstance().dispose();
                 GameStateManager.getInstance().pop();
-                Gdx.input.setInputProcessor(parentStage);
-                dispose();
+                Gdx.input.setInputProcessor(MainMenu.stage);
                 return true;
             }
         });
 
         table.add(backButton).expandX().top().left().padBottom(120);
+
+        table.row();
+
+        /*BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/bahnschrift.ttf"));
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
+        table.add(new Label("asdasd:",labelStyle));*/
 
         stage.addActor(table);
 

@@ -43,8 +43,8 @@ public class CarSuperFun extends ApplicationAdapter {
 
         // Starts the game in MainMenu
 
-        //gsm.push(new LoginMenu(androidLauncher));
-        gsm.push(new MainMenu(androidLauncher));
+        gsm.push(new LoginMenu(androidLauncher));
+        //gsm.push(new MainMenu(androidLauncher));
 
         // Take control of the back button
         Gdx.input.setCatchBackKey(true);
