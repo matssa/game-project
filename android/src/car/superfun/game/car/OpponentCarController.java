@@ -37,6 +37,10 @@ public class OpponentCarController implements CarController {
         controlledCar.getBody().setLinearVelocity(velocity);
     }
 
+    public OpponentCar getControlledCar() {
+        return controlledCar;
+    }
+
     public boolean hasControlledCar() {
         return (controlledCar != null);
     }

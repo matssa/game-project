@@ -1,5 +1,6 @@
 package car.superfun.game.car;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -28,5 +29,12 @@ public class OpponentCar extends Car {
 
     public void setTransform(float x, float y, float angle) {
         body.setTransform(x, y, angle);
+    }
+
+    public void setMovement(float xPos, float yPos, float angle, Vector2 velocity, int timeDiff) {
+        Vector2 sentPosition = new Vector2(xPos, yPos);
+        Vector2 travelledDistance = velocity.cpy().scl((float) timeDiff / 10000f);
+        body.setTransform(sentPosition.cpy().add(travelledDistance), angle);
+        body.setLinearVelocity(velocity);
     }
 }

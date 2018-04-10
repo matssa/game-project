@@ -12,7 +12,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -49,8 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import car.superfun.game.car.CarController;
-import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 
 public class AndroidLauncher extends AndroidApplication {
@@ -81,12 +78,7 @@ public class AndroidLauncher extends AndroidApplication {
 
     private CarSuperFun carSuperFun;
 
-    private int posX = 0;
-    private int posY = 0;
-    private float angle = 0;
-
-    // Message buffer for sending messages
-//    byte[] mMsgBuf = new byte[14];
+    int lastTimestamp;
 
     Map<String, OpponentCarController> mParticipantCarControllers = null;
 
@@ -102,6 +94,7 @@ public class AndroidLauncher extends AndroidApplication {
         mParticipantCarControllers = new HashMap<>();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+        lastTimestamp = 0;
     }
 
     @Override
@@ -138,9 +131,9 @@ public class AndroidLauncher extends AndroidApplication {
                // GameStateManager.getInstance().push(new RaceMode(this, false));
 
                 for(Participant participant : mParticipants) {
-//                    if (participant.getParticipantId() == mMyId) {
-//                        continue;
-//                    }
+                    if (participant.getParticipantId().equals(mMyId)) {
+                        continue;
+                    }
                     OpponentCarController oppCC = new OpponentCarController();
                     mParticipantCarControllers.put(participant.getParticipantId(), oppCC);
                 }
@@ -206,7 +199,7 @@ public class AndroidLauncher extends AndroidApplication {
     public void startQuickGame() {
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 2, 0);
 
         // build the room config:
         mJoinedRoomConfig =
@@ -526,22 +519,17 @@ public class AndroidLauncher extends AndroidApplication {
         @Override
         public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
             byte[] buf = realTimeMessage.getMessageData();
-            String sender = realTimeMessage.getSenderParticipantId();
+//            String sender = realTimeMessage.getSenderParticipantId();
 
             ByteBuffer buffer = ByteBuffer.wrap(buf);
             if (buffer.getChar(0) == 'U' || buffer.getChar(0) == 'F') {
-//            if (buf[0] == 'F' || buf[0] == 'U') {
-//                byte[] bytes = new byte[4];
 
-
-//                Gdx.app.log("participant id: ", "" + realTimeMessage.getSenderParticipantId());
-//                Gdx.app.log("new bytes", "yeye");
-//                for (byte b : buf) {
-//                    Gdx.app.log("byte", "" + b);
-//                }
-
-//                float forward = buffer.getFloat(2);
-//                float rotation = buffer.getFloat(6);
+                int timestamp = buffer.getInt(22);
+                if (timestamp < lastTimestamp) {
+                    return;
+                }
+                lastTimestamp = timestamp;
+                int timeDiff = Math.abs(((int) (System.currentTimeMillis() % 2147483648L)) - timestamp);
 
                 Vector2 velocity = new Vector2(buffer.getFloat(2), buffer.getFloat(6));
 
@@ -549,12 +537,11 @@ public class AndroidLauncher extends AndroidApplication {
                 float y = buffer.getFloat(14);
                 float angle = buffer.getFloat(18);
 
+
                 OpponentCarController opponentCarController = mParticipantCarControllers.get(realTimeMessage.getSenderParticipantId());
-//                opponentCarController.setForwardAndRotation(forward, rotation);
 
                 if (opponentCarController.hasControlledCar()) {
-                    opponentCarController.setCarTransform(x, y, angle);
-                    opponentCarController.setCarVelocity(velocity);
+                    opponentCarController.getControlledCar().setMovement(x, y, angle, velocity, timeDiff);
                 } else {
                     Gdx.app.log("opponentCarController missing car", "id: " + realTimeMessage.getSenderParticipantId());
                 }
@@ -573,32 +560,13 @@ public class AndroidLauncher extends AndroidApplication {
         }
     };
 
-    public int getPosX(){
-        return posX;
-    }
-
-    public int getPosY() {
-        return posY;
-    }
-
-    public float getAngle() {
-        return angle;
-    }
-
-//    public void broadcast(boolean finalScore, int score, Vector2 position, float angle) {
-//    public void broadcast(boolean finalScore, int score, float forward, float rotation, Vector2 position, float angle) {
     public void broadcast(boolean finalScore, int score, Vector2 velocity, Vector2 position, float angle) {
 
-
-        ByteBuffer messageBuffer = ByteBuffer.allocate(22);
-
+        ByteBuffer messageBuffer = ByteBuffer.allocate(26);
 
         // First byte in message indicates whether it's a final score or not
 //        messageBuffer.putChar(finalScore ? 'F' : 'U');
         messageBuffer.putChar(0, 'U'); // TODO: put 'F' if final score, and send score
-
-//        messageBuffer.putFloat(2, forward);
-//        messageBuffer.putFloat(6, rotation);
 
         messageBuffer.putFloat(2, velocity.x);
         messageBuffer.putFloat(6, velocity.y);
@@ -606,6 +574,8 @@ public class AndroidLauncher extends AndroidApplication {
         messageBuffer.putFloat(10, position.x);
         messageBuffer.putFloat(14, position.y);
         messageBuffer.putFloat(18, angle);
+
+        messageBuffer.putInt(22, (int) (System.currentTimeMillis() % 2147483648L));
 
         // Send to every other participant.
         for (Participant p : mParticipants) {
