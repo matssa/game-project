@@ -1,5 +1,6 @@
 package car.superfun.game.car;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -39,6 +40,8 @@ public class Car {
         bodyDef.allowSleep = false;
         bodyDef.angularDamping = 0.9f;
         bodyDef.linearDamping = 0.5f;
+
+//        bodyDef.angle = (float) (-Math.PI / 2);
 
         body = world.createBody(bodyDef);
 

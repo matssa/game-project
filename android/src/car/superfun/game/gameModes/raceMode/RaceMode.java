@@ -12,6 +12,9 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.TrackBuilder;
@@ -92,6 +95,7 @@ public class RaceMode extends GameMode {
             opponentCars.add(new OpponentCar(new Vector2(startX, 11000), oppCC, world));
             startX -= 100;
         }
+
     }
 
     // Google Game Service sets the opponent cars
@@ -120,7 +124,8 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
-        world.step(1f/60f, 6, 2);
+        world.step(1f/60f, 2, 1); // Low precision high efficiency
+//        world.step(1f/60f, 6, 2); // High precision low efficiency
         localCarController.update();
         localRaceCar.update(dt);
 
@@ -128,16 +133,13 @@ public class RaceMode extends GameMode {
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
 
         for (OpponentCar car : opponentCars) {
-//            car.setPositionAndAngle(androidLauncher.getPosX(), androidLauncher.getPosY(), androidLauncher.getAngle());
             car.update(dt);
         }
 
         camera.up.set(localRaceCar.getDirectionVector(), 0);
         if(!singlePlayer){
-//            androidLauncher.broadcast(false, 0, localRaceCar.getSpritePosition(), localRaceCar.getDirectionFloat());
             Vector2 position = localRaceCar.getBody().getTransform().getPosition();
             float angle = localRaceCar.getDirectionFloat();
-//            androidLauncher.broadcast(false, 0, localCarController.forward, localCarController.rotation, position, angle);
             androidLauncher.broadcast(false, 0, localRaceCar.getVelocity(), position, angle);
         }
     }
