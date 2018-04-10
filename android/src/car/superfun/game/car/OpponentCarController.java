@@ -33,6 +33,10 @@ public class OpponentCarController implements CarController {
         controlledCar.setTransform(x, y, angle);
     }
 
+    public void setCarVelocity(Vector2 velocity) {
+        controlledCar.getBody().setLinearVelocity(velocity);
+    }
+
     public boolean hasControlledCar() {
         return (controlledCar != null);
     }

@@ -137,7 +137,8 @@ public class RaceMode extends GameMode {
 //            androidLauncher.broadcast(false, 0, localRaceCar.getSpritePosition(), localRaceCar.getDirectionFloat());
             Vector2 position = localRaceCar.getBody().getTransform().getPosition();
             float angle = localRaceCar.getDirectionFloat();
-            androidLauncher.broadcast(false, 0, localCarController.forward, localCarController.rotation, position, angle);
+//            androidLauncher.broadcast(false, 0, localCarController.forward, localCarController.rotation, position, angle);
+            androidLauncher.broadcast(false, 0, localRaceCar.getVelocity(), position, angle);
         }
     }
 

@@ -540,19 +540,21 @@ public class AndroidLauncher extends AndroidApplication {
 //                    Gdx.app.log("byte", "" + b);
 //                }
 
-                float forward = buffer.getFloat(2);
-//                Gdx.app.log("forward:", "" + forward);
-                float rotation = buffer.getFloat(6);
-//                Gdx.app.log("rotation:", "" + rotation);
+//                float forward = buffer.getFloat(2);
+//                float rotation = buffer.getFloat(6);
+
+                Vector2 velocity = new Vector2(buffer.getFloat(2), buffer.getFloat(6));
+
                 float x = buffer.getFloat(10);
                 float y = buffer.getFloat(14);
                 float angle = buffer.getFloat(18);
 
                 OpponentCarController opponentCarController = mParticipantCarControllers.get(realTimeMessage.getSenderParticipantId());
-                opponentCarController.setForwardAndRotation(forward, rotation);
+//                opponentCarController.setForwardAndRotation(forward, rotation);
 
                 if (opponentCarController.hasControlledCar()) {
                     opponentCarController.setCarTransform(x, y, angle);
+                    opponentCarController.setCarVelocity(velocity);
                 } else {
                     Gdx.app.log("opponentCarController missing car", "id: " + realTimeMessage.getSenderParticipantId());
                 }
@@ -584,7 +586,9 @@ public class AndroidLauncher extends AndroidApplication {
     }
 
 //    public void broadcast(boolean finalScore, int score, Vector2 position, float angle) {
-    public void broadcast(boolean finalScore, int score, float forward, float rotation, Vector2 position, float angle) {
+//    public void broadcast(boolean finalScore, int score, float forward, float rotation, Vector2 position, float angle) {
+    public void broadcast(boolean finalScore, int score, Vector2 velocity, Vector2 position, float angle) {
+
 
         ByteBuffer messageBuffer = ByteBuffer.allocate(22);
 
@@ -593,8 +597,12 @@ public class AndroidLauncher extends AndroidApplication {
 //        messageBuffer.putChar(finalScore ? 'F' : 'U');
         messageBuffer.putChar(0, 'U'); // TODO: put 'F' if final score, and send score
 
-        messageBuffer.putFloat(2, forward);
-        messageBuffer.putFloat(6, rotation);
+//        messageBuffer.putFloat(2, forward);
+//        messageBuffer.putFloat(6, rotation);
+
+        messageBuffer.putFloat(2, velocity.x);
+        messageBuffer.putFloat(6, velocity.y);
+
         messageBuffer.putFloat(10, position.x);
         messageBuffer.putFloat(14, position.y);
         messageBuffer.putFloat(18, angle);
