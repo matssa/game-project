@@ -37,7 +37,6 @@ public class SettingsMenu extends State {
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                GameStateManager.getInstance().dispose();
                 GameStateManager.getInstance().pop();
                 Gdx.input.setInputProcessor(MainMenu.stage);
                 return true;
