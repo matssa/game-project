@@ -1,5 +1,6 @@
 package car.superfun.game.gameModes.raceMode;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -10,6 +11,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
@@ -32,7 +36,6 @@ public class RaceMode extends GameMode {
 
     private LocalCarController localCarController;
     private LocalRaceCar localRaceCar;
-    private OpponentCar opponentCar;
     private Array<OpponentCar> opponentCars;
     private int amountOfCheckpoints;
     private boolean singlePlayer;
@@ -80,13 +83,30 @@ public class RaceMode extends GameMode {
         checkpointDef.isSensor = true;
 
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
+
+        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
+
+        int startX = 1900;
+
+        Array<OpponentCarController> opponentCarControllers = androidLauncher.getOpponentCarControllers();
+
+        opponentCars = new Array<OpponentCar>();
+        for (OpponentCarController oppCC : opponentCarControllers) {
+            opponentCars.add(new OpponentCar(new Vector2(startX, 11000), oppCC, world));
+            startX -= 100;
+        }
+
     }
 
     // Google Game Service sets the opponent cars
-    public void setOpponentCars(Array<Vector2> carPositions) {
+    public void setOpponentCars(Array<Vector2> carPositions, Array<OpponentCarController> opponentCarControllers) {
+        if (carPositions.size != opponentCarControllers.size) {
+            Gdx.app.log("ERROR: carPositions.size != opponentCarControllers.size", "cp: " + carPositions.size + ", occ: " + opponentCarControllers.size);
+            return;
+        }
         opponentCars = new Array<OpponentCar>();
-        for (Vector2 carPosition : carPositions) {
-            opponentCars.add(new OpponentCar(carPosition, new OpponentCarController(),world));
+        for (int i = 0; i < carPositions.size; i++) {
+            opponentCars.add(new OpponentCar(carPositions.get(i), opponentCarControllers.get(i), world));
         }
     }
 
@@ -104,7 +124,8 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
-        world.step(1f/60f, 6, 2);
+        world.step(1f/60f, 2, 1); // Low precision high efficiency
+//        world.step(1f/60f, 6, 2); // High precision low efficiency
         localCarController.update();
         localRaceCar.update(dt);
         camera.position.set(localRaceCar.getSpritePosition(), 0);
@@ -116,7 +137,9 @@ public class RaceMode extends GameMode {
 
         camera.up.set(localRaceCar.getDirectionVector(), 0);
         if(!singlePlayer){
-            androidLauncher.broadcast(false, 0, localRaceCar.getSpritePosition(), localRaceCar.getDirectionFloat());
+            Vector2 position = localRaceCar.getBody().getTransform().getPosition();
+            float angle = localRaceCar.getDirectionFloat();
+            androidLauncher.broadcast(false, 0, localRaceCar.getVelocity(), position, angle);
         }
     }
 

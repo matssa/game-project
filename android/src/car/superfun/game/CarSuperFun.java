@@ -68,7 +68,7 @@ public class CarSuperFun extends ApplicationAdapter {
         // in such case the app is closed
         if (Gdx.input.isKeyPressed(Input.Keys.BACK) && !justPressedBack) {
             if (gsm.isOnlyOneLeft()) {
-                Gdx.app.exit();
+                Gdx.app.exit(); // TODO this can no longer be reached
             } else {
                 justPressedBack = true;
                 new Timer().schedule(new TimerTask() {
