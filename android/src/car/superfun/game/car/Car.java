@@ -35,8 +35,8 @@ public class Car {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set((sprite.getX() + sprite.getWidth() / 2) / CarSuperFun.PIXELS_TO_METERS,
-                (sprite.getY() + sprite.getHeight() / 2) / CarSuperFun.PIXELS_TO_METERS);
+        bodyDef.position.set((sprite.getX() + sprite.getWidth() / 2) / GlobalVariables.PIXELS_TO_METERS,
+                (sprite.getY() + sprite.getHeight() / 2) / GlobalVariables.PIXELS_TO_METERS);
         bodyDef.allowSleep = false;
         bodyDef.angularDamping = 0.9f;
         bodyDef.linearDamping = 0.5f;
@@ -46,7 +46,7 @@ public class Car {
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((sprite.getWidth() / 2) / CarSuperFun.PIXELS_TO_METERS, (sprite.getHeight() / 2) / CarSuperFun.PIXELS_TO_METERS);
+        shape.setAsBox((sprite.getWidth() / 2) / GlobalVariables.PIXELS_TO_METERS, (sprite.getHeight() / 2) / GlobalVariables.PIXELS_TO_METERS);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -90,8 +90,8 @@ public class Car {
     }
 
     public void render(SpriteBatch sb) {
-        sprite.setPosition((body.getTransform().getPosition().x * CarSuperFun.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
-                (body.getTransform().getPosition().y * CarSuperFun.PIXELS_TO_METERS) - sprite.getHeight()/2 );
+        sprite.setPosition((body.getTransform().getPosition().x * GlobalVariables.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
+                (body.getTransform().getPosition().y * GlobalVariables.PIXELS_TO_METERS) - sprite.getHeight()/2 );
         sprite.setRotation((float)Math.toDegrees(body.getAngle()));
         sb.begin();
         sb.draw(sprite,

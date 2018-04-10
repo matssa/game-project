@@ -43,6 +43,7 @@ public class GameStateManager {
      * Remove top state from stack
      */
     public void pop(){
+        dispose();
         states.pop();
     }
 
@@ -52,9 +53,10 @@ public class GameStateManager {
      * @param state
      */
     public void set(State state) {
+        dispose();
         states.pop();
         states.push(state);
-    }
+    }   
 
     /**
      * updates the states

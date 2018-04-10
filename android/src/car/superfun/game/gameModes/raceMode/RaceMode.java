@@ -128,7 +128,6 @@ public class RaceMode extends GameMode {
 //        world.step(1f/60f, 6, 2); // High precision low efficiency
         localCarController.update();
         localRaceCar.update(dt);
-
         camera.position.set(localRaceCar.getSpritePosition(), 0);
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
 
