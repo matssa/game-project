@@ -39,7 +39,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import com.instacart.library.truetime.TrueTime;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,7 +96,10 @@ public class AndroidLauncher extends AndroidApplication {
         participantCarControllers = new HashMap<>();
 
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+
         lastTimestamp = 0;
+        ClockSynchronizer clockSync = new ClockSynchronizer();
+        clockSync.start();
     }
 
     @Override
@@ -346,6 +351,9 @@ public class AndroidLauncher extends AndroidApplication {
             Log.d(TAG, "Room ID: " + roomId);
             Log.d(TAG, "My ID " + myId);
             Log.d(TAG, "<< CONNECTED TO ROOM>>");
+
+            // Make sure to start the game with lastTimestamp = 0
+            lastTimestamp = 0;
         }
 
         // Called when we get disconnected from the room. We return to the main screen.
@@ -528,7 +536,8 @@ public class AndroidLauncher extends AndroidApplication {
                     return;
                 }
                 lastTimestamp = timestamp;
-                int timeDiff = Math.abs(((int) (System.currentTimeMillis() % 2147483648L)) - timestamp);
+
+                int timeDiff = Math.abs(((int) (TrueTime.now().getTime() % 2147483648L)) - timestamp);
 
                 Vector2 velocity = new Vector2(buffer.getFloat(2), buffer.getFloat(6));
 
@@ -574,7 +583,7 @@ public class AndroidLauncher extends AndroidApplication {
         messageBuffer.putFloat(14, position.y);
         messageBuffer.putFloat(18, angle);
 
-        messageBuffer.putInt(22, (int) (System.currentTimeMillis() % 2147483648L));
+        messageBuffer.putInt(22, (int) (TrueTime.now().getTime() % 2147483648L));
 
         // Send to every other participant.
         for (Participant p : participants) {
@@ -616,6 +625,23 @@ public class AndroidLauncher extends AndroidApplication {
             opponentCarControllers.add(entry.getValue());
         }
         return opponentCarControllers;
+    }
+
+    private class ClockSynchronizer extends Thread {
+        public void run() {
+            Gdx.app.log("ClockSync", "start of run");
+            try {
+                TrueTime.build().initialize();
+            } catch (IOException ex) {
+                Gdx.app.log("IOException from TrueTime:", ex.getMessage());
+                ex.printStackTrace();
+            }
+            if (!TrueTime.isInitialized()) {
+                Gdx.app.error("TrueTime ERROR:", "True time is not initialized");
+            } else {
+                Gdx.app.log("TrueTime", "True time now initialized! :D");
+            }
+        }
     }
 
 }
