@@ -30,7 +30,6 @@ public class LocalRaceCar extends LocalCar {
     }
 
     public void passGoal() {
-        Gdx.app.log("pos", "(" + body.getPosition().x + ", " + body.getPosition().y + ")");
         if (allCheckpointsPassed()) {
             completedRounds++;
             Gdx.app.log("GOAL PASSED!", "" + completedRounds + " rounds passed");

@@ -43,12 +43,8 @@ public class RaceContactListener implements ContactListener {
         int bothCategoryBits = (fixtureA.getFilterData().categoryBits | fixtureB.getFilterData().categoryBits);
 
         if ((bothCategoryBits & RaceMode.TEST_ENTITY) == RaceMode.TEST_ENTITY) {
-            Gdx.app.log("test entity", "test entity hit");
             LocalRaceCar localRaceCar = (fixtureA.getUserData() instanceof LocalRaceCar) ? (LocalRaceCar) fixtureA.getUserData() : (LocalRaceCar) fixtureB.getUserData();
-            float angle = localRaceCar.getBody().getAngle();
-            Gdx.app.log("angle", "" + angle);
-            angle -= (float) (Math.PI / 2);
-            Gdx.app.log("new angle", "" + angle);
+            float angle = localRaceCar.getBody().getAngle() - (float) (Math.PI / 2);
             localRaceCar.setTransformRotation(angle);
         }
 

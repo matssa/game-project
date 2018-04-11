@@ -2,6 +2,7 @@ package car.superfun.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Vector2;
 
 
 public final class GlobalVariables {
@@ -16,6 +17,13 @@ public final class GlobalVariables {
     // For converting between coordinate systems
     public static final float PIXELS_TO_METERS = 100f;
 
+    public static void logVector(Vector2 vector, String tag) {
+        Gdx.app.log(tag, "(" + vector.x + ", " + vector.y + ")");
+    }
+
+    public static void logVector(Vector2 vector) {
+        logVector(vector, "Vector log: ");
+    }
 
     // Game mode specific filters are made from 0b 0000 0001 0000 0000 and up.
     // I.e. leave the first 8 entity bits for globals
