@@ -1,6 +1,7 @@
 package car.superfun.game.gameModes.raceMode;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -36,6 +37,20 @@ public class RaceContactListener implements ContactListener {
 
     @Override
     public void endContact(Contact contact) {
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
+
+        int bothCategoryBits = (fixtureA.getFilterData().categoryBits | fixtureB.getFilterData().categoryBits);
+
+        if ((bothCategoryBits & RaceMode.TEST_ENTITY) == RaceMode.TEST_ENTITY) {
+            Gdx.app.log("test entity", "test entity hit");
+            LocalRaceCar localRaceCar = (fixtureA.getUserData() instanceof LocalRaceCar) ? (LocalRaceCar) fixtureA.getUserData() : (LocalRaceCar) fixtureB.getUserData();
+            float angle = localRaceCar.getBody().getAngle();
+            Gdx.app.log("angle", "" + angle);
+            angle -= (float) (Math.PI / 2);
+            Gdx.app.log("new angle", "" + angle);
+            localRaceCar.setTransformRotation(angle);
+        }
 
     }
 

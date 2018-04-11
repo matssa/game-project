@@ -41,7 +41,7 @@ public class Car {
         bodyDef.angularDamping = 0.9f;
         bodyDef.linearDamping = 0.5f;
 
-//        bodyDef.angle = (float) (-Math.PI / 2);
+        bodyDef.angle = (float) (-Math.PI / 2);
 
         body = world.createBody(bodyDef);
 

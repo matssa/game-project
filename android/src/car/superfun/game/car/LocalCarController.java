@@ -33,38 +33,42 @@ public class LocalCarController implements CarController {
     }
 
     public void update() {
-        boolean slider1Touched = false;
-        boolean slider2Touched = false;
-        for (int i = 0; i < 5; i++) {
-            if (Gdx.input.isTouched(i)) {
-                Vector2 justTouched = new Vector2(Gdx.input.getX(i), Gdx.input.getY(i) * (-1) + Gdx.graphics.getHeight());
-                if (justTouched.x < Gdx.graphics.getWidth() / 4) {
-                    slider1Touched = true;
-                    slider1Position =
-                            (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
-                                    || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
-                                    ? justTouched.y :
-                                    Gdx.graphics.getHeight() / 2;
-                }
-                else if (justTouched.x > 3 * Gdx.graphics.getWidth() / 4) {
-                    slider2Touched = true;
-                    slider2Position =
-                            (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
-                                    || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
-                                    ? justTouched.y :
-                                    Gdx.graphics.getHeight() / 2;
-                }
-            }
-        }
-        if (!slider1Touched) {
-            slider1Position = slider1Position - (slider1Position - Gdx.graphics.getHeight() / 2) / 5;
-        }
-        if (!slider2Touched) {
-            slider2Position = slider2Position - (slider2Position - Gdx.graphics.getHeight() / 2) / 5;
-        }
 
-        forward = Math.max(-1f, Math.min(1f, (slider1Position + slider2Position - Gdx.graphics.getHeight()) / (Gdx.graphics.getHeight() * 0.8f)));
-        rotation = Math.max(-1f, Math.min(1f, (slider2Position - slider1Position) / (Gdx.graphics.getHeight() * 0.8f)));
+        forward = 0.4f;
+        rotation = 0.0f;
+//
+//        boolean slider1Touched = false;
+//        boolean slider2Touched = false;
+//        for (int i = 0; i < 5; i++) {
+//            if (Gdx.input.isTouched(i)) {
+//                Vector2 justTouched = new Vector2(Gdx.input.getX(i), Gdx.input.getY(i) * (-1) + Gdx.graphics.getHeight());
+//                if (justTouched.x < Gdx.graphics.getWidth() / 4) {
+//                    slider1Touched = true;
+//                    slider1Position =
+//                            (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
+//                                    || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
+//                                    ? justTouched.y :
+//                                    Gdx.graphics.getHeight() / 2;
+//                }
+//                else if (justTouched.x > 3 * Gdx.graphics.getWidth() / 4) {
+//                    slider2Touched = true;
+//                    slider2Position =
+//                            (((Gdx.graphics.getHeight() / 2) - 50 > justTouched.y)
+//                                    || (justTouched.y > (Gdx.graphics.getHeight() / 2) + 50))
+//                                    ? justTouched.y :
+//                                    Gdx.graphics.getHeight() / 2;
+//                }
+//            }
+//        }
+//        if (!slider1Touched) {
+//            slider1Position = slider1Position - (slider1Position - Gdx.graphics.getHeight() / 2) / 5;
+//        }
+//        if (!slider2Touched) {
+//            slider2Position = slider2Position - (slider2Position - Gdx.graphics.getHeight() / 2) / 5;
+//        }
+//
+//        forward = Math.max(-1f, Math.min(1f, (slider1Position + slider2Position - Gdx.graphics.getHeight()) / (Gdx.graphics.getHeight() * 0.8f)));
+//        rotation = Math.max(-1f, Math.min(1f, (slider2Position - slider1Position) / (Gdx.graphics.getHeight() * 0.8f)));
     }
 
     public void render(SpriteBatch sb) {
