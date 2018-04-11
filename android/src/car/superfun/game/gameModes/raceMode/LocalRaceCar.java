@@ -13,16 +13,16 @@ public class LocalRaceCar extends LocalCar {
     boolean[] passedCheckpoints;
     int completedRounds;
 
-    private boolean setAngle;
-    private float newAngle;
+    private boolean doRotate;
+    private float rotateBy;
 
     public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world, int amountOfCheckpoints) {
         super(position, localCarController, world);
         passedCheckpoints = new boolean[amountOfCheckpoints];
         Arrays.fill(passedCheckpoints, Boolean.FALSE);
         completedRounds = 0;
-        setAngle = false;
-        newAngle = 0f;
+        doRotate = false;
+        rotateBy = 0f;
     }
 
     public void passCheckpoint(int checkpointId) {
@@ -39,10 +39,11 @@ public class LocalRaceCar extends LocalCar {
 
     public void update(float dt) {
         super.update(dt);
-        if (setAngle) {
+        if (doRotate) {
+            float newAngle = body.getTransform().getRotation() + rotateBy;
             body.setTransform(body.getPosition(), newAngle);
-            setAngle = false;
-            newAngle = 0f;
+            doRotate = false;
+            rotateBy = 0f;
         }
     }
 
@@ -55,8 +56,8 @@ public class LocalRaceCar extends LocalCar {
         return true;
     }
 
-    public void setTransformRotation(float angle) {
-        setAngle = true;
-        newAngle = angle;
+    public void rotateBy(float angle) {
+        doRotate = true;
+        rotateBy = angle;
     }
 }

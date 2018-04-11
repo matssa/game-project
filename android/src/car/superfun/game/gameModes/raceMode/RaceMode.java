@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
-import com.instacart.library.truetime.TrueTime;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -88,21 +87,23 @@ public class RaceMode extends GameMode {
 
         localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
 
+        int startX = 1900;
 
         Array<OpponentCarController> opponentCarControllers = androidLauncher.getOpponentCarControllers();
 
         opponentCars = new Array<OpponentCar>();
         for (OpponentCarController oppCC : opponentCarControllers) {
-            opponentCars.add(new OpponentCar(new Vector2(2000, 11000), oppCC, world));
+            opponentCars.add(new OpponentCar(new Vector2(startX, 11000), oppCC, world));
+            startX -= 100;
         }
 
-        // Build test-objects in map
-        FixtureDef testDef = new FixtureDef();
-        testDef.filter.categoryBits = TEST_ENTITY;
-        testDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
-        testDef.isSensor = true;
-
-        TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
+        if (GlobalVariables.TESTING_MODE) {
+            FixtureDef testDef = new FixtureDef();
+            testDef.filter.categoryBits = TEST_ENTITY;
+            testDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+            testDef.isSensor = true;
+            TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
+        }
 
     }
 

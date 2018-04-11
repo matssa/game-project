@@ -42,10 +42,14 @@ public class RaceContactListener implements ContactListener {
 
         int bothCategoryBits = (fixtureA.getFilterData().categoryBits | fixtureB.getFilterData().categoryBits);
 
+        // stop here if not one and only one LocalCar is involved
+        if (((fixtureA.getFilterData().categoryBits ^ fixtureB.getFilterData().categoryBits) & GlobalVariables.PLAYER_ENTITY) != GlobalVariables.PLAYER_ENTITY) {
+            return;
+        }
+
         if ((bothCategoryBits & RaceMode.TEST_ENTITY) == RaceMode.TEST_ENTITY) {
             LocalRaceCar localRaceCar = (fixtureA.getUserData() instanceof LocalRaceCar) ? (LocalRaceCar) fixtureA.getUserData() : (LocalRaceCar) fixtureB.getUserData();
-            float angle = localRaceCar.getBody().getAngle() - (float) (Math.PI / 2);
-            localRaceCar.setTransformRotation(angle);
+            localRaceCar.rotateBy((float) (-Math.PI / 2));
         }
 
     }
