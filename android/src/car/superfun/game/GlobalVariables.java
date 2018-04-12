@@ -28,7 +28,7 @@ public final class GlobalVariables {
     public static final boolean TESTING_MODE = true;
 
     public static int worldStepCounter = 0;
-    public static int 
+    public static int opponentCarSetMovementCounter = 0;
 
     // Game mode specific filters are made from 0b 0000 0001 0000 0000 and up.
     // I.e. leave the first 8 entity bits for globals

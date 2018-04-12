@@ -107,14 +107,13 @@ public class RaceMode extends GameMode {
             TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
         }
 
-//        new Timer().schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                for (OpponentCar car : opponentCars) {
-//                    car.logPos();
-//                }
-//            }
-//        }, 10000);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Gdx.app.log("WorldSteps:", "" + GlobalVariables.worldStepCounter);
+                Gdx.app.log("setMovements:", "" + GlobalVariables.opponentCarSetMovementCounter);
+            }
+        }, 10000);
 
         androidLauncher.readyToStart();
 
@@ -149,25 +148,31 @@ public class RaceMode extends GameMode {
 //        world.step(1f/60f, 2, 1); // Low precision high efficiency
 //        world.step(1f/60f, 6, 2); // High precision low efficiency
         world.step(dt, 2, 1); // Using deltaTime
+        GlobalVariables.worldStepCounter++;
+        Gdx.app.log("world", "step");
 
         localCarController.update();
         localRaceCar.update(dt);
         camera.position.set(localRaceCar.getSpritePosition(), 0);
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
+        camera.up.set(localRaceCar.getDirectionVector(), 0);
 
         for (OpponentCar car : opponentCars) {
             car.update(dt);
         }
 
-        camera.up.set(localRaceCar.getDirectionVector(), 0);
-//        if(!singlePlayer && counter > 3){
+        if (!singlePlayer) {
+            androidLauncher.broadcastController(localCarController.forward, localCarController.rotation);
+        }
+
+        if(!singlePlayer && counter > 9){
             Vector2 position = localRaceCar.getBody().getTransform().getPosition();
             float angle = localRaceCar.getDirectionFloat();
             androidLauncher.broadcast(false, 0, localRaceCar.getVelocity(), position, angle);
             counter = 0;
-//        } else {
-//            counter++;
-//        }
+        } else {
+            counter++;
+        }
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass

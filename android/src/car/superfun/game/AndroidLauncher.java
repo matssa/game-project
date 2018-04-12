@@ -582,6 +582,9 @@ public class AndroidLauncher extends AndroidApplication {
                 }
             } else if (buffer.getChar(0) == 'R') {
                 newParticipantReady(buffer.getLong(2));
+            } else if (buffer.getChar(0) == 'C') {
+                OpponentCarController opponentCarController = participantCarControllers.get(realTimeMessage.getSenderParticipantId());
+                opponentCarController.setForwardAndRotation(buffer.getFloat(2), buffer.getFloat(6));
             } else {
                 Gdx.app.log("unknown byte buffer content", "length: " + buffer.array().length);
                 for (byte b : buffer.array()) {
@@ -619,6 +622,26 @@ public class AndroidLauncher extends AndroidApplication {
         }
     }
 
+    public void broadcastController(float forward, float rotation) {
+        ByteBuffer messageBuffer = ByteBuffer.allocate(10);
+
+        messageBuffer.putChar(0, 'C');
+        messageBuffer.putFloat(2, forward);
+        messageBuffer.putFloat(6, rotation);
+
+        for (Participant p : participants) {
+            if (p.getParticipantId().equals(myId)) {
+                continue;
+            }
+            if (p.getStatus() != Participant.STATUS_JOINED) {
+                continue;
+            }
+            // it's an interim score notification, so we can use unreliable
+            realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), roomId, p.getParticipantId());
+        }
+    }
+
+
     public void broadcast(boolean finalScore, int score, Vector2 velocity, Vector2 position, float angle) {
 
         ByteBuffer messageBuffer = ByteBuffer.allocate(30);
@@ -638,12 +661,7 @@ public class AndroidLauncher extends AndroidApplication {
         messageBuffer.putInt(22, timestamp);
         messageBuffer.putInt(26, messageNumber++);
 
-        if (lastSentPosition.x > position.x) {
-            Gdx.app.log("" + timestamp + "@ broadcast:", "lastX: " + lastSentPosition.x + ", newX: " + position.x);
-        }
-
-        // Send to every other participant.
-
+        // Send to all the other participants.
         if (finalScore) {
             broadcastReliableMessage(messageBuffer.array());
         } else {
@@ -717,7 +735,7 @@ public class AndroidLauncher extends AndroidApplication {
             ScheduledExecutorService renderService = Executors.newSingleThreadScheduledExecutor();
             renderService.scheduleAtFixedRate(renderRequester,
                     startTime - TrueTime.now().getTime(),
-                    25,
+                    100,
                     TimeUnit.MILLISECONDS);
     }
 }
