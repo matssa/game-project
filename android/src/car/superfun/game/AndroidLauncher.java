@@ -49,6 +49,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import car.superfun.game.car.OpponentCarController;
 
@@ -80,7 +83,13 @@ public class AndroidLauncher extends AndroidApplication {
 
     private CarSuperFun carSuperFun;
 
-    int lastTimestamp;
+    private int lastTimestamp;
+    private int messageNumber;
+    private int lastMessageReceived;
+    private int readyParticipants = 0;
+    private long startTime = 0;
+
+    private Vector2 lastSentPosition;
 
     Map<String, OpponentCarController> participantCarControllers = null;
 
@@ -91,6 +100,7 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+
         this.carSuperFun =  new CarSuperFun(this);
         initialize(carSuperFun, config);
         participantCarControllers = new HashMap<>();
@@ -98,8 +108,13 @@ public class AndroidLauncher extends AndroidApplication {
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
 
         lastTimestamp = 0;
+        messageNumber = 0;
+        lastMessageReceived = 0;
+        lastSentPosition = new Vector2(0,0);
+
         ClockSynchronizer clockSync = new ClockSynchronizer();
         clockSync.start();
+        Gdx.graphics.setContinuousRendering(false);
     }
 
     @Override
@@ -202,6 +217,7 @@ public class AndroidLauncher extends AndroidApplication {
     }
 
     public void startQuickGame() {
+        readyParticipants = 0;
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 2, 0);
@@ -544,12 +560,17 @@ public class AndroidLauncher extends AndroidApplication {
                 float x = buffer.getFloat(10);
                 float y = buffer.getFloat(14);
                 float angle = buffer.getFloat(18);
-
+                int thisMessageNumber = buffer.getInt(26);
+                if (thisMessageNumber > lastMessageReceived + 1) {
+                    Gdx.app.log("Packed loss!", "this message: " + thisMessageNumber + ", last message: " + lastMessageReceived);
+                    Gdx.app.log("Time difference: ", "" + timeDiff);
+                }
+                lastMessageReceived = thisMessageNumber;
 
                 OpponentCarController opponentCarController = participantCarControllers.get(realTimeMessage.getSenderParticipantId());
 
                 if (opponentCarController.hasControlledCar()) {
-                    opponentCarController.getControlledCar().setMovement(x, y, angle, velocity, timeDiff);
+                    opponentCarController.getControlledCar().setMovement(x, y, angle, velocity, timeDiff, timestamp);
                 } else {
                     Gdx.app.log("opponentCarController missing car", "id: " + realTimeMessage.getSenderParticipantId());
                 }
@@ -559,6 +580,8 @@ public class AndroidLauncher extends AndroidApplication {
                 if (buffer.getChar(0) == 'F') {
                     finishedParticipants.add(realTimeMessage.getSenderParticipantId());
                 }
+            } else if (buffer.getChar(0) == 'R') {
+                newParticipantReady(buffer.getLong(2));
             } else {
                 Gdx.app.log("unknown byte buffer content", "length: " + buffer.array().length);
                 for (byte b : buffer.array()) {
@@ -568,9 +591,37 @@ public class AndroidLauncher extends AndroidApplication {
         }
     };
 
+    private void broadcastReliableMessage(byte[] byteArray) {
+        // Send to every other participant.
+        for (Participant p : participants) {
+            if (p.getParticipantId().equals(myId)) {
+                continue;
+            }
+            if (p.getStatus() != Participant.STATUS_JOINED) {
+                continue;
+            }
+            realTimeMultiplayerClient.sendReliableMessage(byteArray,
+                    roomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
+                        @Override
+                        public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
+                            Log.d(TAG, "RealTime message sent");
+                            Log.d(TAG, "  statusCode: " + statusCode);
+                            Log.d(TAG, "  tokenId: " + tokenId);
+                            Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                        }
+                    })
+                    .addOnSuccessListener(new OnSuccessListener<Integer>() {
+                        @Override
+                        public void onSuccess(Integer tokenId) {
+                            Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                        }
+                    });
+        }
+    }
+
     public void broadcast(boolean finalScore, int score, Vector2 velocity, Vector2 position, float angle) {
 
-        ByteBuffer messageBuffer = ByteBuffer.allocate(26);
+        ByteBuffer messageBuffer = ByteBuffer.allocate(30);
 
         // First byte in message indicates whether it's a final score or not
 //        messageBuffer.putChar(finalScore ? 'F' : 'U');
@@ -583,38 +634,28 @@ public class AndroidLauncher extends AndroidApplication {
         messageBuffer.putFloat(14, position.y);
         messageBuffer.putFloat(18, angle);
 
-        messageBuffer.putInt(22, (int) (TrueTime.now().getTime() % 2147483648L));
+        int timestamp = (int) (TrueTime.now().getTime() % 2147483648L);
+        messageBuffer.putInt(22, timestamp);
+        messageBuffer.putInt(26, messageNumber++);
+
+        if (lastSentPosition.x > position.x) {
+            Gdx.app.log("" + timestamp + "@ broadcast:", "lastX: " + lastSentPosition.x + ", newX: " + position.x);
+        }
 
         // Send to every other participant.
-        for (Participant p : participants) {
-            if (p.getParticipantId().equals(myId)) {
-                continue;
-            }
-            if (p.getStatus() != Participant.STATUS_JOINED) {
-                continue;
-            }
-            if (finalScore) {
-                // final score notification must be sent via reliable message
-                realTimeMultiplayerClient.sendReliableMessage(messageBuffer.array(),
-                        roomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
-                            @Override
-                            public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
-                                Log.d(TAG, "RealTime message sent");
-                                Log.d(TAG, "  statusCode: " + statusCode);
-                                Log.d(TAG, "  tokenId: " + tokenId);
-                                Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
-                            }
-                        })
-                        .addOnSuccessListener(new OnSuccessListener<Integer>() {
-                            @Override
-                            public void onSuccess(Integer tokenId) {
-                                Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
-                            }
-                        });
-            } else {
+
+        if (finalScore) {
+            broadcastReliableMessage(messageBuffer.array());
+        } else {
+            for (Participant p : participants) {
+                if (p.getParticipantId().equals(myId)) {
+                    continue;
+                }
+                if (p.getStatus() != Participant.STATUS_JOINED) {
+                    continue;
+                }
                 // it's an interim score notification, so we can use unreliable
-                realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), roomId,
-                        p.getParticipantId());
+                realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), roomId, p.getParticipantId());
             }
         }
     }
@@ -644,6 +685,41 @@ public class AndroidLauncher extends AndroidApplication {
         }
     }
 
+    public void readyToStart() {
+        ByteBuffer messageBuffer = ByteBuffer.allocate(10);
+        messageBuffer.putChar(0, 'R');
+
+        long proposedStartTime = TrueTime.now().getTime() + 3000;
+        messageBuffer.putLong(2, proposedStartTime);
+
+        newParticipantReady(proposedStartTime);
+
+        broadcastReliableMessage(messageBuffer.array());
+    }
+
+    private void newParticipantReady(long newStartTime) {
+        readyParticipants++;
+        if (newStartTime > this.startTime) {
+            this.startTime = newStartTime;
+        }
+        if (readyParticipants == participants.size()) {
+            startRenderService();
+        }
+    }
+
+    private void startRenderService() {
+            Runnable renderRequester = new Runnable() {
+                @Override
+                public void run() {
+                    Gdx.graphics.requestRendering();
+                }
+            };
+            ScheduledExecutorService renderService = Executors.newSingleThreadScheduledExecutor();
+            renderService.scheduleAtFixedRate(renderRequester,
+                    startTime - TrueTime.now().getTime(),
+                    25,
+                    TimeUnit.MILLISECONDS);
+    }
 }
 
 

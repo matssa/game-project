@@ -1,5 +1,6 @@
 package car.superfun.game.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Stack;
@@ -37,6 +38,7 @@ public class GameStateManager {
     public void push(State state)
     {
         states.push(state);
+        Gdx.graphics.requestRendering();
     }
 
     /**
@@ -45,6 +47,7 @@ public class GameStateManager {
     public void pop(){
         dispose();
         states.pop();
+        Gdx.graphics.requestRendering();
     }
 
     /**
@@ -56,6 +59,7 @@ public class GameStateManager {
         dispose();
         states.pop();
         states.push(state);
+        Gdx.graphics.requestRendering();
     }   
 
     /**

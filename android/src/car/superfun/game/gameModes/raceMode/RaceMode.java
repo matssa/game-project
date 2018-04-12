@@ -41,6 +41,8 @@ public class RaceMode extends GameMode {
     private int amountOfCheckpoints;
     private boolean singlePlayer;
 
+    private short counter = 0;
+
     private class checkpointUserData implements UserDataCreater {
         private int id;
 
@@ -105,6 +107,17 @@ public class RaceMode extends GameMode {
             TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
         }
 
+//        new Timer().schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                for (OpponentCar car : opponentCars) {
+//                    car.logPos();
+//                }
+//            }
+//        }, 10000);
+
+        androidLauncher.readyToStart();
+
     }
 
     // Google Game Service sets the opponent cars
@@ -133,8 +146,10 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
-        world.step(1f/60f, 2, 1); // Low precision high efficiency
+//        world.step(1f/60f, 2, 1); // Low precision high efficiency
 //        world.step(1f/60f, 6, 2); // High precision low efficiency
+        world.step(dt, 2, 1); // Using deltaTime
+
         localCarController.update();
         localRaceCar.update(dt);
         camera.position.set(localRaceCar.getSpritePosition(), 0);
@@ -145,11 +160,14 @@ public class RaceMode extends GameMode {
         }
 
         camera.up.set(localRaceCar.getDirectionVector(), 0);
-        if(!singlePlayer){
+//        if(!singlePlayer && counter > 3){
             Vector2 position = localRaceCar.getBody().getTransform().getPosition();
             float angle = localRaceCar.getDirectionFloat();
             androidLauncher.broadcast(false, 0, localRaceCar.getVelocity(), position, angle);
-        }
+            counter = 0;
+//        } else {
+//            counter++;
+//        }
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
