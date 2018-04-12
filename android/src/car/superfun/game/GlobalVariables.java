@@ -25,7 +25,7 @@ public final class GlobalVariables {
         logVector(vector, "Vector log: ");
     }
 
-    public static final boolean TESTING_MODE = true;
+    public static final boolean TESTING_MODE = false;
 
     public static int worldStepCounter = 0;
     public static int opponentCarSetMovementCounter = 0;

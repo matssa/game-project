@@ -47,9 +47,6 @@ public class OpponentCar extends Car {
         super.update(dt);
         if (doUpdate) {
             doUpdate = false;
-//            if(body.getPosition().x > newPosition.x) {
-//                Gdx.app.log("" + timestamp + "@ OpponentCar:", "oldX: " + body.getPosition().x + ", newX: " + newPosition.x + ", sentX: " + sentPosition.x);
-//            }
             body.setTransform(newPosition, newAngle);
             body.setLinearVelocity(newVelocity);
         }
@@ -57,24 +54,24 @@ public class OpponentCar extends Car {
 
     public void setMovement(float xPos, float yPos, float angle, Vector2 velocity, int timeDiff, int timestamp) {
         sentPosition = new Vector2(xPos, yPos);
-        Vector2 travelledDistance = velocity.cpy().scl((0.5f * carController.getForward() + 1f) * 10 * (float) timeDiff / 10000f);
-        newPosition = sentPosition.cpy().add(travelledDistance);
-        newAngle = angle;
+        Vector2 travelledDistance = velocity.cpy().scl((0.5f * carController.getForward() + 1f) * 15 * (float) timeDiff / 10000f);
+        Vector2 updatedPosition = sentPosition.cpy().add(travelledDistance);
+        Vector2 positionDifference = updatedPosition.cpy().sub(body.getPosition());
+        if (positionDifference.len() < 2) {
+            newPosition = body.getPosition().cpy().add(positionDifference.scl(0.1f));
+        } else {
+            newPosition = updatedPosition;
+        }
+        float angleDifference = body.getAngle() - angle;
+        if (Math.abs(angleDifference) < 1) {
+            newAngle = body.getAngle() - 0.1f * angleDifference;
+        } else {
+            newAngle = angle;
+        }
         newVelocity = velocity;
         doUpdate = true;
         GlobalVariables.opponentCarSetMovementCounter++;
-        Gdx.app.log("opponentCar", "setMovement");
         this.timestamp = timestamp;
-//        Gdx.app.log("setMovement", "new position: (" + newPosition.x + ", " + newPosition.y + "), new angle: " + angle);
-//        if (body.getPosition().x > newPosition.x) {
-////            Gdx.app.log("LAG!", "New position behind current");
-////            GlobalVariables.logVector(body.getPosition(), "current position");
-////            GlobalVariables.logVector(newPosition, "new position");
-//            posSmaller++;
-//        } else {
-//            posLarger++;
-//        }
-
     }
 
 //    public void logPos() {

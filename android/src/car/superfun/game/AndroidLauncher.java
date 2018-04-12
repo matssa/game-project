@@ -688,6 +688,7 @@ public class AndroidLauncher extends AndroidApplication {
 
     private class ClockSynchronizer extends Thread {
         public void run() {
+            int counter = 5;
             while (!TrueTime.isInitialized()) {
                 Gdx.app.log("ClockSync", "start of run");
                 try {
@@ -700,6 +701,10 @@ public class AndroidLauncher extends AndroidApplication {
                     Gdx.app.error("TrueTime ERROR:", "True time is not initialized");
                 } else {
                     Gdx.app.log("TrueTime", "True time now initialized! :D");
+                }
+                counter--;
+                if (counter <= 0) {
+                    break;
                 }
             }
         }
@@ -737,7 +742,7 @@ public class AndroidLauncher extends AndroidApplication {
             ScheduledExecutorService renderService = Executors.newSingleThreadScheduledExecutor();
             renderService.scheduleAtFixedRate(renderRequester,
                     startTime - TrueTime.now().getTime(),
-                    100,
+                    25,
                     TimeUnit.MILLISECONDS);
     }
 }

@@ -42,7 +42,7 @@ public class LocalRaceCar extends LocalCar {
         if (doRotate) {
 //            float newAngle = body.getTransform().getRotation() + rotateBy;
 //            body.setTransform(body.getPosition(), newAngle);
-            body.setTransform(20f, 10.4f, (float) (-Math.PI / 2));
+            body.setTransform(20f, 110.4f, (float) (-Math.PI / 2));
             doRotate = false;
             rotateBy = 0f;
         }
