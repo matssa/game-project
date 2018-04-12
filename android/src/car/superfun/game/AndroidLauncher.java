@@ -629,17 +629,19 @@ public class AndroidLauncher extends AndroidApplication {
 
     private class ClockSynchronizer extends Thread {
         public void run() {
-            Gdx.app.log("ClockSync", "start of run");
-            try {
-                TrueTime.build().initialize();
-            } catch (IOException ex) {
-                Gdx.app.log("IOException from TrueTime:", ex.getMessage());
-                ex.printStackTrace();
-            }
-            if (!TrueTime.isInitialized()) {
-                Gdx.app.error("TrueTime ERROR:", "True time is not initialized");
-            } else {
-                Gdx.app.log("TrueTime", "True time now initialized! :D");
+            while (!TrueTime.isInitialized()) {
+                Gdx.app.log("ClockSync", "start of run");
+                try {
+                    TrueTime.build().initialize();
+                } catch (IOException ex) {
+                    Gdx.app.log("IOException from TrueTime:", ex.getMessage());
+                    ex.printStackTrace();
+                }
+                if (!TrueTime.isInitialized()) {
+                    Gdx.app.error("TrueTime ERROR:", "True time is not initialized");
+                } else {
+                    Gdx.app.log("TrueTime", "True time now initialized! :D");
+                }
             }
         }
     }
