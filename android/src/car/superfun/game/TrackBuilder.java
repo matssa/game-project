@@ -134,8 +134,8 @@ public class TrackBuilder {
 
         rectangle = rectangleObject.getRectangle();
         polygonShape = new PolygonShape();
-        size = new Vector2((rectangle.x + rectangle.width * 0.5f) / CarSuperFun.PIXELS_TO_METERS,(rectangle.y + rectangle.height * 0.5f ) / CarSuperFun.PIXELS_TO_METERS);
-        polygonShape.setAsBox(rectangle.width * 0.5f / CarSuperFun.PIXELS_TO_METERS, rectangle.height * 0.5f / CarSuperFun.PIXELS_TO_METERS, size, 0.0f);
+        size = new Vector2((rectangle.x + rectangle.width * 0.5f) / GlobalVariables.PIXELS_TO_METERS,(rectangle.y + rectangle.height * 0.5f ) / GlobalVariables.PIXELS_TO_METERS);
+        polygonShape.setAsBox(rectangle.width * 0.5f / GlobalVariables.PIXELS_TO_METERS, rectangle.height * 0.5f / GlobalVariables.PIXELS_TO_METERS, size, 0.0f);
         return polygonShape;
     }
 
@@ -145,8 +145,8 @@ public class TrackBuilder {
 
         circle = circleMapObject.getCircle();
         circleShape = new CircleShape();
-        circleShape.setRadius(circle.radius / CarSuperFun.PIXELS_TO_METERS);
-        circleShape.setPosition(new Vector2(circle.x / CarSuperFun.PIXELS_TO_METERS, circle.y / CarSuperFun.PIXELS_TO_METERS));
+        circleShape.setRadius(circle.radius / GlobalVariables.PIXELS_TO_METERS);
+        circleShape.setPosition(new Vector2(circle.x / GlobalVariables.PIXELS_TO_METERS, circle.y / GlobalVariables.PIXELS_TO_METERS));
         return circleShape;
     }
 
@@ -160,7 +160,7 @@ public class TrackBuilder {
         worldVertices = new float[vertices.length];
 
         for (int i = 0; i < vertices.length; ++i) {
-            worldVertices[i] = vertices[i] / CarSuperFun.PIXELS_TO_METERS;
+            worldVertices[i] = vertices[i] / GlobalVariables.PIXELS_TO_METERS;
         }
 
         polygonShape.set(worldVertices);
@@ -173,8 +173,8 @@ public class TrackBuilder {
 
         for (int i = 0; i < vertices.length / 2; ++i) {
             worldVertices[i] = new Vector2();
-            worldVertices[i].x = vertices[i * 2] / CarSuperFun.PIXELS_TO_METERS;
-            worldVertices[i].y = vertices[i * 2 + 1] / CarSuperFun.PIXELS_TO_METERS;
+            worldVertices[i].x = vertices[i * 2] / GlobalVariables.PIXELS_TO_METERS;
+            worldVertices[i].y = vertices[i * 2 + 1] / GlobalVariables.PIXELS_TO_METERS;
         }
 
         ChainShape chainShape = new ChainShape();

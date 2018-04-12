@@ -8,8 +8,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,9 +39,21 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.instacart.library.truetime.TrueTime;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import car.superfun.game.car.OpponentCarController;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -51,31 +66,55 @@ public class AndroidLauncher extends AndroidApplication {
     final static int RC_WAITING_ROOM = 10002;
 
     // Client used to sign in with Google APIs
-    private GoogleSignInClient mGoogleSignInClient = null;
+    private GoogleSignInClient googleSignInClient = null;
 
     // Client used to interact with the real time multiplayer system.
-    private RealTimeMultiplayerClient mRealTimeMultiplayerClient = null;
+    private RealTimeMultiplayerClient realTimeMultiplayerClient = null;
 
-    private RoomConfig mJoinedRoomConfig = null;
+    private RoomConfig joinedRoomConfig = null;
 
-    private String mRoomId;
+    private String roomId;
 
     // The participants in the currently active game
-    ArrayList<Participant> mParticipants = null;
+    ArrayList<Participant> participants = null;
 
     // My participant ID in the currently active game
-    String mMyId = null;
+    String myId = null;
 
     private CarSuperFun carSuperFun;
+
+    private int lastTimestamp;
+    private int messageNumber;
+    private int lastMessageReceived;
+    private int readyParticipants = 0;
+    private long startTime = 0;
+
+    private Vector2 lastSentPosition;
+
+    Map<String, OpponentCarController> participantCarControllers = null;
+
+    // Participants who sent us their final score.
+    Set<String> finishedParticipants = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+
         this.carSuperFun =  new CarSuperFun(this);
         initialize(carSuperFun, config);
+        participantCarControllers = new HashMap<>();
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+        googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+
+        lastTimestamp = 0;
+        messageNumber = 0;
+        lastMessageReceived = 0;
+        lastSentPosition = new Vector2(0,0);
+
+        ClockSynchronizer clockSync = new ClockSynchronizer();
+        clockSync.start();
+        Gdx.graphics.setContinuousRendering(false);
     }
 
     @Override
@@ -90,7 +129,6 @@ public class AndroidLauncher extends AndroidApplication {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        Log.d(TAG, "HERE");
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == RC_SIGN_IN) {
             Log.d(TAG, "onActivityResult()");
@@ -109,9 +147,16 @@ public class AndroidLauncher extends AndroidApplication {
         }  else if (requestCode == RC_WAITING_ROOM) {
             // we got the result from the "waiting room" UI.
             if (resultCode == Activity.RESULT_OK) {
-                // ready to start playing
-                carSuperFun.startGame();
                 Log.d(TAG, "Starting game (waiting room returned OK).");
+               // GameStateManager.getInstance().push(new RaceMode(this, false));
+
+                for(Participant participant : participants) {
+                    if (participant.getParticipantId().equals(myId)) {
+                        continue;
+                    }
+                    OpponentCarController opponentCarController = new OpponentCarController();
+                    participantCarControllers.put(participant.getParticipantId(), opponentCarController);
+                }
 
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 // player indicated that they want to leave the room
@@ -153,7 +198,7 @@ public class AndroidLauncher extends AndroidApplication {
     public void signInSilently() {
         Log.d(TAG, "signInSilently()");
 
-        mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
+        googleSignInClient.silentSignIn().addOnCompleteListener(this,
                 new OnCompleteListener<GoogleSignInAccount>() {
                     @Override
                     public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
@@ -172,15 +217,16 @@ public class AndroidLauncher extends AndroidApplication {
     }
 
     public void startQuickGame() {
+        readyParticipants = 0;
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 2, 0);
 
         // build the room config:
-        mJoinedRoomConfig =
-                RoomConfig.builder(mRoomUpdateCallback)
-                        .setOnMessageReceivedListener(mMessageReceivedHandler)
-                        .setRoomStatusUpdateCallback(mRoomStatusCallbackHandler)
+        joinedRoomConfig =
+                RoomConfig.builder(roomUpdateCallback)
+                        .setOnMessageReceivedListener(messageReceivedHandler)
+                        .setRoomStatusUpdateCallback(roomStatusCallbackHandler)
                         .setAutoMatchCriteria(autoMatchCriteria)
                         .build();
 
@@ -189,11 +235,11 @@ public class AndroidLauncher extends AndroidApplication {
 
         // create room:
         Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this))
-                .create(mJoinedRoomConfig);
+                .create(joinedRoomConfig);
     }
 
 
-    private RoomUpdateCallback mRoomUpdateCallback = new RoomUpdateCallback() {
+    private RoomUpdateCallback roomUpdateCallback = new RoomUpdateCallback() {
 
         // Called when room has been created
         @Override
@@ -206,7 +252,7 @@ public class AndroidLauncher extends AndroidApplication {
             }
 
             // save room ID so we can leave cleanly before the game starts.
-            mRoomId = room.getRoomId();
+            roomId = room.getRoomId();
 
             // show the waiting room UI
             showWaitingRoom(room);
@@ -261,19 +307,19 @@ public class AndroidLauncher extends AndroidApplication {
      * API callbacks.
      */
 
-    private String mPlayerId;
+    private String playerId;
 
     // The currently signed in account, used to check the account has changed outside of this activity when resuming.
-    GoogleSignInAccount mSignedInAccount = null;
+    GoogleSignInAccount signedInAccount = null;
 
     private void onConnected(GoogleSignInAccount googleSignInAccount) {
         Log.d(TAG, "onConnected(): connected to Google APIs");
-        if (mSignedInAccount != googleSignInAccount) {
+        if (signedInAccount != googleSignInAccount) {
 
-            mSignedInAccount = googleSignInAccount;
+            signedInAccount = googleSignInAccount;
 
             // update the clients
-            mRealTimeMultiplayerClient = Games.getRealTimeMultiplayerClient(this, googleSignInAccount);
+            realTimeMultiplayerClient = Games.getRealTimeMultiplayerClient(this, googleSignInAccount);
 
             // get the playerId from the PlayersClient
             PlayersClient playersClient = Games.getPlayersClient(this, googleSignInAccount);
@@ -281,7 +327,7 @@ public class AndroidLauncher extends AndroidApplication {
                     .addOnSuccessListener(new OnSuccessListener<Player>() {
                         @Override
                         public void onSuccess(Player player) {
-                            mPlayerId = player.getPlayerId();
+                            playerId = player.getPlayerId();
 
                             getMenuScreen();
                         }
@@ -291,12 +337,6 @@ public class AndroidLauncher extends AndroidApplication {
 
     }
 
-    OnRealTimeMessageReceivedListener mMessageReceivedHandler = new OnRealTimeMessageReceivedListener() {
-        @Override
-        public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
-            // TODO SEND DATA
-        }
-    };
 
     private OnFailureListener createFailureListener(final String string) {
         return new OnFailureListener() {
@@ -307,7 +347,7 @@ public class AndroidLauncher extends AndroidApplication {
         };
     }
 
-    private RoomStatusUpdateCallback mRoomStatusCallbackHandler = new RoomStatusUpdateCallback() {
+    private RoomStatusUpdateCallback roomStatusCallbackHandler = new RoomStatusUpdateCallback() {
         // Called when we are connected to the room. We're not ready to play yet! (maybe not everybody
         // is connected yet).
         @Override
@@ -315,25 +355,28 @@ public class AndroidLauncher extends AndroidApplication {
             Log.d(TAG, "onConnectedToRoom.");
 
             //get participants and my ID:
-            mParticipants = room.getParticipants();
-            mMyId = room.getParticipantId(mPlayerId);
+            participants = room.getParticipants();
+            myId = room.getParticipantId(playerId);
 
             // save room ID if its not initialized in onRoomCreated() so we can leave cleanly before the game starts.
-            if (mRoomId == null) {
-                mRoomId = room.getRoomId();
+            if (roomId == null) {
+                roomId = room.getRoomId();
             }
 
             // print out the list of participants (for debug purposes)
-            Log.d(TAG, "Room ID: " + mRoomId);
-            Log.d(TAG, "My ID " + mMyId);
+            Log.d(TAG, "Room ID: " + roomId);
+            Log.d(TAG, "My ID " + myId);
             Log.d(TAG, "<< CONNECTED TO ROOM>>");
+
+            // Make sure to start the game with lastTimestamp = 0
+            lastTimestamp = 0;
         }
 
         // Called when we get disconnected from the room. We return to the main screen.
         @Override
         public void onDisconnectedFromRoom(Room room) {
-            mRoomId = null;
-            mJoinedRoomConfig = null;
+            roomId = null;
+            joinedRoomConfig = null;
             showGameError();
         }
 
@@ -395,13 +438,13 @@ public class AndroidLauncher extends AndroidApplication {
     void leaveRoom() {
         Log.d(TAG, "Leaving room.");
         stopKeepingScreenOn();
-        if (mRoomId != null) {
-            mRealTimeMultiplayerClient.leave(mJoinedRoomConfig, mRoomId)
+        if (roomId != null) {
+            realTimeMultiplayerClient.leave(joinedRoomConfig, roomId)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            mRoomId = null;
-                            mJoinedRoomConfig = null;
+                            roomId = null;
+                            joinedRoomConfig = null;
                         }
                     });
 
@@ -426,7 +469,7 @@ public class AndroidLauncher extends AndroidApplication {
         // For simplicity, we require everyone to join the game before we start it
         // (this is signaled by Integer.MAX_VALUE).
         final int MIN_PLAYERS = Integer.MAX_VALUE;
-        mRealTimeMultiplayerClient.getWaitingRoomIntent(room, MIN_PLAYERS)
+        realTimeMultiplayerClient.getWaitingRoomIntent(room, MIN_PLAYERS)
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
                     @Override
                     public void onSuccess(Intent intent) {
@@ -490,7 +533,218 @@ public class AndroidLauncher extends AndroidApplication {
                 .show();
     }
 
+    // Called when we receive a real-time message from the network.
+    // Messages in our game are made up of 2 bytes: the first one is 'F' or 'U'
+    // indicating
+    // whether it's a final or interim score. The second byte is the score.
+    // There is also the
+    // 'S' message, which indicates that the game should start.
+    OnRealTimeMessageReceivedListener messageReceivedHandler = new OnRealTimeMessageReceivedListener() {
+        @Override
+        public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+//            String sender = realTimeMessage.getSenderParticipantId();
 
+            ByteBuffer buffer = ByteBuffer.wrap(realTimeMessage.getMessageData());
+            if (buffer.getChar(0) == 'U' || buffer.getChar(0) == 'F') {
+
+                int timestamp = buffer.getInt(22);
+                if (timestamp < lastTimestamp) {
+                    return;
+                }
+                lastTimestamp = timestamp;
+
+                int timeDiff = Math.abs(((int) (TrueTime.now().getTime() % 2147483648L)) - timestamp);
+
+                Vector2 velocity = new Vector2(buffer.getFloat(2), buffer.getFloat(6));
+
+                float x = buffer.getFloat(10);
+                float y = buffer.getFloat(14);
+                float angle = buffer.getFloat(18);
+                int thisMessageNumber = buffer.getInt(26);
+                if (thisMessageNumber > lastMessageReceived + 1) {
+                    Gdx.app.log("Packed loss!", "this message: " + thisMessageNumber + ", last message: " + lastMessageReceived);
+                    Gdx.app.log("Time difference: ", "" + timeDiff);
+                }
+                lastMessageReceived = thisMessageNumber;
+
+                OpponentCarController opponentCarController = participantCarControllers.get(realTimeMessage.getSenderParticipantId());
+
+                if (opponentCarController.hasControlledCar()) {
+                    opponentCarController.getControlledCar().setMovement(x, y, angle, velocity, timeDiff, timestamp);
+                } else {
+                    Gdx.app.log("opponentCarController missing car", "id: " + realTimeMessage.getSenderParticipantId());
+                }
+
+                // if it's a final score, mark this participant as having finished
+                // the game
+                if (buffer.getChar(0) == 'F') {
+                    finishedParticipants.add(realTimeMessage.getSenderParticipantId());
+                }
+            } else if (buffer.getChar(0) == 'R') {
+                newParticipantReady(buffer.getLong(2));
+            } else if (buffer.getChar(0) == 'C') {
+                OpponentCarController opponentCarController = participantCarControllers.get(realTimeMessage.getSenderParticipantId());
+                opponentCarController.setForwardAndRotation(buffer.getFloat(2), buffer.getFloat(6));
+            } else {
+                Gdx.app.log("unknown byte buffer content", "length: " + buffer.array().length);
+                for (byte b : buffer.array()) {
+                    Gdx.app.log("byte: ", "" + b);
+                }
+            }
+        }
+    };
+
+    private void broadcastReliableMessage(byte[] byteArray) {
+        // Send to every other participant.
+        for (Participant p : participants) {
+            if (p.getParticipantId().equals(myId)) {
+                continue;
+            }
+            if (p.getStatus() != Participant.STATUS_JOINED) {
+                continue;
+            }
+            realTimeMultiplayerClient.sendReliableMessage(byteArray,
+                    roomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
+                        @Override
+                        public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
+                            Log.d(TAG, "RealTime message sent");
+                            Log.d(TAG, "  statusCode: " + statusCode);
+                            Log.d(TAG, "  tokenId: " + tokenId);
+                            Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                        }
+                    })
+                    .addOnSuccessListener(new OnSuccessListener<Integer>() {
+                        @Override
+                        public void onSuccess(Integer tokenId) {
+                            Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                        }
+                    });
+        }
+    }
+
+    public void broadcastController(float forward, float rotation) {
+        ByteBuffer messageBuffer = ByteBuffer.allocate(10);
+
+        messageBuffer.putChar(0, 'C');
+        messageBuffer.putFloat(2, forward);
+        messageBuffer.putFloat(6, rotation);
+
+        for (Participant p : participants) {
+            if (p.getParticipantId().equals(myId)) {
+                continue;
+            }
+            if (p.getStatus() != Participant.STATUS_JOINED) {
+                continue;
+            }
+            // it's an interim score notification, so we can use unreliable
+            realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), roomId, p.getParticipantId());
+        }
+    }
+
+
+    public void broadcast(boolean finalScore, int score, Vector2 velocity, Vector2 position, float angle) {
+
+        ByteBuffer messageBuffer = ByteBuffer.allocate(30);
+
+        // First byte in message indicates whether it's a final score or not
+//        messageBuffer.putChar(finalScore ? 'F' : 'U');
+        messageBuffer.putChar(0, 'U'); // TODO: put 'F' if final score, and send score
+
+        messageBuffer.putFloat(2, velocity.x);
+        messageBuffer.putFloat(6, velocity.y);
+
+        messageBuffer.putFloat(10, position.x);
+        messageBuffer.putFloat(14, position.y);
+        messageBuffer.putFloat(18, angle);
+
+        int timestamp = (int) (TrueTime.now().getTime() % 2147483648L);
+        messageBuffer.putInt(22, timestamp);
+        messageBuffer.putInt(26, messageNumber++);
+
+        // Send to all the other participants.
+        if (finalScore) {
+            broadcastReliableMessage(messageBuffer.array());
+        } else {
+            for (Participant p : participants) {
+                if (p.getParticipantId().equals(myId)) {
+                    continue;
+                }
+                if (p.getStatus() != Participant.STATUS_JOINED) {
+                    continue;
+                }
+                // it's an interim score notification, so we can use unreliable
+                realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), roomId, p.getParticipantId());
+            }
+        }
+    }
+
+    public Array<OpponentCarController> getOpponentCarControllers() {
+        Array<OpponentCarController> opponentCarControllers = new Array<OpponentCarController>(participantCarControllers.size());
+        for (Map.Entry<String, OpponentCarController> entry : participantCarControllers.entrySet()) {
+            opponentCarControllers.add(entry.getValue());
+        }
+        return opponentCarControllers;
+    }
+
+    private class ClockSynchronizer extends Thread {
+        public void run() {
+            int counter = 5;
+            while (!TrueTime.isInitialized()) {
+                Gdx.app.log("ClockSync", "start of run");
+                try {
+                    TrueTime.build().initialize();
+                } catch (IOException ex) {
+                    Gdx.app.log("IOException from TrueTime:", ex.getMessage());
+                    ex.printStackTrace();
+                }
+                if (!TrueTime.isInitialized()) {
+                    Gdx.app.error("TrueTime ERROR:", "True time is not initialized");
+                } else {
+                    Gdx.app.log("TrueTime", "True time now initialized! :D");
+                }
+                counter--;
+                if (counter <= 0) {
+                    break;
+                }
+            }
+        }
+    }
+
+    public void readyToStart() {
+        ByteBuffer messageBuffer = ByteBuffer.allocate(10);
+        messageBuffer.putChar(0, 'R');
+
+        long proposedStartTime = TrueTime.now().getTime() + 3000;
+        messageBuffer.putLong(2, proposedStartTime);
+
+        newParticipantReady(proposedStartTime);
+
+        broadcastReliableMessage(messageBuffer.array());
+    }
+
+    private void newParticipantReady(long newStartTime) {
+        readyParticipants++;
+        if (newStartTime > this.startTime) {
+            this.startTime = newStartTime;
+        }
+        if (readyParticipants == participants.size()) {
+            startRenderService();
+        }
+    }
+
+    private void startRenderService() {
+            Runnable renderRequester = new Runnable() {
+                @Override
+                public void run() {
+                    Gdx.graphics.requestRendering();
+                }
+            };
+            ScheduledExecutorService renderService = Executors.newSingleThreadScheduledExecutor();
+            renderService.scheduleAtFixedRate(renderRequester,
+                    startTime - TrueTime.now().getTime(),
+                    25,
+                    TimeUnit.MILLISECONDS);
+    }
 }
 
 

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.menus.LoginMenu;
 import car.superfun.game.states.GameStateManager;
 
@@ -20,8 +21,6 @@ public class CarSuperFun extends ApplicationAdapter {
     private AndroidLauncher androidLauncher;
 
     private boolean justPressedBack;
-
-    public static final float PIXELS_TO_METERS = 100f;
 
     /**
      * Sets up the app
@@ -69,7 +68,7 @@ public class CarSuperFun extends ApplicationAdapter {
         // in such case the app is closed
         if (Gdx.input.isKeyPressed(Input.Keys.BACK) && !justPressedBack) {
             if (gsm.isOnlyOneLeft()) {
-                Gdx.app.exit();
+                Gdx.app.exit(); // TODO this can no longer be reached
             } else {
                 justPressedBack = true;
                 new Timer().schedule(new TimerTask() {
@@ -91,7 +90,7 @@ public class CarSuperFun extends ApplicationAdapter {
         batch.dispose();
     }
 
-    public void startGame() {
-
+    public void startGame(AndroidLauncher androidLauncher) {
+        gsm.push(new RaceMode(androidLauncher, false));
     }
 }

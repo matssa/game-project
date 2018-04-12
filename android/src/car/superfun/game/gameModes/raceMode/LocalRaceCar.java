@@ -6,18 +6,23 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.Arrays;
 
-import car.superfun.game.car.CarController;
+import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.LocalCar;
 
 public class LocalRaceCar extends LocalCar {
     boolean[] passedCheckpoints;
     int completedRounds;
 
-        public LocalRaceCar(Vector2 position, CarController carController, World world, int amountOfCheckpoints) {
-            super(position, carController, world);
-            passedCheckpoints = new boolean[amountOfCheckpoints];
-            Arrays.fill(passedCheckpoints, Boolean.FALSE);
-            completedRounds = 0;
+    private boolean doRotate;
+    private float rotateBy;
+
+    public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world, int amountOfCheckpoints) {
+        super(position, localCarController, world);
+        passedCheckpoints = new boolean[amountOfCheckpoints];
+        Arrays.fill(passedCheckpoints, Boolean.FALSE);
+        completedRounds = 0;
+        doRotate = false;
+        rotateBy = 0f;
     }
 
     public void passCheckpoint(int checkpointId) {
@@ -32,6 +37,17 @@ public class LocalRaceCar extends LocalCar {
         }
     }
 
+    public void update(float dt) {
+        super.update(dt);
+        if (doRotate) {
+//            float newAngle = body.getTransform().getRotation() + rotateBy;
+//            body.setTransform(body.getPosition(), newAngle);
+            body.setTransform(20f, 110.4f, (float) (-Math.PI / 2));
+            doRotate = false;
+            rotateBy = 0f;
+        }
+    }
+
     private boolean allCheckpointsPassed() {
         for (boolean checkpointPassed : passedCheckpoints) {
             if (!checkpointPassed) {
@@ -39,5 +55,10 @@ public class LocalRaceCar extends LocalCar {
             }
         }
         return true;
+    }
+
+    public void rotateBy(float angle) {
+        doRotate = true;
+        rotateBy = angle;
     }
 }

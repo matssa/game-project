@@ -273,7 +273,7 @@
    <polyline points="0,0 0,466"/>
   </object>
  </objectgroup>
- <objectgroup name="checkpoints" locked="1">
+ <objectgroup name="checkpoints">
   <object id="49" x="11335.3" y="2731.33">
    <polyline points="0,0 472,-0.666667"/>
   </object>
@@ -285,6 +285,17 @@
   </object>
  </objectgroup>
  <objectgroup name="test">
-  <object id="53" gid="125" x="3639" y="1773" width="354" height="370" rotation="90"/>
+  <object id="53" x="10790" y="2210">
+   <polyline points="390,0 390,-520"/>
+  </object>
+  <object id="54" x="11310" y="10270">
+   <polyline points="0,390 520,390"/>
+  </object>
+  <object id="55" x="2210" y="10790">
+   <polyline points="-390,0 -390,520"/>
+  </object>
+  <object id="56" x="1690" y="2730">
+   <polyline points="0,-390 -520,-390"/>
+  </object>
  </objectgroup>
 </map>
