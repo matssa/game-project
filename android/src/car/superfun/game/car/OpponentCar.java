@@ -12,9 +12,6 @@ import car.superfun.game.GlobalVariables;
 
 public class OpponentCar extends Car {
 
-//    private int posLarger = 0;
-//    private int posSmaller = 0;
-
     boolean doUpdate;
     Vector2 newPosition;
     Vector2 newVelocity;
@@ -32,13 +29,6 @@ public class OpponentCar extends Car {
         doUpdate = false;
     }
 
-    // Set the position of the car using values from libGDX coordinate system
-    public void setPositionAndAngle(int xCoordinate, int yCoordinate, float angle) {
-        float x = (xCoordinate + sprite.getWidth() / 2) / GlobalVariables.PIXELS_TO_METERS;
-        float y = (yCoordinate + sprite.getHeight() / 2) / GlobalVariables.PIXELS_TO_METERS;
-        body.setTransform(x, y, angle);
-    }
-
     public void setTransform(float x, float y, float angle) {
         body.setTransform(x, y, angle);
     }
@@ -52,30 +42,25 @@ public class OpponentCar extends Car {
         }
     }
 
-    public void setMovement(float xPos, float yPos, float angle, Vector2 velocity, int timeDiff, int timestamp) {
-        sentPosition = new Vector2(xPos, yPos);
+    // Timestamp is for logging purposes only
+    // TODO remove timestamp when finished using it
+    public void setMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff, int timestamp) {
         Vector2 travelledDistance = velocity.cpy().scl((0.5f * carController.getForward() + 1f) * 15 * (float) timeDiff / 10000f);
-        Vector2 updatedPosition = sentPosition.cpy().add(travelledDistance);
+        Vector2 updatedPosition = position.cpy().add(travelledDistance);
         Vector2 positionDifference = updatedPosition.cpy().sub(body.getPosition());
         if (positionDifference.len() < 2) {
-            newPosition = body.getPosition().cpy().add(positionDifference.scl(0.1f));
+            newPosition = body.getPosition().cpy().add(positionDifference.scl(0.15f));
         } else {
             newPosition = updatedPosition;
         }
         float angleDifference = body.getAngle() - angle;
         if (Math.abs(angleDifference) < 1) {
-            newAngle = body.getAngle() - 0.1f * angleDifference;
+            newAngle = body.getAngle() - 0.15f * angleDifference;
         } else {
             newAngle = angle;
         }
         newVelocity = velocity;
         doUpdate = true;
-        GlobalVariables.opponentCarSetMovementCounter++;
         this.timestamp = timestamp;
     }
-
-//    public void logPos() {
-//        Gdx.app.log("Number of times updated position was smaller than current position", "" + posSmaller);
-//        Gdx.app.log("Number of times updated position was larger than current position", "" + posLarger);
-//    }
 }

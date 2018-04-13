@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.Arrays;
 
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.LocalCar;
 
@@ -39,7 +40,7 @@ public class LocalRaceCar extends LocalCar {
 
     public void update(float dt) {
         super.update(dt);
-        if (doRotate) {
+        if (GlobalVariables.TESTING_MODE && doRotate) {
 //            float newAngle = body.getTransform().getRotation() + rotateBy;
 //            body.setTransform(body.getPosition(), newAngle);
             body.setTransform(20f, 110.4f, (float) (-Math.PI / 2));
@@ -58,6 +59,9 @@ public class LocalRaceCar extends LocalCar {
     }
 
     public void rotateBy(float angle) {
+        if (!GlobalVariables.TESTING_MODE) {
+            return;
+        }
         doRotate = true;
         rotateBy = angle;
     }
