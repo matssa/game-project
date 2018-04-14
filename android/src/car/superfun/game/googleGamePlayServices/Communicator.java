@@ -31,8 +31,6 @@ public class Communicator {
 
     final static String TAG = "Communicator";
 
-    private RealTimeMultiplayerClient realTimeMultiplayerClient = null;
-
     private AndroidLauncher androidLauncher;
 
     private SetUpGame setUpGame;
@@ -133,7 +131,7 @@ public class Communicator {
                 continue;
             }
             // Using UDP so that we don't waste time resending time critical packages
-            realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), setUpGame.roomId, p.getParticipantId());
+            setUpGame.realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), setUpGame.roomId, p.getParticipantId());
         }
     }
 
@@ -146,7 +144,7 @@ public class Communicator {
             if (p.getStatus() != Participant.STATUS_JOINED) {
                 continue;
             }
-            realTimeMultiplayerClient.sendReliableMessage(byteArray,
+            setUpGame.realTimeMultiplayerClient.sendReliableMessage(byteArray,
                     setUpGame.roomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
                         @Override
                         public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {

@@ -188,17 +188,5 @@ public class RaceMode extends GameMode {
         // TODO: Implement a proper way to exit the game
     }
 
-    private class checkpointUserData implements UserDataCreater {
-        private int id;
-
-
-        public checkpointUserData() {
-            id = 0;
-        }
-
-        public Object getUserData() {
-            return id++;
-        }
-    }
 }
 
