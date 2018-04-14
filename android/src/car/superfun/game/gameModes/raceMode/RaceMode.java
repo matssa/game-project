@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
+import com.instacart.library.truetime.TrueTime;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -121,17 +122,20 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
+        if (!androidLauncher.gameStarted && !singlePlayer) {
+            return;
+        }
         for (OpponentCar car : opponentCars) {
             car.update(dt);
         }
-        localCarController.update();
         localRaceCar.update(dt);
+        world.step(dt, 2, 1); // Using deltaTime
+
         camera.position.set(localRaceCar.getSpritePosition(), 0);
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
 
-        world.step(dt, 2, 1); // Using deltaTime
-
+        localCarController.update();
         if (!singlePlayer) {
             androidLauncher.broadcastState(
                     localRaceCar.getVelocity(),

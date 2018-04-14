@@ -87,8 +87,8 @@ public class AndroidLauncher extends AndroidApplication {
     private int lastTimestamp = 0;
     private int readyParticipants = 0;
     private long startTime = 0;
-    private long myReadyTime = new Random().nextLong();
-    private int startPosition = -1;
+    private long myReadyTime = 0L;
+    public boolean gameStarted = false;
 
     Map<String, OpponentCarController> participantCarControllers = null;
 
@@ -108,7 +108,7 @@ public class AndroidLauncher extends AndroidApplication {
 
         ClockSynchronizer clockSync = new ClockSynchronizer();
         clockSync.start();
-        Gdx.graphics.setContinuousRendering(false);
+        Gdx.graphics.setContinuousRendering(true);
     }
 
     @Override
@@ -250,6 +250,7 @@ public class AndroidLauncher extends AndroidApplication {
 
             // show the waiting room UI
             showWaitingRoom(room);
+            gameStarted = false;
         }
 
         // Called when room is fully connected.
@@ -541,13 +542,13 @@ public class AndroidLauncher extends AndroidApplication {
             return;
         }
 
-        int timestamp = buffer.getInt(2);
-        if (timestamp < lastTimestamp) {
+        int packageTimestamp = buffer.getInt(2);
+        if (packageTimestamp < lastTimestamp) {
+            Gdx.app.log("package loss", "out of order package arrived. timestamp: " + packageTimestamp);
             return; // Dropping outdated message
         }
-        lastTimestamp = timestamp;
-
-        int timeDiff = Math.abs(((int) (TrueTime.now().getTime() % 2147483648L)) - timestamp);
+        lastTimestamp = packageTimestamp;
+        int timeDiff = Math.abs(((int) (TrueTime.now().getTime() % 2147483648L)) - packageTimestamp);
 
         Vector2 velocity = new Vector2(buffer.getFloat(6), buffer.getFloat(10));
         Vector2 position = new Vector2(buffer.getFloat(14), buffer.getFloat(18));
@@ -557,7 +558,7 @@ public class AndroidLauncher extends AndroidApplication {
         float rotation = buffer.getFloat(30);
 
         opponentCarController.setForwardAndRotation(forward, rotation);
-        opponentCarController.setCarMovement(position, angle, velocity, timeDiff, timestamp);
+        opponentCarController.setCarMovement(position, angle, velocity, timeDiff, packageTimestamp);
     }
 
     // Called when we receive a real-time message from the network.
@@ -651,6 +652,9 @@ public class AndroidLauncher extends AndroidApplication {
         messageBuffer.putFloat(26, forward);
         messageBuffer.putFloat(30, rotation);
 
+//        Gdx.app.log("my timestamp", "" + timestamp);
+//        GlobalVariables.logVector(position, "My position");
+
         // Send to all the other participants.
             for (Participant p : participants) {
                 if (p.getParticipantId().equals(myId)) {
@@ -674,24 +678,25 @@ public class AndroidLauncher extends AndroidApplication {
 
     private class ClockSynchronizer extends Thread { // TODO make this more reliable
         public void run() {
-            int counter = 5;
-            while (!TrueTime.isInitialized()) {
-                Gdx.app.log("ClockSync", "start of run");
+            if (!TrueTime.isInitialized()) {
+                Gdx.app.log("TrueTime", "start of run");
                 try {
-                    TrueTime.build().initialize();
+                    TrueTime.build()
+                            .withNtpHost("time.google.com")
+                            .withLoggingEnabled(false)
+                            .withConnectionTimeout(3_1428)
+                            .initialize();
                 } catch (IOException ex) {
                     Gdx.app.log("IOException from TrueTime:", ex.getMessage());
                     ex.printStackTrace();
                 }
                 if (!TrueTime.isInitialized()) {
-                    Gdx.app.error("TrueTime ERROR:", "True time is not initialized");
+                    Gdx.app.error("TrueTime", "True time is not initialized");
                 } else {
                     Gdx.app.log("TrueTime", "True time now initialized! :D");
                 }
-                counter--;
-                if (counter <= 0) {
-                    break;
-                }
+            } else {
+                Gdx.app.log("TrueTime", "True time all ready initialized! :D");
             }
         }
     }
@@ -714,10 +719,12 @@ public class AndroidLauncher extends AndroidApplication {
             this.startTime = newStartTime;
         }
         if (readyParticipants == participants.size()) {
-            startRenderService();
+//            startRenderService();
+            gameStarted = true;
         }
     }
 
+    // Seems like it's best to make libGDX do the rendering by itself for now
     // TODO: Test whether this does give a smoother simulation
     private void startRenderService() {
             Runnable renderRequester = new Runnable() {
