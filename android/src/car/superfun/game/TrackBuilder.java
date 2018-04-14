@@ -117,10 +117,10 @@ public class TrackBuilder {
 //        shape.setAsBox(tileObject.getTile().getTextureRegion().getRegionWidth() );
 //        shape.setAsBox((sprite.getWidth() / 2) / CarSuperFun.PIXELS_TO_METERS, (sprite.getHeight() / 2) / CarSuperFun.PIXELS_TO_METERS);
 
-        float width = tileObject.getTextureRegion().getRegionWidth() / (2 * CarSuperFun.PIXELS_TO_METERS);
-        float height = tileObject.getTextureRegion().getRegionHeight() / (2 * CarSuperFun.PIXELS_TO_METERS);
+        float width = tileObject.getTextureRegion().getRegionWidth() / (2 * GlobalVariables.PIXELS_TO_METERS);
+        float height = tileObject.getTextureRegion().getRegionHeight() / (2 * GlobalVariables.PIXELS_TO_METERS);
 
-        Vector2 center = new Vector2((tileObject.getX() / CarSuperFun.PIXELS_TO_METERS) + width, (tileObject.getY() / CarSuperFun.PIXELS_TO_METERS) + height);
+        Vector2 center = new Vector2((tileObject.getX() / GlobalVariables.PIXELS_TO_METERS) + width, (tileObject.getY() / GlobalVariables.PIXELS_TO_METERS) + height);
 
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(width, height, center, 0f);

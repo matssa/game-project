@@ -42,7 +42,7 @@ public class MainMenu extends State {
             if(isOnHost()){
 //              GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                RaceMode race = new RaceMode(androidLauncher, false);
+                RaceMode race = new RaceMode(androidLauncher, true);
 
 //                race.setLocalRaceCar(new Vector2(1600, 11000));
 //                Array<Vector2> opponentCars = new Array<Vector2>();

@@ -50,7 +50,7 @@ public class RaceMode extends GameMode {
 
         localCarController = new LocalCarController();
 
-        tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
+        tiledMap = new TmxMapLoader().load("tiled_maps/decentMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         FixtureDef wallDef = new FixtureDef();
@@ -73,7 +73,7 @@ public class RaceMode extends GameMode {
 
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
 
-        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(2000, 1000), localCarController, world, amountOfCheckpoints);
 
         int startX = 1900;
 
@@ -93,7 +93,11 @@ public class RaceMode extends GameMode {
             TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
         }
 
-        androidLauncher.readyToStart();
+        if (singlePlayer) {
+            androidLauncher.gameStarted = true;
+        } else {
+            androidLauncher.readyToStart();
+        }
     }
 
     // Google Game Service sets the opponent cars
