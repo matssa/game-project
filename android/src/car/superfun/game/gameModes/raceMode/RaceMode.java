@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
+import com.instacart.library.truetime.TrueTime;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,21 +41,6 @@ public class RaceMode extends GameMode {
     private Array<OpponentCar> opponentCars;
     private int amountOfCheckpoints;
     private boolean singlePlayer;
-
-    private short counter = 0;
-
-    private class checkpointUserData implements UserDataCreater {
-        private int id;
-
-
-        public checkpointUserData() {
-            id = 0;
-        }
-
-        public Object getUserData() {
-            return id++;
-        }
-    }
 
     public RaceMode(AndroidLauncher androidLauncher, boolean singlePlayer) {
         super();
@@ -94,8 +80,8 @@ public class RaceMode extends GameMode {
         Array<OpponentCarController> opponentCarControllers = androidLauncher.getOpponentCarControllers();
 
         opponentCars = new Array<OpponentCar>();
-        for (OpponentCarController oppCC : opponentCarControllers) {
-            opponentCars.add(new OpponentCar(new Vector2(startX, 11000), oppCC, world));
+        for (OpponentCarController opponentCarController : opponentCarControllers) {
+            opponentCars.add(new OpponentCar(new Vector2(startX, 11000), opponentCarController, world));
             startX -= 100;
         }
 
@@ -107,16 +93,7 @@ public class RaceMode extends GameMode {
             TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
         }
 
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Gdx.app.log("WorldSteps:", "" + GlobalVariables.worldStepCounter);
-                Gdx.app.log("setMovements:", "" + GlobalVariables.opponentCarSetMovementCounter);
-            }
-        }, 10000);
-
         androidLauncher.readyToStart();
-
     }
 
     // Google Game Service sets the opponent cars
@@ -135,7 +112,7 @@ public class RaceMode extends GameMode {
     public void setLocalRaceCar(Vector2 position) {
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
-        localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), localCarController, world, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(1600, 10900), localCarController, world, amountOfCheckpoints);
     }
 
     @Override
@@ -145,32 +122,28 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
+        if (!androidLauncher.gameStarted && !singlePlayer) {
+            return;
+        }
         for (OpponentCar car : opponentCars) {
             car.update(dt);
         }
-//        world.step(1f/60f, 2, 1); // Low precision high efficiency
-//        world.step(1f/60f, 6, 2); // High precision low efficiency
+        localRaceCar.update(dt);
         world.step(dt, 2, 1); // Using deltaTime
 
-        localCarController.update();
-        localRaceCar.update(dt);
         camera.position.set(localRaceCar.getSpritePosition(), 0);
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
 
-
+        localCarController.update();
         if (!singlePlayer) {
-            androidLauncher.broadcastController(localCarController.forward, localCarController.rotation);
-            Vector2 position = localRaceCar.getBody().getTransform().getPosition();
-            float angle = localRaceCar.getDirectionFloat();
-            androidLauncher.broadcast(false, 0, localRaceCar.getVelocity(), position, angle);
-//            counter = 0;
+            androidLauncher.broadcastState(
+                    localRaceCar.getVelocity(),
+                    localRaceCar.getBodyPosition(),
+                    localRaceCar.getAngle(),
+                    localCarController.getForward(),
+                    localCarController.getRotation());
         }
-
-//        if(!singlePlayer && counter > 3){
-//        } else {
-//            counter++;
-//        }
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
@@ -198,4 +171,18 @@ public class RaceMode extends GameMode {
     public void endGame() {
         // TODO: Implement a proper way to exit the game
     }
+
+    private class checkpointUserData implements UserDataCreater {
+        private int id;
+
+
+        public checkpointUserData() {
+            id = 0;
+        }
+
+        public Object getUserData() {
+            return id++;
+        }
+    }
 }
+
