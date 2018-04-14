@@ -17,24 +17,31 @@ import com.google.android.gms.tasks.Task;
 import java.util.Set;
 
 import car.superfun.game.AndroidLauncher;
+import car.superfun.game.CarSuperFun;
+import car.superfun.game.NewState;
+import car.superfun.game.menus.LoginMenu;
+import car.superfun.game.menus.MainMenu;
+import car.superfun.game.states.GameStateManager;
 
 
 public class SignIn  {
 
-    final static String TAG = "SignInCarSuperFun";
+    private final static String TAG = "SignIn";
 
     private AndroidLauncher androidLauncher;
 
     // Request code used to invoke sign in user interactions.
     public static final int SIGN_IN_ID = 9001;
 
+    private CarSuperFun carSuperFun;
     private SetUpGame setUpGame;
     // Client used to sign in with Google APIs
     private GoogleSignInClient googleSignInClient = null;
 
-    public SignIn(AndroidLauncher androidLauncher, SetUpGame setUpGame) {
+    public SignIn(AndroidLauncher androidLauncher, SetUpGame setUpGame, CarSuperFun carSuperFun) {
         this.setUpGame = setUpGame;
         this.androidLauncher = androidLauncher;
+        this.carSuperFun = carSuperFun;
     }
 
     public void startSignInIntent() {
@@ -50,8 +57,7 @@ public class SignIn  {
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        // at this point, the user is signed out.
-                        Log.d(TAG, "signOut(): success");
+                        carSuperFun.createNewState(NewState.LOGIN_MENU);
                     }
                 });
     }

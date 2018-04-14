@@ -24,7 +24,7 @@ import car.superfun.game.car.OpponentCarController;
 
 public class Communicator {
 
-    final static String TAG = "CarSuperFun";
+    final static String TAG = "Communicator";
 
     private RealTimeMultiplayerClient realTimeMultiplayerClient = null;
 

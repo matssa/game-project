@@ -1,13 +1,13 @@
 package car.superfun.game.googleGamePlayServices;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.badlogic.gdx.utils.Array;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
@@ -28,9 +28,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.R;
@@ -41,7 +40,7 @@ public class SetUpGame {
 
     private int lastTimestamp;
 
-    private final static String TAG = "SetUpGame-CarSuperFun";
+    private final static String TAG = "SetUpGame";
 
     private AndroidLauncher androidLauncher;
 
@@ -290,7 +289,6 @@ public class SetUpGame {
                         @Override
                         public void onSuccess(Player player) {
                             playerId = player.getPlayerId();
-
                             getMenuScreen();
                         }
                     })
