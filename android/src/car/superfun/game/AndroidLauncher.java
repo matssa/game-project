@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +14,11 @@ import com.badlogic.gdx.utils.Array;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.games.GamesActivityResultCodes;
+
+import com.instacart.library.truetime.TrueTime;
+
+import java.io.IOException;
+
 
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.googleGamePlayServices.Communicator;
@@ -43,8 +49,12 @@ public class AndroidLauncher extends AndroidApplication {
         this.communicator = setUpGame.getCommunicator();
 
         signIn.setSignInClient();
-    }
 
+        ClockSynchronizer clockSync = new ClockSynchronizer();
+        clockSync.start();
+        Gdx.graphics.setContinuousRendering(true);
+
+    }
 
     @Override
     protected void onResume() {
@@ -68,7 +78,7 @@ public class AndroidLauncher extends AndroidApplication {
                 new AlertDialog.Builder(this).setMessage(message)
                         .setNeutralButton(android.R.string.ok, null).show();
             }
-        } else if (requestCode == setUpGame.RC_WAITING_ROOM) {
+        } else if (requestCode == SetUpGame.RC_WAITING_ROOM) {
             if (resultCode == Activity.RESULT_OK) {
                 setUpGame.waitingRoomReady();
                 carSuperFun.createNewState(NewState.RACE_MODE);
@@ -80,10 +90,36 @@ public class AndroidLauncher extends AndroidApplication {
         }
     }
 
+    private class ClockSynchronizer extends Thread { // TODO make this more reliable
+        public void run() {
+            if (!TrueTime.isInitialized()) {
+                Gdx.app.log("TrueTime", "start of run");
+                try {
+                    TrueTime.build()
+                            .withNtpHost("time.google.com")
+                            .withLoggingEnabled(false)
+                            .withConnectionTimeout(3_1428)
+                            .initialize();
+                } catch (IOException ex) {
+                    Gdx.app.log("IOException from TrueTime:", ex.getMessage());
+                    ex.printStackTrace();
+                }
+                if (!TrueTime.isInitialized()) {
+                    Gdx.app.error("TrueTime", "True time is not initialized");
+                } else {
+                    Gdx.app.log("TrueTime", "True time now initialized! :D");
+                }
+            } else {
+                Gdx.app.log("TrueTime", "True time all ready initialized! :D");
+            }
+        }
+    }
+
     public GoogleGameServices googleGameServices = new GoogleGameServices() {
+
         @Override
-        public void broadcast(boolean finalScore, int score, Vector2 velocity, Vector2 position, float angle) {
-            communicator.broadcast(finalScore, score, velocity, position, angle);
+        public void broadcast(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
+            communicator.broadcastState(velocity, position, angle, forward, rotation);
         }
 
         @Override
@@ -114,6 +150,16 @@ public class AndroidLauncher extends AndroidApplication {
         @Override
         public void leaveRoom() {
             setUpGame.leaveRoom();
+        }
+
+        @Override
+        public void readyToStart() {
+            communicator.readyToStart();
+        }
+
+        @Override
+        public boolean gameStarted() {
+            return communicator.gameStarted;
         }
     };
 

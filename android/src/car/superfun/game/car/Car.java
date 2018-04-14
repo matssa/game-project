@@ -41,7 +41,7 @@ public class Car {
         bodyDef.angularDamping = 0.9f;
         bodyDef.linearDamping = 0.5f;
 
-//        bodyDef.angle = (float) (-Math.PI / 2);
+        bodyDef.angle = (float) (-Math.PI / 2);
 
         body = world.createBody(bodyDef);
 
@@ -110,9 +110,7 @@ public class Car {
     public Vector2 getVelocity() { return body.getLinearVelocity(); }
     public Body getBody() { return body; }
     public Vector2 getSpritePosition() { return new Vector2(sprite.getX(), sprite.getY()); }
-    public float getDirectionFloat() { return body.getAngle(); }
+    public float getAngle() { return body.getAngle(); }
     public Vector2 getDirectionVector() { return new Vector2(0,1).rotateRad(body.getAngle()); }
-    public float getFrameRotation() {
-        return frameRotation;
-    }
+    public Vector2 getBodyPosition() { return body.getPosition(); }
 }

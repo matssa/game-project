@@ -7,7 +7,7 @@ import car.superfun.game.car.OpponentCarController;
 
 public interface GoogleGameServices {
 
-    public abstract void broadcast(boolean finalScore, int score, Vector2 velocity, Vector2 position, float angle);
+    public abstract void broadcast(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
     public abstract Array<OpponentCarController> getOpponentCarControllers();
 
     public abstract boolean isSignedIn();
@@ -16,6 +16,8 @@ public interface GoogleGameServices {
 
     public abstract void startQuickGame();
     public abstract void leaveRoom();
+    public abstract void readyToStart();
+    public abstract boolean gameStarted();
 
 
 }
