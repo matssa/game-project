@@ -29,16 +29,12 @@ public class OpponentCarController implements CarController {
         this.rotation = rotation;
     }
 
-    public void setCarTransform(float x, float y, float angle) {
-        controlledCar.setTransform(x, y, angle);
-    }
-
-    public void setCarVelocity(Vector2 velocity) {
-        controlledCar.getBody().setLinearVelocity(velocity);
-    }
-
     public OpponentCar getControlledCar() {
         return controlledCar;
+    }
+
+    public void setCarMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff, int timestamp) {
+        controlledCar.setMovement(position, angle, velocity, timeDiff, timestamp);
     }
 
     public boolean hasControlledCar() {
