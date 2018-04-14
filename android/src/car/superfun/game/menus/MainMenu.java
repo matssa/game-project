@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import car.superfun.game.AndroidLauncher;
+import car.superfun.game.GoogleGameServices;
 import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
@@ -16,10 +17,10 @@ import car.superfun.game.states.State;
 
 public class MainMenu extends State {
     private Texture background, hostButton, joinButton, settings, extraSettings;
-    private AndroidLauncher androidLauncher;
+    private GoogleGameServices googleGameServices;
 
-    public MainMenu(AndroidLauncher androidLauncher){
-        this.androidLauncher = androidLauncher;
+    public MainMenu(GoogleGameServices googleGameServices){
+        this.googleGameServices = googleGameServices;
         background = new Texture("background.png");
         hostButton = new Texture("menu-buttons/host.png");
         joinButton = new Texture("menu-buttons/join.png");
@@ -31,18 +32,18 @@ public class MainMenu extends State {
     public void handleInput() {
         if(Gdx.input.justTouched()){
             if(isOnSettings()){
-                androidLauncher.signOut();
                 GameStateManager.getInstance().push(new SettingsMenu());
+                googleGameServices.signOut();
                 //GameStateManager.getInstance().push(new GladiatorMode());
             }
             if(isOnJoin()){
-                androidLauncher.startQuickGame();
+                googleGameServices.startQuickGame();
                 GameStateManager.getInstance().push(new GameBrowser());
             }
             if(isOnHost()){
 //              GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                RaceMode race = new RaceMode(androidLauncher, false);
+                RaceMode race = new RaceMode(googleGameServices, false);
 
 //                race.setLocalRaceCar(new Vector2(1600, 11000));
 //                Array<Vector2> opponentCars = new Array<Vector2>();

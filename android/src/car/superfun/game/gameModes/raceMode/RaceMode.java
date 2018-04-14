@@ -17,6 +17,7 @@ import java.util.TimerTask;
 
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
+import car.superfun.game.GoogleGameServices;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.UserDataCreater;
 import car.superfun.game.car.LocalCarController;
@@ -29,7 +30,7 @@ public class RaceMode extends GameMode {
     public static final int GOAL_ENTITY = 0b1 << 8;
     public static final int CHECKPOINT_ENTITY = 0b1 << 9;
 
-    private AndroidLauncher androidLauncher;
+    private GoogleGameServices googleGameServices;
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
@@ -53,10 +54,10 @@ public class RaceMode extends GameMode {
         }
     }
 
-    public RaceMode(AndroidLauncher androidLauncher, boolean singlePlayer) {
+    public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super();
         this.singlePlayer = singlePlayer;
-        this.androidLauncher = androidLauncher;
+        this.googleGameServices = googleGameServices;
         world.setContactListener(new RaceContactListener());
 
         localCarController = new LocalCarController();
@@ -88,7 +89,7 @@ public class RaceMode extends GameMode {
 
         int startX = 1900;
 
-        Array<OpponentCarController> opponentCarControllers = androidLauncher.getOpponentCarControllers();
+        Array<OpponentCarController> opponentCarControllers = googleGameServices.getOpponentCarControllers();
 
         opponentCars = new Array<OpponentCar>();
         for (OpponentCarController oppCC : opponentCarControllers) {
@@ -139,7 +140,7 @@ public class RaceMode extends GameMode {
         if(!singlePlayer){
             Vector2 position = localRaceCar.getBody().getTransform().getPosition();
             float angle = localRaceCar.getDirectionFloat();
-            androidLauncher.broadcast(false, 0, localRaceCar.getVelocity(), position, angle);
+            googleGameServices.broadcast(false, 0, localRaceCar.getVelocity(), position, angle);
         }
     }
 

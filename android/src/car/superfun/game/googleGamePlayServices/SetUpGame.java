@@ -7,10 +7,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.badlogic.gdx.utils.Array;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.SignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesCallbackStatusCodes;
@@ -46,7 +45,7 @@ public class SetUpGame {
 
     private AndroidLauncher androidLauncher;
 
-    private Communication communication;
+    private Communicator communicator;
 
     private RoomConfig joinedRoomConfig = null;
 
@@ -63,15 +62,19 @@ public class SetUpGame {
     // My participant ID in the currently active game
     public String myId = null;
 
-    public Map<String, OpponentCarController> participantCarControllers = new HashMap<>();
+
 
     // Client used to interact with the real time multiplayer system.
-    private RealTimeMultiplayerClient realTimeMultiplayerClient = null;
+    public RealTimeMultiplayerClient realTimeMultiplayerClient = null;
 
     public SetUpGame(AndroidLauncher androidLauncher) {
         this.androidLauncher = androidLauncher;
-        this.communication = new Communication(androidLauncher, realTimeMultiplayerClient, this);
+        this.communicator = new Communicator(androidLauncher, this);
         lastTimestamp = 0;
+    }
+
+    public Communicator getCommunicator() {
+        return communicator;
     }
 
     public void startQuickGame() {
@@ -82,7 +85,7 @@ public class SetUpGame {
         // build the room config:
         joinedRoomConfig =
                 RoomConfig.builder(roomUpdateCallback)
-                        .setOnMessageReceivedListener(communication.messageReceivedHandler)
+                        .setOnMessageReceivedListener(communicator.messageReceivedHandler)
                         .setRoomStatusUpdateCallback(roomStatusCallbackHandler)
                         .setAutoMatchCriteria(autoMatchCriteria)
                         .build();
@@ -271,7 +274,7 @@ public class SetUpGame {
 
     GoogleSignInAccount signedInAccount = null;
 
-    private void onConnected(GoogleSignInAccount googleSignInAccount) {
+    public void onConnected(GoogleSignInAccount googleSignInAccount) {
         Log.d(TAG, "onConnected(): connected to Google APIs");
         if (signedInAccount != googleSignInAccount) {
 
@@ -383,8 +386,10 @@ public class SetUpGame {
                 continue;
             }
             OpponentCarController opponentCarController = new OpponentCarController();
-            participantCarControllers.put(participant.getParticipantId(), opponentCarController);
+            communicator.putParticipantController(participant.getParticipantId(), opponentCarController);
         }
     }
+
+
 
 }

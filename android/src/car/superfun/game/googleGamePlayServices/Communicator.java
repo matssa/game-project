@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener;
@@ -21,7 +22,7 @@ import car.superfun.game.AndroidLauncher;
 import car.superfun.game.car.OpponentCarController;
 
 
-public class Communication {
+public class Communicator {
 
     final static String TAG = "CarSuperFun";
 
@@ -35,14 +36,28 @@ public class Communication {
     // Participants who sent us their final score.
     Set<String> finishedParticipants = new HashSet<>();
 
+    public Map<String, OpponentCarController> participantCarControllers = new HashMap<>();
 
-    public Communication(AndroidLauncher androidLauncher, RealTimeMultiplayerClient realTimeMultiplayerClient, SetUpGame setUpGame) {
+
+    public Communicator(AndroidLauncher androidLauncher, SetUpGame setUpGame) {
         this.setUpGame = setUpGame;
         this.androidLauncher = androidLauncher;
-        this.realTimeMultiplayerClient = realTimeMultiplayerClient;
 
 
     }
+
+    public void putParticipantController(String id, OpponentCarController controller){
+        participantCarControllers.put(id, controller);
+    }
+
+    public Array<OpponentCarController> getOpponentCarControllers() {
+        Array<OpponentCarController> opponentCarControllers = new Array<OpponentCarController>(participantCarControllers.size());
+        for (Map.Entry<String, OpponentCarController> entry : participantCarControllers.entrySet()) {
+            opponentCarControllers.add(entry.getValue());
+        }
+        return opponentCarControllers;
+    }
+
 
     // Called when we receive a real-time message from the network.
     // Messages in our game are made up of 2 bytes: the first one is 'F' or 'U'
@@ -72,7 +87,7 @@ public class Communication {
                 float angle = buffer.getFloat(18);
 
 
-                OpponentCarController opponentCarController = setUpGame.participantCarControllers.get(realTimeMessage.getSenderParticipantId());
+                OpponentCarController opponentCarController = participantCarControllers.get(realTimeMessage.getSenderParticipantId());
 
                 if (opponentCarController.hasControlledCar()) {
                     opponentCarController.getControlledCar().setMovement(x, y, angle, velocity, timeDiff);
@@ -119,28 +134,32 @@ public class Communication {
             if (p.getStatus() != Participant.STATUS_JOINED) {
                 continue;
             }
-            if (finalScore) {
-                // final score notification must be sent via reliable message
-                realTimeMultiplayerClient.sendReliableMessage(messageBuffer.array(),
-                        setUpGame.roomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
-                            @Override
-                            public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
-                                Log.d(TAG, "RealTime message sent");
-                                Log.d(TAG, "  statusCode: " + statusCode);
-                                Log.d(TAG, "  tokenId: " + tokenId);
-                                Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
-                            }
-                        })
-                        .addOnSuccessListener(new OnSuccessListener<Integer>() {
-                            @Override
-                            public void onSuccess(Integer tokenId) {
-                                Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
-                            }
-                        });
-            } else {
-                // it's an interim score notification, so we can use unreliable
-                realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), setUpGame.roomId,
-                        p.getParticipantId());
+            System.out.println("print pos");
+            if (realTimeMultiplayerClient == null) {
+                this.realTimeMultiplayerClient = setUpGame.realTimeMultiplayerClient;
+            }else {
+                if (finalScore) {
+                    // final score notification must be sent via reliable message
+                    realTimeMultiplayerClient.sendReliableMessage(messageBuffer.array(),
+                            setUpGame.roomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
+                                @Override
+                                public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
+                                    Log.d(TAG, "RealTime message sent");
+                                    Log.d(TAG, "  statusCode: " + statusCode);
+                                    Log.d(TAG, "  tokenId: " + tokenId);
+                                    Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                                }
+                            })
+                            .addOnSuccessListener(new OnSuccessListener<Integer>() {
+                                @Override
+                                public void onSuccess(Integer tokenId) {
+                                    Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                                }
+                            });
+                } else {
+                    realTimeMultiplayerClient.sendUnreliableMessage(messageBuffer.array(), setUpGame.roomId,
+                            p.getParticipantId());
+                }
             }
         }
     }

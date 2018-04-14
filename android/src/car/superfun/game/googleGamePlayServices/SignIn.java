@@ -13,6 +13,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import java.util.Set;
+
 import car.superfun.game.AndroidLauncher;
 
 
@@ -25,10 +28,12 @@ public class SignIn  {
     // Request code used to invoke sign in user interactions.
     public static final int SIGN_IN_ID = 9001;
 
+    private SetUpGame setUpGame;
     // Client used to sign in with Google APIs
     private GoogleSignInClient googleSignInClient = null;
 
-    public SignIn(AndroidLauncher androidLauncher) {
+    public SignIn(AndroidLauncher androidLauncher, SetUpGame setUpGame) {
+        this.setUpGame = setUpGame;
         this.androidLauncher = androidLauncher;
     }
 
@@ -63,7 +68,7 @@ public class SignIn  {
                     public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInSilently(): success");
-                            // onConnected(task.getResult());
+                                setUpGame.onConnected(task.getResult());
                         } else {
                             Log.d(TAG, "signInSilently(): failure", task.getException());
                         }
