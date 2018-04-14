@@ -18,6 +18,7 @@ import java.util.TimerTask;
 
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
+import car.superfun.game.GoogleGameServices;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.UserDataCreater;
 import car.superfun.game.car.LocalCarController;
@@ -31,7 +32,7 @@ public class RaceMode extends GameMode {
     public static final int CHECKPOINT_ENTITY = 0b1 << 9;
     public static final int TEST_ENTITY = 0b1 << 10;
 
-    private AndroidLauncher androidLauncher;
+    private GoogleGameServices googleGameServices;
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
@@ -42,10 +43,24 @@ public class RaceMode extends GameMode {
     private int amountOfCheckpoints;
     private boolean singlePlayer;
 
-    public RaceMode(AndroidLauncher androidLauncher, boolean singlePlayer) {
+
+    private class checkpointUserData implements UserDataCreater {
+        private int id;
+
+
+        public checkpointUserData() {
+            id = 0;
+        }
+
+        public Object getUserData() {
+            return id++;
+        }
+    }
+
+    public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super();
         this.singlePlayer = singlePlayer;
-        this.androidLauncher = androidLauncher;
+        this.googleGameServices = googleGameServices;
         world.setContactListener(new RaceContactListener());
 
         localCarController = new LocalCarController();
@@ -77,7 +92,7 @@ public class RaceMode extends GameMode {
 
         int startX = 1900;
 
-        Array<OpponentCarController> opponentCarControllers = androidLauncher.getOpponentCarControllers();
+        Array<OpponentCarController> opponentCarControllers = googleGameServices.getOpponentCarControllers();
 
         opponentCars = new Array<OpponentCar>();
         for (OpponentCarController opponentCarController : opponentCarControllers) {
@@ -93,7 +108,7 @@ public class RaceMode extends GameMode {
             TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
         }
 
-        androidLauncher.readyToStart();
+        googleGameServices.readyToStart();
     }
 
     // Google Game Service sets the opponent cars
@@ -122,7 +137,7 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
-        if (!androidLauncher.gameStarted && !singlePlayer) {
+        if (!googleGameServices.gameStarted() && !singlePlayer) {
             return;
         }
         for (OpponentCar car : opponentCars) {
@@ -137,12 +152,13 @@ public class RaceMode extends GameMode {
 
         localCarController.update();
         if (!singlePlayer) {
-            androidLauncher.broadcastState(
+            googleGameServices.broadcast(
                     localRaceCar.getVelocity(),
                     localRaceCar.getBodyPosition(),
                     localRaceCar.getAngle(),
                     localCarController.getForward(),
                     localCarController.getRotation());
+
         }
     }
 
@@ -172,17 +188,5 @@ public class RaceMode extends GameMode {
         // TODO: Implement a proper way to exit the game
     }
 
-    private class checkpointUserData implements UserDataCreater {
-        private int id;
-
-
-        public checkpointUserData() {
-            id = 0;
-        }
-
-        public Object getUserData() {
-            return id++;
-        }
-    }
 }
 
