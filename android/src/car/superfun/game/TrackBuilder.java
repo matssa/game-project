@@ -24,8 +24,20 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
-
 public class TrackBuilder {
+
+    public static Array<Vector2> getPoints(Map map, String layerName) {
+        MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
+        Array<Vector2> points = new Array<>();
+
+            for (MapObject mapObject : mapObjects) {
+                float x = Float.parseFloat(mapObject.getProperties().get("x").toString());
+                float y = Float.parseFloat(mapObject.getProperties().get("y").toString());
+                points.add(new Vector2(x, y));
+            }
+
+        return points;
+    }
 
     public static Array<Body> buildLayer(Map map, World world, String layerName, FixtureDef fixtureDef) {
         MapObjects mapObjects = map.getLayers().get(layerName).getObjects();

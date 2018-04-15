@@ -53,6 +53,8 @@ public class RaceMode extends GameMode {
         tiledMap = new TmxMapLoader().load("tiled_maps/decentMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
+        Array<Vector2> startingPoints = TrackBuilder.getPoints(tiledMap, "starting_points");
+
         FixtureDef wallDef = new FixtureDef();
         wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
         wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
@@ -73,7 +75,7 @@ public class RaceMode extends GameMode {
 
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
 
-        localRaceCar = new LocalRaceCar(new Vector2(2000, 1000), localCarController, world, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(startingPoints.get(0), localCarController, world, amountOfCheckpoints);
 
         int startX = 1900;
 
