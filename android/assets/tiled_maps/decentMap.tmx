@@ -193,7 +193,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="starting_points">
+ <objectgroup name="starting_points" locked="1">
   <object id="20" x="5632" y="3584">
    <point/>
   </object>
