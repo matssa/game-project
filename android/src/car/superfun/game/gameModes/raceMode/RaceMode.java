@@ -22,18 +22,24 @@ public class RaceMode extends GameMode {
     public static final int CHECKPOINT_ENTITY = 0b1 << 9;
     public static final int TEST_ENTITY = 0b1 << 10;
 
+
+    // Path to map
     private final static String MAP_PATH = "tiled_maps/simpleMap.tmx";
 
     // Car textures
-    private final static String[] TEXTURE_PATHS = new String[] {
+    private final static String[] TEXTURE_PATHS = new String[]{
             "racing-pack/PNG/Cars/car_black_5.png",
             "racing-pack/PNG/Cars/car_blue_5.png",
             "racing-pack/PNG/Cars/car_red_5.png",
             "racing-pack/PNG/Cars/car_green_5.png",
     };
+    // Used to set different color to different players cars
     private int texturePathIndex = 0;
 
+    // List of opponentCars
     private Array<OpponentCar> opponentCars = new Array<>();
+
+    // The car controlled by this phones owner
     private LocalRaceCar localRaceCar;
 
     private int amountOfCheckpoints;
@@ -60,6 +66,9 @@ public class RaceMode extends GameMode {
         readyToStart();
     }
 
+    /**
+     * Load and set up tiledMap
+     */
     private void setUpMap() {
         // Set the normal walls
         FixtureDef wallDef = new FixtureDef();
@@ -89,6 +98,9 @@ public class RaceMode extends GameMode {
         getStartPositions("starting_points");
     }
 
+    /**
+     * Callback used to create the opponent cars and the localCar.
+     */
     private SetStartPositionCallback startPositionCallback = new SetStartPositionCallback() {
         @Override
         public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
@@ -104,7 +116,7 @@ public class RaceMode extends GameMode {
     };
 
     private void incrementTexurePath() {
-        if(texturePathIndex < TEXTURE_PATHS.length){
+        if (texturePathIndex < TEXTURE_PATHS.length) {
             texturePathIndex++;
         }
     }

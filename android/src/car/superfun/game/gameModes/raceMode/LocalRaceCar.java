@@ -18,7 +18,7 @@ public class LocalRaceCar extends LocalCar {
     private float rotateBy;
 
     public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world, int amountOfCheckpoints, String texturePath) {
-        super(position, localCarController, world, texturePath );
+        super(position, localCarController, world, texturePath);
         passedCheckpoints = new boolean[amountOfCheckpoints];
         Arrays.fill(passedCheckpoints, Boolean.FALSE);
         completedRounds = 0;

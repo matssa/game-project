@@ -29,14 +29,13 @@ public abstract class GameMode extends State {
     protected Array<Vector2> startPositions;
 
     protected LocalCarController localCarController;
+    protected Array<CarController> opponentCarControllers;
+
     protected boolean singlePlayer = true;
     protected World world;
 
     protected TiledMap tiledMap;
     protected TiledMapRenderer tiledMapRenderer;
-
-
-    protected Array<CarController> opponentCarControllers;
 
     protected GoogleGameServices googleGameServices;
 
