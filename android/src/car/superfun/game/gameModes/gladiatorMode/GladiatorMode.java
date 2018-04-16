@@ -142,6 +142,7 @@ public class GladiatorMode extends GameMode {
             car.update(dt);
         }
         localCar.update(dt);
+
         world.step(dt, 2, 1); // Using deltaTime
 
         camera.position.set(localCar.getSpritePosition(), 0);
@@ -156,7 +157,6 @@ public class GladiatorMode extends GameMode {
                     localCar.getAngle(),
                     localCarController.getForward(),
                     localCarController.getRotation());
-
         }
     }
 
@@ -166,7 +166,9 @@ public class GladiatorMode extends GameMode {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         localCar.render(sb);
-
+        for (OpponentCar car : opponentCars) {
+            car.render(sb);
+        }
     }
 
     // Renders objects that have a static position on the screen. Is called by superclass
