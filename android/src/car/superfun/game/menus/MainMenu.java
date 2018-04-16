@@ -49,7 +49,7 @@ public class MainMenu extends State {
                 GameStateManager.getInstance().push(race);
             }
             if(isOnExtraSettings()){
-                googleGameServices.startQuickGame(NewState.GLADIATOR_MODE);
+                // googleGameServices.startQuickGame(NewState.GLADIATOR_MODE);
                 GameStateManager.getInstance().push(new GameBrowser());
             }
         }

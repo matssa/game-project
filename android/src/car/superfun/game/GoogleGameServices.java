@@ -6,12 +6,12 @@ import com.google.android.gms.games.multiplayer.Participant;
 
 import java.util.ArrayList;
 
-import car.superfun.game.car.OpponentCarController;
+import car.superfun.game.car.CarController;
 
 public interface GoogleGameServices {
 
     public abstract void broadcast(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
-    public abstract Array<OpponentCarController> getOpponentCarControllers();
+    public abstract Array<CarController> getOpponentCarControllers();
 
     public abstract boolean isSignedIn();
     public abstract void signOut();
@@ -25,4 +25,5 @@ public interface GoogleGameServices {
     public abstract String getMyID();
 
 
+    public abstract Participant getLocalParticipant();
 }

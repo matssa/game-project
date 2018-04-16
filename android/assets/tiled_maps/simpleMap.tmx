@@ -269,20 +269,21 @@
   </object>
  </objectgroup>
  <objectgroup name="starting_points">
-  <object id="57" x="3952.15" y="1797.35">
+  <object id="57" x="3844.87" y="1802.46">
    <point/>
   </object>
-  <object id="58" x="3959.35" y="2061.11">
+  <object id="58" x="3844.41" y="1979.37">
    <point/>
   </object>
-  <object id="59" x="3665.32" y="2053.91">
+  <object id="59" x="3841.57" y="2079.45">
    <point/>
   </object>
-  <object id="60" x="3675.41" y="1804.55">
+  <object id="60" x="3843.99" y="1893.95">
    <point/>
   </object>
  </objectgroup>
  <objectgroup name="goal_line" locked="1">
+
   <object id="48" x="3474" y="1718">
    <polyline points="0,0 0,466"/>
   </object>

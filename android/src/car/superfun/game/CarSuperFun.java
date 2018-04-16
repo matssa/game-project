@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.menus.LoginMenu;
 import car.superfun.game.menus.MainMenu;
@@ -78,7 +77,7 @@ public class CarSuperFun extends ApplicationAdapter {
                     break;
                 case GLADIATOR_MODE:
                     Log.d("CarSuperFun", "Pushed GladiatorMode");
-                    GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, false));
+                    // GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, false));
                     break;
             }
         }

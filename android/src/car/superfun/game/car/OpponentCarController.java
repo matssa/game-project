@@ -1,22 +1,25 @@
 package car.superfun.game.car;
 
+import android.support.annotation.NonNull;
+
 import com.badlogic.gdx.math.Vector2;
+import com.google.android.gms.games.multiplayer.Participant;
 
 public class OpponentCarController implements CarController {
+
     public float forward;
     public float rotation;
-    public String partisipentID;
+    private Participant participent;
     private OpponentCar controlledCar;
 
-    public OpponentCarController() {
+    public OpponentCarController(Participant participent) {
         forward = 0;
         rotation = 0;
+        this.participent = participent;
     }
 
-    public void setControlledCar(OpponentCar controlledCar, String partisipentID) {
-
+    public void setControlledCar(OpponentCar controlledCar) {
         this.controlledCar = controlledCar;
-        this.partisipentID = partisipentID;
     }
 
     public void setForward(float forward) {
@@ -45,6 +48,11 @@ public class OpponentCarController implements CarController {
     }
 
     @Override
+    public Participant getParticipant() {
+        return participent;
+    }
+
+    @Override
     public float getForward() {
         return forward;
     }
@@ -53,4 +61,10 @@ public class OpponentCarController implements CarController {
     public float getRotation() {
         return rotation;
     }
+
+    @Override
+    public int compareTo(@NonNull CarController carController) {
+        return participent.getParticipantId().compareTo(carController.getParticipant().getParticipantId());
+    }
+
 }

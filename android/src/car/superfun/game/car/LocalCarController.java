@@ -4,10 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.google.android.gms.games.multiplayer.Participant;
 
 import car.superfun.game.GlobalVariables;
 
 public class LocalCarController implements CarController {
+
     public float slider1Position;
     public float slider2Position;
 
@@ -25,6 +27,14 @@ public class LocalCarController implements CarController {
 
     private float forwardOffset;
 
+    private Participant participant;
+
+    public LocalCarController(Participant participant) {
+        this();
+        this.participant = participant;
+
+    }
+
     public LocalCarController() {
         slider1Position = Gdx.graphics.getHeight() / 2;
         slider2Position = Gdx.graphics.getHeight() / 2;
@@ -34,6 +44,7 @@ public class LocalCarController implements CarController {
 
         knob1Texture = new Texture("slider_knob.png");
         knob2Texture = new Texture("slider_knob.png");
+
 
         if (GlobalVariables.TESTING_MODE) {
             forwardOffset = 0.4f;
@@ -94,6 +105,11 @@ public class LocalCarController implements CarController {
     }
 
     @Override
+    public Participant getParticipant() {
+        return participant;
+    }
+
+    @Override
     public float getForward() {
         return forward;
     }
@@ -101,5 +117,11 @@ public class LocalCarController implements CarController {
     @Override
     public float getRotation() {
         return rotation;
+    }
+
+
+    @Override
+    public int compareTo(CarController carController) {
+        return this.participant.getParticipantId().compareTo(carController.getParticipant().getParticipantId());
     }
 }

@@ -1,19 +1,10 @@
 package car.superfun.game.gameModes.raceMode;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
-import com.google.android.gms.games.multiplayer.Participant;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
@@ -23,6 +14,7 @@ import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
+import car.superfun.game.gameModes.SetStartPositionCallback;
 
 public class RaceMode extends GameMode {
 
@@ -30,30 +22,36 @@ public class RaceMode extends GameMode {
     public static final int CHECKPOINT_ENTITY = 0b1 << 9;
     public static final int TEST_ENTITY = 0b1 << 10;
 
-    private GoogleGameServices googleGameServices;
+    private final static String MAP_PATH = "tiled_maps/simpleMap.tmx";
 
-    TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
-
-    private LocalCarController localCarController;
+    private Array<OpponentCar> opponentCars = new Array<>();
     private LocalRaceCar localRaceCar;
-    private Array<OpponentCar> opponentCars;
-    private int amountOfCheckpoints;
-    private boolean singlePlayer;
-    private Array<Vector2> startPositions;
 
+    private int amountOfCheckpoints;
 
     public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
-        super();
-        this.singlePlayer = singlePlayer;
-        this.googleGameServices = googleGameServices;
+        super(MAP_PATH, googleGameServices, singlePlayer);
+
         world.setContactListener(new RaceContactListener());
 
-        localCarController = new LocalCarController();
+        // Set up the map
+        setUpMap();
 
-        tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        // Sets the positions for the different cars
+        setStartPositions(startPositionCallback);
 
+        // Enables testing mode
+        if (GlobalVariables.TESTING_MODE) {
+            FixtureDef testDef = new FixtureDef();
+            testDef.filter.categoryBits = TEST_ENTITY;
+            testDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+            testDef.isSensor = true;
+            TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
+        }
+        readyToStart();
+    }
+
+    private void setUpMap() {
         // Set the normal walls
         FixtureDef wallDef = new FixtureDef();
         wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
@@ -75,46 +73,25 @@ public class RaceMode extends GameMode {
         checkpointDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         checkpointDef.isSensor = true;
 
-
+        // returnes the amount of checkpoints for the given map
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
 
-
-        startPositions = TrackBuilder.getPoints(tiledMap, "starting_points");
-
-        Array<OpponentCarController> opponentCarControllers = googleGameServices.getOpponentCarControllers();
-
-        ArrayList<String> participantIDs = getSortedParticipents();
-        opponentCars = new Array<OpponentCar>();
-        for (OpponentCarController opponentCarController : opponentCarControllers) {
-            int index = participantIDs.indexOf(opponentCarController.partisipentID);
-            opponentCars.add(new OpponentCar(new Vector2(startPositions.get(index).x, startPositions.get(index).y), opponentCarController, world));
-        }
-
-        int index = participantIDs.indexOf(googleGameServices.getMyID());
-        // This should be set in GGS, no? Through the setLocalRaceCar method?
-        localRaceCar = new LocalRaceCar(new Vector2(startPositions.get(index).x, startPositions.get(index).y), localCarController, world, amountOfCheckpoints);
-
-        // Enables testing mode
-        if (GlobalVariables.TESTING_MODE) {
-            FixtureDef testDef = new FixtureDef();
-            testDef.filter.categoryBits = TEST_ENTITY;
-            testDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
-            testDef.isSensor = true;
-            TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
-        }
-
-        googleGameServices.readyToStart();
+        // Get starting positions for map
+        getStartPositions("starting_points");
     }
 
-    private ArrayList<String> getSortedParticipents() {
-        ArrayList<Participant> participants = googleGameServices.getParticipants();
-        ArrayList<String> participantIDs = new ArrayList<>();
-        for (Participant participant : participants) {
-            participantIDs.add(participant.getParticipantId());
+    private SetStartPositionCallback startPositionCallback = new SetStartPositionCallback() {
+        @Override
+        public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
+            opponentCars.add(new OpponentCar(position, opponentCarController, world));
         }
-        Collections.sort(participantIDs);
-        return participantIDs;
-    }
+
+        @Override
+        public void addLocalCar(Vector2 position, LocalCarController localCarController) {
+            localRaceCar = new LocalRaceCar(position, localCarController, world, amountOfCheckpoints);
+        }
+    };
+
 
     private class checkpointUserData implements UserDataCreater {
         private int id;
@@ -126,25 +103,6 @@ public class RaceMode extends GameMode {
         public Object getUserData() {
             return id++;
         }
-    }
-
-    // Google Game Service sets the opponent cars
-    public void setOpponentCars(Array<Vector2> carPositions, Array<OpponentCarController> opponentCarControllers) {
-        if (carPositions.size != opponentCarControllers.size) {
-            Gdx.app.log("ERROR: carPositions.size != opponentCarControllers.size", "cp: " + carPositions.size + ", occ: " + opponentCarControllers.size);
-            return;
-        }
-        opponentCars = new Array<OpponentCar>();
-        for (int i = 0; i < carPositions.size; i++) {
-            opponentCars.add(new OpponentCar(carPositions.get(i), opponentCarControllers.get(i), world));
-        }
-    }
-
-    // Google game service sets the local car
-    public void setLocalRaceCar(Vector2 position) {
-        // TODO: implement some way to save starting position together with the map
-        // (1600, 11000) is an appropriate starting place in simpleMap
-        localRaceCar = new LocalRaceCar(new Vector2(1600, 10900), localCarController, world, amountOfCheckpoints);
     }
 
     @Override
