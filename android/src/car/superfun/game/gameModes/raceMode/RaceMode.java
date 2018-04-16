@@ -90,8 +90,9 @@ public class RaceMode extends GameMode {
             opponentCars.add(new OpponentCar(new Vector2(startPositions.get(index).x, startPositions.get(index).y), opponentCarController, world));
         }
 
+        int index = participantIDs.indexOf(googleGameServices.getMyID());
         // This should be set in GGS, no? Through the setLocalRaceCar method?
-        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(startPositions.get(index).x, startPositions.get(index).y), localCarController, world, amountOfCheckpoints);
 
         // Enables testing mode
         if (GlobalVariables.TESTING_MODE) {

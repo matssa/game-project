@@ -22,6 +22,7 @@ public interface GoogleGameServices {
     public abstract void readyToStart();
     public abstract boolean gameStarted();
     public abstract ArrayList<Participant> getParticipants();
+    public abstract String getMyID();
 
 
 }

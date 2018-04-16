@@ -166,6 +166,11 @@ public class AndroidLauncher extends AndroidApplication {
         public ArrayList<Participant> getParticipants() {
             return setUpGame.participants;
         }
+
+        @Override
+        public String getMyID() {
+            return setUpGame.myId;
+        }
     };
 
     public void setNewState(NewState newState) {
