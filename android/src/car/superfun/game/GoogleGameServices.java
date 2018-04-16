@@ -14,7 +14,7 @@ public interface GoogleGameServices {
     public abstract void signOut();
     public abstract void startSignInIntent();
 
-    public abstract void startQuickGame();
+    public abstract void startQuickGame(NewState newState);
     public abstract void leaveRoom();
     public abstract void readyToStart();
     public abstract boolean gameStarted();
