@@ -18,6 +18,7 @@ import java.util.TimerTask;
 
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
+import car.superfun.game.MapLoader;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.UserDataCreater;
 import car.superfun.game.car.LocalCarController;
@@ -50,7 +51,8 @@ public class RaceMode extends GameMode {
 
         localCarController = new LocalCarController();
 
-        tiledMap = new TmxMapLoader().load("tiled_maps/decentMap.tmx");
+//        tiledMap = new TmxMapLoader().load("tiled_maps/decentMap.tmx");
+        tiledMap = new MapLoader(world).load("tiled_maps/decentMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         Array<Vector2> startingPoints = TrackBuilder.getPoints(tiledMap, "starting_points");
@@ -60,6 +62,7 @@ public class RaceMode extends GameMode {
         wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
 
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
+        TrackBuilder.buildTileLayer(tiledMap, world, "fence", wallDef, "fenceTiles");
 
         FixtureDef goalDef = new FixtureDef();
         goalDef.filter.categoryBits = GOAL_ENTITY;
