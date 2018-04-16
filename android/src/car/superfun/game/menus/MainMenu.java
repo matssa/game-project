@@ -74,7 +74,7 @@ public class MainMenu extends State {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                RaceMode race = new RaceMode(googleGameService, false);
+                RaceMode race = new RaceMode(googleGameService);
 
 //                race.setLocalRaceCar(new Vector2(1600, 11000));
 //                Array<Vector2> opponentCars = new Array<Vector2>();

@@ -21,5 +21,6 @@ public interface GoogleGameServices {
     void readyToStart();
     boolean gameStarted();
 
+    long getStartTime();
 
 }

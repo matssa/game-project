@@ -3,10 +3,13 @@ package car.superfun.game.gameModes.raceMode;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.instacart.library.truetime.TrueTime;
 
 import java.util.Arrays;
 
+import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
+import car.superfun.game.GoogleGameServices;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.LocalCar;
 
@@ -16,9 +19,11 @@ public class LocalRaceCar extends LocalCar {
 
     private boolean doRotate;
     private float rotateBy;
+    private GoogleGameServices googleGameServices;
 
-    public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world, int amountOfCheckpoints) {
+    public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world, GoogleGameServices googleGameServices, int amountOfCheckpoints) {
         super(position, localCarController, world);
+        this.googleGameServices = googleGameServices;
         passedCheckpoints = new boolean[amountOfCheckpoints];
         Arrays.fill(passedCheckpoints, Boolean.FALSE);
         completedRounds = 0;
@@ -35,6 +40,10 @@ public class LocalRaceCar extends LocalCar {
             completedRounds++;
             Gdx.app.log("GOAL PASSED!", "" + completedRounds + " rounds passed");
             Arrays.fill(passedCheckpoints, Boolean.FALSE);
+            if (completedRounds == 3 && !GlobalVariables.SINGLE_PLAYER) {
+                int timeSinceStart = (int) (TrueTime.now().getTime() - googleGameServices.getStartTime() % 2147483648L);
+                googleGameServices.broadcastScore(timeSinceStart, false);
+            }
         }
     }
 
