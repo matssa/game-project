@@ -138,7 +138,9 @@ public class RaceMode extends GameMode {
             car.update(dt);
         }
         localRaceCar.update(dt);
+        long timeBefore = System.currentTimeMillis();
         world.step(dt, 2, 1); // Using deltaTime
+        Gdx.app.log("World step ", "" + (System.currentTimeMillis() - timeBefore));
 
         camera.position.set(localRaceCar.getSpritePosition(), 0);
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
