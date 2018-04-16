@@ -95,6 +95,6 @@ public class GameStateManager {
         return states.isEmpty();
     }
     public boolean isOnlyOneLeft() {
-        return (states.size() == 2);
+        return (states.size() == 1);
     }
 }

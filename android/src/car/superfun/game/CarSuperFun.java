@@ -66,7 +66,7 @@ public class CarSuperFun extends ApplicationAdapter {
             switch (state){
                 case RACE_MODE:
                     Log.d("CarSuperFun", "Pushed RaceMode");
-                    GameStateManager.getInstance().push(new RaceMode(googleGameServices, false));
+                    GameStateManager.getInstance().push(new RaceMode(googleGameServices));
                     break;
                 case MAIN_MENU:
                     Log.d("CarSuperFun", "Pushed MainMenu");
