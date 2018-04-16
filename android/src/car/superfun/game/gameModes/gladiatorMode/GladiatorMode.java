@@ -123,6 +123,9 @@ public class GladiatorMode extends GameMode {
         boostZone.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         TrackBuilder.buildLayer(tiledMap, world, "boost_zone", boostZone);
 
+
+        // Get starting positions for map
+        getStartPositions("starting_points");
     }
 
     @Override
