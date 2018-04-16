@@ -23,7 +23,7 @@ import car.superfun.game.states.State;
 public class Leaderboard extends State {
     private Texture background;
     private Stage stage;
-    private ArrayList<String> playerList;
+    private ArrayList<ArrayList<String>> playerList;
     private Table table;
 
     public Leaderboard(){
@@ -56,9 +56,9 @@ public class Leaderboard extends State {
         stage.draw();
     }
 
-    public void updateTable(String player){
+    public void updateTable(String player, int position){
         clearTable();
-        placePlayer(player);
+        placePlayer(player, position);
         fillTable();
     }
 
@@ -84,10 +84,11 @@ public class Leaderboard extends State {
         table.add(new Label("Leaderboard", headerSkin)).center().colspan(2);
         if(!playerList.isEmpty()){
             int pos = 1;
-            for(String player : playerList){
+            for(ArrayList<String> player : playerList){
                 table.row();
                 table.add(new Label(Integer.toString(pos)+".", skin)).right().padRight(80);
-                table.add(new Label(player, skin)).left().width(stage.getWidth()/6);
+                table.add(new Label(player.get(0), skin)).left().width(stage.getWidth()/6);
+                table.add(new Label(player.get(1), skin));
                 pos += 1;
             }
         }
@@ -103,8 +104,11 @@ public class Leaderboard extends State {
         Gdx.input.setInputProcessor(stage);
     }
 
-    private void placePlayer(String player){
-        playerList.add(player);
+    private void placePlayer(String player, int score){
+        ArrayList<String> tempList = new ArrayList<>();
+        tempList.add(player);
+        tempList.add(Integer.toString(score));
+        playerList.add(tempList);
     }
 
     @Override
