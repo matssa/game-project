@@ -43,46 +43,6 @@ public class TrackBuilder {
         return points;
     }
 
-    public static Array<Body> buildTileLayer(TiledMap map, World world, String layerName, FixtureDef fixtureDef, String tileSetName) {
-        Gdx.app.log("TileLayer", "in buildTileLayer");
-//        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerName);
-//        TiledMapTile tile;
-
-        TiledMapTileSet tileSet = map.getTileSets().getTileSet(tileSetName);
-
-        Array<Body> bodies = new Array<>();
-
-        for (TiledMapTile tile : tileSet) {
-            MapObjects mapObjects = tile.getObjects();
-            for (MapObject mapObject : mapObjects) {
-                Shape shape;
-                Gdx.app.log("TileLayer", "mapObject name: " + mapObject.getName());
-                Gdx.app.log("TileLayer", "mapObject to string: " + mapObject.toString());
-
-                try {
-                    shape = getShape(mapObject);
-                } catch (ClassNotFoundException ex) {
-                    Gdx.app.error("Can't find class for mapObject", mapObject.toString());
-                    return bodies;
-                }
-
-                BodyDef bodyDef = new BodyDef();
-                bodyDef.type = BodyDef.BodyType.StaticBody;
-
-                fixtureDef.shape = shape;
-
-                Body body = world.createBody(bodyDef);
-                body.createFixture(fixtureDef);
-                bodies.add(body);
-                shape.dispose();
-            }
-        }
-
-
-
-        return bodies;
-    }
-
     public static Array<Body> buildLayer(Map map, World world, String layerName, FixtureDef fixtureDef) {
         MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
         Array<Body> bodies = new Array<>();

@@ -19,6 +19,7 @@ import java.util.TimerTask;
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.MapLoader;
+import car.superfun.game.OrthogonalTiledMapRenderer2;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.UserDataCreater;
 import car.superfun.game.car.LocalCarController;
@@ -35,13 +36,19 @@ public class RaceMode extends GameMode {
     private AndroidLauncher androidLauncher;
 
     TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
+//    OrthogonalTiledMapRenderer tiledMapRenderer;
+    OrthogonalTiledMapRenderer2 tiledMapRenderer;
 
     private LocalCarController localCarController;
     private LocalRaceCar localRaceCar;
     private Array<OpponentCar> opponentCars;
     private int amountOfCheckpoints;
     private boolean singlePlayer;
+
+    private int frameRateCounter = 0;
+    private float dtCounter = 0;
+
+    private SpriteBatch spriteBatch;
 
     public RaceMode(AndroidLauncher androidLauncher, boolean singlePlayer) {
         super();
@@ -53,7 +60,8 @@ public class RaceMode extends GameMode {
 
 //        tiledMap = new TmxMapLoader().load("tiled_maps/decentMap.tmx");
         tiledMap = new MapLoader(world).load("tiled_maps/decentMap.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+//        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, camBatch);
+        tiledMapRenderer = new OrthogonalTiledMapRenderer2(tiledMap);
 
         Array<Vector2> startingPoints = TrackBuilder.getPoints(tiledMap, "starting_points");
 
@@ -62,7 +70,6 @@ public class RaceMode extends GameMode {
         wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
 
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
-        TrackBuilder.buildTileLayer(tiledMap, world, "fence", wallDef, "fenceTiles");
 
         FixtureDef goalDef = new FixtureDef();
         goalDef.filter.categoryBits = GOAL_ENTITY;
@@ -131,6 +138,14 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
+        frameRateCounter ++;
+        dtCounter += dt;
+        if (dtCounter >= 1) {
+            Gdx.app.log("frameRate", "" + frameRateCounter + " fps");
+//            Gdx.app.log("maxSpritesInBatch: ", "" + camBatch.maxSpritesInBatch);
+            dtCounter = 0;
+            frameRateCounter = 0;
+        }
         if (!androidLauncher.gameStarted && !singlePlayer) {
             return;
         }
@@ -138,9 +153,9 @@ public class RaceMode extends GameMode {
             car.update(dt);
         }
         localRaceCar.update(dt);
-        long timeBefore = System.currentTimeMillis();
+//        long timeBefore = System.currentTimeMillis();
         world.step(dt, 2, 1); // Using deltaTime
-        Gdx.app.log("World step ", "" + (System.currentTimeMillis() - timeBefore));
+//        Gdx.app.log("World step ", "" + (System.currentTimeMillis() - timeBefore));
 
         camera.position.set(localRaceCar.getSpritePosition(), 0);
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
@@ -162,10 +177,12 @@ public class RaceMode extends GameMode {
     public void renderWithCamera(SpriteBatch sb, OrthographicCamera camera) {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
+        sb.begin();
         localRaceCar.render(sb);
         for (OpponentCar car : opponentCars) {
             car.render(sb);
         }
+        sb.end();
     }
 
     // Renders objects that have a static position on the screen. Is called by superclass
