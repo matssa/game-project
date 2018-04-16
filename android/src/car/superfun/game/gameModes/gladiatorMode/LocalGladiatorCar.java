@@ -17,8 +17,8 @@ public class LocalGladiatorCar extends LocalCar {
     GladiatorMode gameClass;
     
 
-    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, LocalCarController localCarController, World world, Integer score, Sound dustWallCrash){
-        super(position, localCarController, world);
+    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, LocalCarController localCarController, World world, Integer score, Sound dustWallCrash, String texturePath){
+        super(position, localCarController, world, texturePath);
         this.score = score;
         this.dustWallCrash = dustWallCrash;
         this.gameClass = gameClass;

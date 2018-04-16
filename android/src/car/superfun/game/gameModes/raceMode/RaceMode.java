@@ -24,6 +24,15 @@ public class RaceMode extends GameMode {
 
     private final static String MAP_PATH = "tiled_maps/simpleMap.tmx";
 
+    // Car textures
+    private final static String[] TEXTURE_PATHS = new String[] {
+            "racing-pack/PNG/Cars/car_black_5.png",
+            "racing-pack/PNG/Cars/car_blue_5.png",
+            "racing-pack/PNG/Cars/car_red_5.png",
+            "racing-pack/PNG/Cars/car_green_5.png",
+    };
+    private int texturePathIndex = 0;
+
     private Array<OpponentCar> opponentCars = new Array<>();
     private LocalRaceCar localRaceCar;
 
@@ -83,15 +92,22 @@ public class RaceMode extends GameMode {
     private SetStartPositionCallback startPositionCallback = new SetStartPositionCallback() {
         @Override
         public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
-            opponentCars.add(new OpponentCar(position, opponentCarController, world));
+            opponentCars.add(new OpponentCar(position, opponentCarController, world, TEXTURE_PATHS[texturePathIndex]));
+            incrementTexurePath();
         }
 
         @Override
         public void addLocalCar(Vector2 position, LocalCarController localCarController) {
-            localRaceCar = new LocalRaceCar(position, localCarController, world, amountOfCheckpoints);
+            localRaceCar = new LocalRaceCar(position, localCarController, world, amountOfCheckpoints, TEXTURE_PATHS[texturePathIndex]);
+            incrementTexurePath();
         }
     };
 
+    private void incrementTexurePath() {
+        if(texturePathIndex < TEXTURE_PATHS.length){
+            texturePathIndex++;
+        }
+    }
 
     private class checkpointUserData implements UserDataCreater {
         private int id;

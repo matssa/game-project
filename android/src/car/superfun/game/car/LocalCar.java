@@ -9,9 +9,9 @@ import car.superfun.game.GlobalVariables;
 
 public class LocalCar extends Car {
 
-    public LocalCar(Vector2 position, CarController carController, World world) {
+    public LocalCar(Vector2 position, CarController carController, World world, String texturePath) {
         super(position,
-                new Sprite(new Texture("racing-pack/PNG/Cars/car_blue_5.png")),
+                new Sprite(new Texture(texturePath)),
                 carController,
                 world,
                 GlobalVariables.PLAYER_ENTITY);
