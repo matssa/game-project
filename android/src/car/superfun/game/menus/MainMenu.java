@@ -34,7 +34,6 @@ public class MainMenu extends State {
             if(isOnSettings()){
                 GameStateManager.getInstance().push(new SettingsMenu());
                 googleGameServices.signOut();
-                //GameStateManager.getInstance().push(new GladiatorMode());
             }
             if(isOnJoin()){
                 googleGameServices.startQuickGame();
@@ -53,7 +52,7 @@ public class MainMenu extends State {
                 GameStateManager.getInstance().push(race);
             }
             if(isOnExtraSettings()){
-                GameStateManager.getInstance().push(new GladiatorMode());
+                GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, false));
             }
         }
     }

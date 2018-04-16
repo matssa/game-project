@@ -82,6 +82,7 @@ public class AndroidLauncher extends AndroidApplication {
             if (resultCode == Activity.RESULT_OK) {
                 setUpGame.waitingRoomReady();
                 carSuperFun.createNewState(NewState.RACE_MODE);
+//                carSuperFun.createNewState(NewState.GLADIATOR_MODE);
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 setUpGame.leaveRoom();
             } else if (resultCode == Activity.RESULT_CANCELED) {

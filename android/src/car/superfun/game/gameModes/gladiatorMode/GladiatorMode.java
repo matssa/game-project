@@ -20,7 +20,6 @@ import car.superfun.game.TrackBuilder;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
-import car.superfun.game.gameModes.raceMode.LocalRaceCar;
 
 
 public class GladiatorMode extends GameMode {
