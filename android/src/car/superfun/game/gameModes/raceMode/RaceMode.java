@@ -35,12 +35,10 @@ public class RaceMode extends GameMode {
     private LocalRaceCar localRaceCar;
     private Array<OpponentCar> opponentCars;
     private int amountOfCheckpoints;
-    private boolean singlePlayer;
 
 
-    public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
+    public RaceMode(GoogleGameServices googleGameServices) {
         super();
-        this.singlePlayer = singlePlayer;
         this.googleGameServices = googleGameServices;
         world.setContactListener(new RaceContactListener());
 
@@ -73,7 +71,7 @@ public class RaceMode extends GameMode {
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
 
         // This should be set in GGS, no? Through the setLocalRaceCar method?
-        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, googleGameServices, amountOfCheckpoints);
 
         int startX = 1900;
 
@@ -94,7 +92,9 @@ public class RaceMode extends GameMode {
             TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
         }
 
-        googleGameServices.readyToStart();
+        if (!GlobalVariables.SINGLE_PLAYER) {
+            googleGameServices.readyToStart();
+        }
     }
 
     private class checkpointUserData implements UserDataCreater {
@@ -125,7 +125,7 @@ public class RaceMode extends GameMode {
     public void setLocalRaceCar(Vector2 position) {
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
-        localRaceCar = new LocalRaceCar(new Vector2(1600, 10900), localCarController, world, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(1600, 10900), localCarController, world, googleGameServices, amountOfCheckpoints);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
-        if (!googleGameServices.gameStarted() && !singlePlayer) {
+        if (!googleGameServices.gameStarted() && !GlobalVariables.SINGLE_PLAYER) {
             return;
         }
         for (OpponentCar car : opponentCars) {
@@ -149,7 +149,7 @@ public class RaceMode extends GameMode {
         camera.up.set(localRaceCar.getDirectionVector(), 0);
 
         localCarController.update();
-        if (!singlePlayer) {
+        if (!GlobalVariables.SINGLE_PLAYER) {
             googleGameServices.broadcastState(
                     localRaceCar.getVelocity(),
                     localRaceCar.getBodyPosition(),

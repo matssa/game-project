@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,8 +44,9 @@ public class Communicator {
 
     private int lastTimestamp = 0;
     private int readyParticipants = 0;
-    private long startTime = 0;
     private long myReadyTime = 0L;
+
+    public long startTime = 0;
     public boolean gameStarted = false;
 
 
@@ -203,7 +206,7 @@ public class Communicator {
         ByteBuffer messageBuffer = ByteBuffer.allocate(10);
         messageBuffer.putChar(0, 'R');
 
-        myReadyTime = TrueTime.now().getTime() + 3000;
+        myReadyTime = TrueTime.now().getTime() + 2000;
         messageBuffer.putLong(2, myReadyTime);
 
         newParticipantReady(myReadyTime);
@@ -217,9 +220,19 @@ public class Communicator {
             this.startTime = newStartTime;
         }
         if (readyParticipants == setUpGame.participants.size()) {
+            startGame();
 //            startRenderService();
             gameStarted = true;
         }
+    }
+
+    private void startGame() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                gameStarted = true;
+            }
+        }, startTime - TrueTime.now().getTime());
     }
 
     // Seems like it's best to make libGDX do the rendering by itself for now

@@ -41,7 +41,7 @@ public class AndroidLauncher extends AndroidApplication {
         super.onCreate(savedInstanceState);
 
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-        this.carSuperFun = new CarSuperFun(googleGameServices);
+        this.carSuperFun = new CarSuperFun(googleGameServices, this);
         initialize(carSuperFun, config);
 
         this.setUpGame = new SetUpGame(this);
@@ -123,6 +123,7 @@ public class AndroidLauncher extends AndroidApplication {
             communicator.broadcastState(velocity, position, angle, forward, rotation);
         }
 
+        @Override
         public void broadcastScore(int score, boolean isPositive) {
             communicator.broadcastScore(score, isPositive);
         }
@@ -165,6 +166,11 @@ public class AndroidLauncher extends AndroidApplication {
         @Override
         public boolean gameStarted() {
             return communicator.gameStarted;
+        }
+
+        @Override
+        public long getStartTime() {
+            return communicator.startTime;
         }
     };
 
