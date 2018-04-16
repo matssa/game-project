@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+import car.superfun.game.GlobalVariables;
+
 public class LocalCarController implements CarController {
     public float slider1Position;
     public float slider2Position;
@@ -21,6 +23,8 @@ public class LocalCarController implements CarController {
     private int knobRadius = 50;
     private int sliderWidth = 120;
 
+    private float forwardOffset;
+
     public LocalCarController() {
         slider1Position = Gdx.graphics.getHeight() / 2;
         slider2Position = Gdx.graphics.getHeight() / 2;
@@ -30,9 +34,19 @@ public class LocalCarController implements CarController {
 
         knob1Texture = new Texture("slider_knob.png");
         knob2Texture = new Texture("slider_knob.png");
+
+        if (GlobalVariables.TESTING_MODE) {
+            forwardOffset = 0.4f;
+        } else {
+            forwardOffset = 0f;
+        }
     }
 
     public void update() {
+
+        forward = 0.4f;
+        rotation = 0.0f;
+
         boolean slider1Touched = false;
         boolean slider2Touched = false;
         for (int i = 0; i < 5; i++) {
@@ -63,7 +77,7 @@ public class LocalCarController implements CarController {
             slider2Position = slider2Position - (slider2Position - Gdx.graphics.getHeight() / 2) / 5;
         }
 
-        forward = Math.max(-1f, Math.min(1f, (slider1Position + slider2Position - Gdx.graphics.getHeight()) / (Gdx.graphics.getHeight() * 0.8f)));
+        forward = Math.max(-1f, Math.min(1f, forwardOffset + (slider1Position + slider2Position - Gdx.graphics.getHeight()) / (Gdx.graphics.getHeight() * 0.8f)));
         rotation = Math.max(-1f, Math.min(1f, (slider2Position - slider1Position) / (Gdx.graphics.getHeight() * 0.8f)));
     }
 

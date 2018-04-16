@@ -1,5 +1,6 @@
 package car.superfun.game.gameModes.raceMode;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -10,9 +11,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
+import com.instacart.library.truetime.TrueTime;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
+import car.superfun.game.GoogleGameServices;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.UserDataCreater;
 import car.superfun.game.car.LocalCarController;
@@ -24,18 +30,19 @@ public class RaceMode extends GameMode {
 
     public static final int GOAL_ENTITY = 0b1 << 8;
     public static final int CHECKPOINT_ENTITY = 0b1 << 9;
+    public static final int TEST_ENTITY = 0b1 << 10;
 
-    private AndroidLauncher androidLauncher;
+    private GoogleGameServices googleGameServices;
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
     private LocalCarController localCarController;
     private LocalRaceCar localRaceCar;
-    private OpponentCar opponentCar;
     private Array<OpponentCar> opponentCars;
     private int amountOfCheckpoints;
     private boolean singlePlayer;
+
 
     private class checkpointUserData implements UserDataCreater {
         private int id;
@@ -50,10 +57,10 @@ public class RaceMode extends GameMode {
         }
     }
 
-    public RaceMode(AndroidLauncher androidLauncher, boolean singlePlayer) {
+    public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super();
         this.singlePlayer = singlePlayer;
-        this.androidLauncher = androidLauncher;
+        this.googleGameServices = googleGameServices;
         world.setContactListener(new RaceContactListener());
 
         localCarController = new LocalCarController();
@@ -80,13 +87,39 @@ public class RaceMode extends GameMode {
         checkpointDef.isSensor = true;
 
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
+
+        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
+
+        int startX = 1900;
+
+        Array<OpponentCarController> opponentCarControllers = googleGameServices.getOpponentCarControllers();
+
+        opponentCars = new Array<OpponentCar>();
+        for (OpponentCarController opponentCarController : opponentCarControllers) {
+            opponentCars.add(new OpponentCar(new Vector2(startX, 11000), opponentCarController, world));
+            startX -= 100;
+        }
+
+        if (GlobalVariables.TESTING_MODE) {
+            FixtureDef testDef = new FixtureDef();
+            testDef.filter.categoryBits = TEST_ENTITY;
+            testDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+            testDef.isSensor = true;
+            TrackBuilder.buildLayer(tiledMap, world, "test", testDef);
+        }
+
+        googleGameServices.readyToStart();
     }
 
     // Google Game Service sets the opponent cars
-    public void setOpponentCars(Array<Vector2> carPositions) {
+    public void setOpponentCars(Array<Vector2> carPositions, Array<OpponentCarController> opponentCarControllers) {
+        if (carPositions.size != opponentCarControllers.size) {
+            Gdx.app.log("ERROR: carPositions.size != opponentCarControllers.size", "cp: " + carPositions.size + ", occ: " + opponentCarControllers.size);
+            return;
+        }
         opponentCars = new Array<OpponentCar>();
-        for (Vector2 carPosition : carPositions) {
-            opponentCars.add(new OpponentCar(carPosition, new OpponentCarController(),world));
+        for (int i = 0; i < carPositions.size; i++) {
+            opponentCars.add(new OpponentCar(carPositions.get(i), opponentCarControllers.get(i), world));
         }
     }
 
@@ -94,7 +127,7 @@ public class RaceMode extends GameMode {
     public void setLocalRaceCar(Vector2 position) {
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
-        localRaceCar = new LocalRaceCar(new Vector2(1600, 11000), localCarController, world, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(1600, 10900), localCarController, world, amountOfCheckpoints);
     }
 
     @Override
@@ -104,19 +137,28 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
-        world.step(1f/60f, 6, 2);
-        localCarController.update();
-        localRaceCar.update(dt);
-        camera.position.set(localRaceCar.getSpritePosition(), 0);
-        camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
-
+        if (!googleGameServices.gameStarted() && !singlePlayer) {
+            return;
+        }
         for (OpponentCar car : opponentCars) {
             car.update(dt);
         }
+        localRaceCar.update(dt);
+        world.step(dt, 2, 1); // Using deltaTime
 
+        camera.position.set(localRaceCar.getSpritePosition(), 0);
+        camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
-        if(!singlePlayer){
-            androidLauncher.broadcast(false, 0, localRaceCar.getSpritePosition(), localRaceCar.getDirectionFloat());
+
+        localCarController.update();
+        if (!singlePlayer) {
+            googleGameServices.broadcast(
+                    localRaceCar.getVelocity(),
+                    localRaceCar.getBodyPosition(),
+                    localRaceCar.getAngle(),
+                    localCarController.getForward(),
+                    localCarController.getRotation());
+
         }
     }
 
@@ -145,4 +187,6 @@ public class RaceMode extends GameMode {
     public void endGame() {
         // TODO: Implement a proper way to exit the game
     }
+
 }
+

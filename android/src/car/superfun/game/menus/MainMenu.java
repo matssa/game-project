@@ -17,27 +17,29 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import car.superfun.game.AndroidLauncher;
+import car.superfun.game.GoogleGameServices;
 import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
 public class MainMenu extends State {
-    private Texture background;
     public static Stage stage = new Stage(new ScreenViewport());
-    private AndroidLauncher androidLauncher;
+  
+    private Texture background, hostButton, joinButton, settings, extraSettings;
+    private GoogleGameServices googleGameServices;
 
-    public MainMenu(AndroidLauncher aLauncher){
-        this.androidLauncher = aLauncher;
-
+    public MainMenu(GoogleGameServices googleGameServices){
+        this.googleGameServices = googleGameServices;
         background = new Texture("background.png");
+
 
         Table table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center|Align.top);
 
         table.setPosition(0,Gdx.graphics.getHeight());
-
+        /*
         ButtonActor settingsButton = new ButtonActor(new Sprite(new Texture("menu-buttons/settings.png")));
         settingsButton.addListener(new InputListener(){
             @Override
@@ -63,6 +65,17 @@ public class MainMenu extends State {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 androidLauncher.startQuickGame();
+    */
+    @Override
+    public void handleInput() {
+        if(Gdx.input.justTouched()){
+            if(isOnSettings()){
+                GameStateManager.getInstance().push(new SettingsMenu());
+                googleGameServices.signOut();
+                //GameStateManager.getInstance().push(new GladiatorMode());
+            }
+            if(isOnJoin()){
+                googleGameServices.startQuickGame();
                 GameStateManager.getInstance().push(new GameBrowser());
                 return true;
             }
@@ -74,12 +87,12 @@ public class MainMenu extends State {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                RaceMode race = new RaceMode(androidLauncher, false);
+                RaceMode race = new RaceMode(googleGameServices, false);
 
-                race.setLocalRaceCar(new Vector2(1600, 11000));
-                Array<Vector2> opponentCars = new Array<Vector2>();
-                opponentCars.add(new Vector2(1600, 11050));
-                race.setOpponentCars(opponentCars);
+//                race.setLocalRaceCar(new Vector2(1600, 11000));
+//                Array<Vector2> opponentCars = new Array<Vector2>();
+//                opponentCars.add(new Vector2(1600, 11050));
+//                race.setOpponentCars(opponentCars);
 
                 GameStateManager.getInstance().push(race);
                 return true;
@@ -97,9 +110,6 @@ public class MainMenu extends State {
 
         Gdx.input.setInputProcessor(stage);
     }
-
-    @Override
-    public void handleInput() { }
 
     @Override
     public void update(float dt) {
