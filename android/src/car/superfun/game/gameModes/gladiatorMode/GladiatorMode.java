@@ -23,7 +23,8 @@ import car.superfun.game.gameModes.GameMode;
 public class GladiatorMode extends GameMode {
 
     // Filters
-    static final short DEATH_ENTITY = 0x0032;
+    static final short DEATH_ENTITY = 0b1 << 8;
+    static final short BOOST_ZONE = 0b1 << 9;
 
     // Music and sounds
     private final Sound dustWallCrash;
@@ -35,10 +36,12 @@ public class GladiatorMode extends GameMode {
     private LocalCarController localCarController;
     private LocalGladiatorCar localCar;
     private int score;
+    private float boost;
 
     public GladiatorMode() {
         super();
 
+        // Audio
         gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
 
@@ -47,25 +50,35 @@ public class GladiatorMode extends GameMode {
         gladiatorSong.play();
 
         score = 5;
+        boost = 10;
         localCarController = new LocalCarController();
         localCar = new LocalGladiatorCar(this, new Vector2(6000, 6000), localCarController, world, score, dustWallCrash);
 
+        // Set the map
         tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
         world.setContactListener(new GladiatorContactListener());
 
+        // Set the normal walls
         FixtureDef wallDef = new FixtureDef();
         wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
         wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
-
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
 
+        // Set the death walls
         FixtureDef deathZoneDef = new FixtureDef();
         deathZoneDef.restitution = 2f;
         deathZoneDef.filter.categoryBits = GladiatorMode.DEATH_ENTITY;
         deathZoneDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
-
         TrackBuilder.buildLayer(tiledMap, world, "dirt_barrier", deathZoneDef);
+
+        // Set the boost charging zone
+        FixtureDef boostZone = new FixtureDef();
+        boostZone.isSensor = true;
+        boostZone.filter.categoryBits = BOOST_ZONE;
+        boostZone.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
+        TrackBuilder.buildLayer(tiledMap, world, "boost_zone", boostZone);
     }
 
     @Override

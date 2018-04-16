@@ -1,12 +1,19 @@
 package car.superfun.game.car;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class OpponentCarController implements CarController {
     public float forward;
     public float rotation;
+    private OpponentCar controlledCar;
 
     public OpponentCarController() {
         forward = 0;
         rotation = 0;
+    }
+
+    public void setControlledCar(OpponentCar controlledCar) {
+        this.controlledCar = controlledCar;
     }
 
     public void setForward(float forward) {
@@ -20,6 +27,18 @@ public class OpponentCarController implements CarController {
     public void setForwardAndRotation(float forward, float rotation) {
         this.forward = forward;
         this.rotation = rotation;
+    }
+
+    public OpponentCar getControlledCar() {
+        return controlledCar;
+    }
+
+    public void setCarMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff, int timestamp) {
+        controlledCar.setMovement(position, angle, velocity, timeDiff, timestamp);
+    }
+
+    public boolean hasControlledCar() {
+        return (controlledCar != null);
     }
 
     @Override

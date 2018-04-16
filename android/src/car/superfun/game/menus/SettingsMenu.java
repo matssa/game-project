@@ -52,8 +52,7 @@ public class SettingsMenu extends State {
         table.add(new Label("Settings", skin)).center().colspan(2);
         table.row();
         table.add(new Label("Music volume", skin)).right().padRight(80);
-        table.add(new Slider(0f, 1f, 0.1f, false, skin)).left().width(stage.getWidth()/6);¨pl
-                pø
+        table.add(new Slider(0f, 1f, 0.1f, false, skin)).left().width(stage.getWidth()/6);
 
 
 
