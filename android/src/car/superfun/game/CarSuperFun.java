@@ -77,7 +77,7 @@ public class CarSuperFun extends ApplicationAdapter {
                     break;
                 case GLADIATOR_MODE:
                     Log.d("CarSuperFun", "Pushed GladiatorMode");
-                    // GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, false));
+                    GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, false));
                     break;
             }
         }

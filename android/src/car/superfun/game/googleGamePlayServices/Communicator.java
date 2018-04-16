@@ -192,7 +192,7 @@ public class Communicator {
         float angle = buffer.getFloat(22);
         float forward = buffer.getFloat(26);
         float rotation = buffer.getFloat(30);
-        
+
         opponentCarController.setForwardAndRotation(forward, rotation);
         opponentCarController.setCarMovement(position, angle, velocity, timeDiff, packageTimestamp);
     }
