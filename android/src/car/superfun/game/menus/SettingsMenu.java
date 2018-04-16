@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -18,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import car.superfun.game.actor.ButtonActor;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
+
 
 public class SettingsMenu extends State {
     private Texture background;
@@ -61,8 +61,9 @@ public class SettingsMenu extends State {
         Gdx.input.setInputProcessor(stage);
     }
 
-    @Override
-    public void handleInput() { }
+    public void handleInput(){
+
+    }
 
     @Override
     public void update(float dt) {

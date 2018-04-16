@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.menus.LoginMenu;
 import car.superfun.game.menus.MainMenu;
@@ -46,6 +47,8 @@ public class CarSuperFun extends ApplicationAdapter {
         //sets the color to black
         Gdx.gl.glClearColor(0, 0, 0, 1);
 
+        // Starts the game in MainMenu
+
         gsm.push(new LoginMenu(googleGameServices));
 
         // Take control of the back button
@@ -72,6 +75,10 @@ public class CarSuperFun extends ApplicationAdapter {
                 case LOGIN_MENU:
                     Log.d("CarSuperFun", "Pushed LoginMenu");
                     GameStateManager.getInstance().push(new LoginMenu(googleGameServices));
+                    break;
+                case GLADIATOR_MODE:
+                    Log.d("CarSuperFun", "Pushed GladiatorMode");
+                    GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, false));
                     break;
             }
         }

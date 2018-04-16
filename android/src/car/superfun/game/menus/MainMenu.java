@@ -11,14 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import car.superfun.game.actor.ButtonActor;
-import car.superfun.game.AndroidLauncher;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-
-import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GoogleGameServices;
-import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
+import car.superfun.game.actor.ButtonActor;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
@@ -28,8 +22,7 @@ public class MainMenu extends State {
   
     private Texture background;
 
-    public MainMenu(GoogleGameServices googleGameServices){
-        //this.googleGameServices = googleGameServices;
+    public MainMenu(GoogleGameServices googleGameServices) {
         background = new Texture("background.png");
 
         final GoogleGameServices googleGameService = googleGameServices;
@@ -37,32 +30,30 @@ public class MainMenu extends State {
 
         Table table = new Table();
         table.setWidth(stage.getWidth());
-        table.align(Align.center|Align.top);
+        table.align(Align.center | Align.top);
 
-        table.setPosition(0,Gdx.graphics.getHeight());
+        table.setPosition(0, Gdx.graphics.getHeight());
 
         ButtonActor settingsButton = new ButtonActor(new Sprite(new Texture("menu-buttons/settings.png")));
-        settingsButton.addListener(new InputListener(){
+        settingsButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                //androidLauncher.signOut();
-                //GameStateManager.getInstance().push(new SettingsMenu());
                 GameStateManager.getInstance().push(new SettingsMenu());
                 return true;
             }
         });
 
         ButtonActor extraSettingsButton = new ButtonActor(new Sprite(new Texture("menu-buttons/settings.png")));
-        extraSettingsButton.addListener(new InputListener(){
+        extraSettingsButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                GameStateManager.getInstance().push(new GladiatorMode());
+                //GameStateManager.getInstance().push(new GladiatorMode());
                 return true;
             }
         });
 
         ButtonActor joinButton = new ButtonActor(new Sprite(new Texture("menu-buttons/join.png")));
-        joinButton.addListener(new InputListener(){
+        joinButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 //androidLauncher.startQuickGame();
@@ -103,19 +94,7 @@ public class MainMenu extends State {
 
     @Override
     public void handleInput() {
-        /*if(Gdx.input.justTouched()){
-            if(isOnSettings()){
-                GameStateManager.getInstance().push(new SettingsMenu());
-                googleGameServices.signOut();
-                //GameStateManager.getInstance().push(new GladiatorMode());
-            }
-            if(isOnJoin()){
-                googleGameServices.startQuickGame();
-                GameStateManager.getInstance().push(new GameBrowser());
-                return true;
-            }
-        });
-        */
+
     }
 
     @Override

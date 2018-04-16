@@ -44,19 +44,6 @@ public class RaceMode extends GameMode {
     private boolean singlePlayer;
 
 
-    private class checkpointUserData implements UserDataCreater {
-        private int id;
-
-
-        public checkpointUserData() {
-            id = 0;
-        }
-
-        public Object getUserData() {
-            return id++;
-        }
-    }
-
     public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super();
         this.singlePlayer = singlePlayer;
@@ -68,12 +55,14 @@ public class RaceMode extends GameMode {
         tiledMap = new TmxMapLoader().load("tiled_maps/simpleMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
+        // Set the normal walls
         FixtureDef wallDef = new FixtureDef();
         wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
         wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
 
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
 
+        // Set the goal line
         FixtureDef goalDef = new FixtureDef();
         goalDef.filter.categoryBits = GOAL_ENTITY;
         goalDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
@@ -81,6 +70,7 @@ public class RaceMode extends GameMode {
 
         TrackBuilder.buildLayer(tiledMap, world, "goal_line", goalDef);
 
+        // Set the checkpoints around the map
         FixtureDef checkpointDef = new FixtureDef();
         checkpointDef.filter.categoryBits = CHECKPOINT_ENTITY;
         checkpointDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
@@ -88,6 +78,7 @@ public class RaceMode extends GameMode {
 
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
 
+        // This should be set in GGS, no? Through the setLocalRaceCar method?
         localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
 
         int startX = 1900;
@@ -100,6 +91,7 @@ public class RaceMode extends GameMode {
             startX -= 100;
         }
 
+        // Enables testing mode
         if (GlobalVariables.TESTING_MODE) {
             FixtureDef testDef = new FixtureDef();
             testDef.filter.categoryBits = TEST_ENTITY;
@@ -109,6 +101,18 @@ public class RaceMode extends GameMode {
         }
 
         googleGameServices.readyToStart();
+    }
+
+    private class checkpointUserData implements UserDataCreater {
+        private int id;
+
+        public checkpointUserData() {
+            id = 0;
+        }
+
+        public Object getUserData() {
+            return id++;
+        }
     }
 
     // Google Game Service sets the opponent cars

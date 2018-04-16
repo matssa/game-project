@@ -7,9 +7,6 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import car.superfun.game.states.State;
 
-/**
- * Created by kristian on 14.03.18.
- */
 
 public abstract class GameMode extends State {
 
