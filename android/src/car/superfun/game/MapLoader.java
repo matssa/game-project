@@ -64,8 +64,21 @@ public class MapLoader extends TmxMapLoader {
                         for (MapObject mapObject : mapObjects) {
                             Shape shape;
 
+                            boolean rotate90 = (flipVertically && flipDiagonally);
+                            boolean rotate180 = (flipHorizontally && flipVertically);
+                            boolean rotate270 = (flipHorizontally && flipDiagonally);
+
+                            int rotation = 0;
+                            if (rotate90) {
+                                rotation = 90;
+                            } else if (rotate180) {
+                                rotation = 180;
+                            } else if (rotate270) {
+                                rotation = 270;
+                            }
+
                             if (mapObject instanceof PolylineMapObject) {
-                                shape = getPolyline((PolylineMapObject)mapObject, height, tileWidth, tileHeight, x, y);
+                                shape = getPolyline((PolylineMapObject)mapObject, height, tileWidth, tileHeight, x, y, rotation);
                             } else {
                                 Gdx.app.log("MapLoader", "encountered non-polyLine tileObject");
                                 continue;
@@ -92,22 +105,25 @@ public class MapLoader extends TmxMapLoader {
         }
     }
 
-    private static float getBox2dX(int tileXPos, int tileWidth) {
-        return (tileXPos * tileWidth) / GlobalVariables.PIXELS_TO_METERS;
+    private static float getBox2dX(int tileXPos, int tileWidth, int offset) {
+        return (tileXPos * tileWidth + offset) / GlobalVariables.PIXELS_TO_METERS;
     }
 
-    private static float getBox2dY(int tileYPos, int tileHeight, int height) {
-        return ((height - tileYPos - 1) * tileHeight) / GlobalVariables.PIXELS_TO_METERS;
+    private static float getBox2dY(int tileYPos, int tileHeight, int height, int offset) {
+        return ((height - tileYPos - 1) * tileHeight + offset) / GlobalVariables.PIXELS_TO_METERS;
     }
 
-    private static ChainShape getPolyline(PolylineMapObject polylineMapObject, int height, int tileWidth, int tileHeight, int x, int y) {
+    private static ChainShape getPolyline(PolylineMapObject polylineMapObject, int height, int tileWidth, int tileHeight, int x, int y, int rotation) {
         float[] vertices = polylineMapObject.getPolyline().getTransformedVertices();
         Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
         for (int i = 0; i < vertices.length / 2; ++i) {
             worldVertices[i] = new Vector2();
-            worldVertices[i].x = (vertices[i * 2] / GlobalVariables.PIXELS_TO_METERS) + getBox2dX(x, tileWidth);
-            worldVertices[i].y = (vertices[i * 2 + 1] / GlobalVariables.PIXELS_TO_METERS) + getBox2dY(y, tileHeight, height);
+            worldVertices[i].x = (vertices[i * 2] - (tileWidth / 2))/ GlobalVariables.PIXELS_TO_METERS;
+            worldVertices[i].y = (vertices[i * 2 + 1] - (tileHeight / 2))/ GlobalVariables.PIXELS_TO_METERS;
+            worldVertices[i].rotate(rotation);
+            worldVertices[i].x += getBox2dX(x, tileWidth, (tileWidth / 2));
+            worldVertices[i].y += getBox2dY(y, tileHeight, height, (tileHeight / 2));
         }
 
         ChainShape chainShape = new ChainShape();
