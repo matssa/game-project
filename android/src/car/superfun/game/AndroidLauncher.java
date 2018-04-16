@@ -99,6 +99,7 @@ public class AndroidLauncher extends AndroidApplication {
                             .withNtpHost("time.google.com")
                             .withLoggingEnabled(false)
                             .withConnectionTimeout(3_1428)
+                            .withSharedPreferences(getApplicationContext())
                             .initialize();
                 } catch (IOException ex) {
                     Gdx.app.log("IOException from TrueTime:", ex.getMessage());
@@ -118,8 +119,12 @@ public class AndroidLauncher extends AndroidApplication {
     public GoogleGameServices googleGameServices = new GoogleGameServices() {
 
         @Override
-        public void broadcast(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
+        public void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
             communicator.broadcastState(velocity, position, angle, forward, rotation);
+        }
+
+        public void broadcastScore(int score, boolean isPositive) {
+            communicator.broadcastScore(score, isPositive);
         }
 
         @Override

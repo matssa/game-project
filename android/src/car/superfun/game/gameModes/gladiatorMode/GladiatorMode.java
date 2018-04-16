@@ -1,7 +1,5 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
-import android.provider.Settings;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -153,7 +151,7 @@ public class GladiatorMode extends GameMode {
 
         localCarController.update();
         if (!singlePlayer) {
-            googleGameServices.broadcast(
+            googleGameServices.broadcastState(
                     localCar.getVelocity(),
                     localCar.getBodyPosition(),
                     localCar.getAngle(),

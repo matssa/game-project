@@ -7,17 +7,19 @@ import car.superfun.game.car.OpponentCarController;
 
 public interface GoogleGameServices {
 
-    public abstract void broadcast(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
-    public abstract Array<OpponentCarController> getOpponentCarControllers();
+    void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
+    void broadcastScore(int score, boolean isPositive);
 
-    public abstract boolean isSignedIn();
-    public abstract void signOut();
-    public abstract void startSignInIntent();
+    Array<OpponentCarController> getOpponentCarControllers();
 
-    public abstract void startQuickGame(NewState newState);
-    public abstract void leaveRoom();
-    public abstract void readyToStart();
-    public abstract boolean gameStarted();
+    boolean isSignedIn();
+    void signOut();
+    void startSignInIntent();
+
+    void startQuickGame(NewState newState);
+    void leaveRoom();
+    void readyToStart();
+    boolean gameStarted();
 
 
 }
