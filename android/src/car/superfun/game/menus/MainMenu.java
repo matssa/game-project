@@ -57,7 +57,13 @@ public class MainMenu extends State {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 //androidLauncher.startQuickGame();
-                GameStateManager.getInstance().push(new Leaderboard());
+                Leaderboard leaderboard = Leaderboard.getInstance();
+                leaderboard.setBool(true);
+                leaderboard.placePlayer("Per", 123456);
+                leaderboard.placePlayer("Kari", 234567);
+
+                leaderboard.initialize();
+                GameStateManager.getInstance().push(leaderboard);
                 return true;
             }
         });
