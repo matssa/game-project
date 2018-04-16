@@ -25,9 +25,9 @@ public class OpponentCar extends Car {
 
     GlobalVariables.AvgLogger posDiffLogger;
 
-    public OpponentCar(Vector2 position, OpponentCarController opponentCarController, World world) {
+    public OpponentCar(Vector2 position, OpponentCarController opponentCarController, World world, String texturePath) {
         super(position,
-                new Sprite(new Texture("racing-pack/PNG/Cars/car_red_5.png")),
+                new Sprite(new Texture(texturePath)),
                 opponentCarController,
                 world,
                 GlobalVariables.OPPONENT_ENTITY);

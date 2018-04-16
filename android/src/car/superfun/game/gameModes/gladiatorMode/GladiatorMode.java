@@ -24,6 +24,8 @@ import car.superfun.game.gameModes.SetStartPositionCallback;
 
 public class GladiatorMode extends GameMode {
 
+
+
     // Filters
     static final short DEATH_ENTITY = 0b1 << 8;
     static final short BOOST_ZONE = 0b1 << 9;
@@ -41,6 +43,7 @@ public class GladiatorMode extends GameMode {
     private static final String MAP_PATH = "tiled_maps/gladiator.tmx";
     private LocalCarController localCarController;
     private LocalGladiatorCar localCar;
+
 
     private int score = 5;
     private float boost = 10;
@@ -67,9 +70,10 @@ public class GladiatorMode extends GameMode {
     }
 
     private SetStartPositionCallback setStartPositionsCallback = new SetStartPositionCallback() {
+        int index = 0;
         @Override
         public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
-            opponentCars.add(new OpponentCar(position, opponentCarController, world));
+            opponentCars.add(new OpponentCar(position, opponentCarController, world, "racing-pack/PNG/Cars/car_black_5.png"));
         }
 
         @Override
@@ -86,7 +90,7 @@ public class GladiatorMode extends GameMode {
         }
         opponentCars = new Array<OpponentCar>();
         for (int i = 0; i < carPositions.size; i++) {
-            opponentCars.add(new OpponentCar(carPositions.get(i), opponentCarControllers.get(i), world));
+            opponentCars.add(new OpponentCar(carPositions.get(i), opponentCarControllers.get(i), world, "racing-pack/PNG/Cars/car_black_5.png"));
         }
     }
 
@@ -94,7 +98,7 @@ public class GladiatorMode extends GameMode {
     public void setLocalRaceCar(Vector2 position, LocalCarController localCarController) {
         // TODO: implement some way to save starting position together with the map
         // Position is set to 6000, 6000 for now.
-        localCar = new LocalGladiatorCar(this, new Vector2(6000, 6000), localCarController, world, score, dustWallCrash);
+        localCar = new LocalGladiatorCar(this, new Vector2(6000, 6000), localCarController, world, score, dustWallCrash, "racing-pack/PNG/Cars/car_blue_5.png");
     }
 
     private void setUpMap() {
