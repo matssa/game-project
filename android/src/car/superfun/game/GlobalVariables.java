@@ -26,6 +26,8 @@ public final class GlobalVariables {
     // Enable testing mode to make localCar drive by itself
     public static final boolean TESTING_MODE = false;
 
+    public static final boolean SINGLE_PLAYER = true;
+
     // Below are some logging classes that are useful for debug and tweaking purposes
 
     public static void logVector(Vector2 vector, String tag) {
