@@ -1,7 +1,6 @@
 package car.superfun.game.googleGamePlayServices;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,8 +29,8 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import car.superfun.game.AndroidLauncher;
+import car.superfun.game.NewState;
 import car.superfun.game.R;
 import car.superfun.game.car.OpponentCarController;
 
@@ -76,7 +75,8 @@ public class SetUpGame {
         return communicator;
     }
 
-    public void startQuickGame() {
+    public void startQuickGame(NewState newState) {
+        androidLauncher.setNewState(newState);
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 2, 0);

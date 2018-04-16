@@ -34,7 +34,7 @@ public class AndroidLauncher extends AndroidApplication {
     public Communicator communicator;
 
     private CarSuperFun carSuperFun;
-
+    private NewState newState = NewState.RACE_MODE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,7 @@ public class AndroidLauncher extends AndroidApplication {
         } else if (requestCode == SetUpGame.RC_WAITING_ROOM) {
             if (resultCode == Activity.RESULT_OK) {
                 setUpGame.waitingRoomReady();
-                carSuperFun.createNewState(NewState.RACE_MODE);
+                carSuperFun.createNewState(newState);
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 setUpGame.leaveRoom();
             } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -143,8 +143,8 @@ public class AndroidLauncher extends AndroidApplication {
         }
 
         @Override
-        public void startQuickGame() {
-            setUpGame.startQuickGame();
+        public void startQuickGame(NewState newState) {
+            setUpGame.startQuickGame(newState);
         }
 
         @Override
@@ -162,6 +162,10 @@ public class AndroidLauncher extends AndroidApplication {
             return communicator.gameStarted;
         }
     };
+
+    public void setNewState(NewState newState) {
+        this.newState = newState;
+    }
 
 }
 
