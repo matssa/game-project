@@ -32,21 +32,16 @@ public class GladiatorMode extends GameMode {
     private final Sound dustWallCrash;
     private final Music gladiatorSong;
 
-
-    TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
-
     private Array<OpponentCar>  opponentCars = new Array<OpponentCar>();
 
     private static final String MAP_PATH = "tiled_maps/gladiator.tmx";
-    private LocalCarController localCarController;
     private LocalGladiatorCar localCar;
 
     private int score = 5;
     private float boost = 10;
 
     public GladiatorMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
-        super(MAP_PATH, googleGameServices, singlePlayer );
+        super(MAP_PATH, googleGameServices, singlePlayer);
 
         // Audio
         gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
@@ -55,7 +50,6 @@ public class GladiatorMode extends GameMode {
         gladiatorSong.setLooping(true);
         gladiatorSong.setVolume(0.6f);
         gladiatorSong.play();
-
 
         // configure map
         setUpMap();
