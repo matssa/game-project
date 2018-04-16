@@ -5,8 +5,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -32,21 +30,16 @@ public class GladiatorMode extends GameMode {
     private final Sound dustWallCrash;
     private final Music gladiatorSong;
 
-
-    TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
-
     private Array<OpponentCar>  opponentCars = new Array<OpponentCar>();
 
     private static final String MAP_PATH = "tiled_maps/gladiator.tmx";
-    private LocalCarController localCarController;
     private LocalGladiatorCar localCar;
 
     private int score = 5;
     private float boost = 10;
 
     public GladiatorMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
-        super(MAP_PATH, googleGameServices, singlePlayer );
+        super(MAP_PATH, googleGameServices, singlePlayer);
 
         // Audio
         gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
@@ -55,7 +48,6 @@ public class GladiatorMode extends GameMode {
         gladiatorSong.setLooping(true);
         gladiatorSong.setVolume(0.6f);
         gladiatorSong.play();
-
 
         // configure map
         setUpMap();
@@ -123,6 +115,9 @@ public class GladiatorMode extends GameMode {
         boostZone.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         TrackBuilder.buildLayer(tiledMap, world, "boost_zone", boostZone);
 
+
+        // Get starting positions for map
+        getStartPositions("starting_points");
     }
 
     @Override
