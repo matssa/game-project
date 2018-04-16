@@ -8,15 +8,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
-import com.instacart.library.truetime.TrueTime;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
 import car.superfun.game.TrackBuilder;
@@ -156,7 +150,7 @@ public class RaceMode extends GameMode {
 
         localCarController.update();
         if (!singlePlayer) {
-            googleGameServices.broadcast(
+            googleGameServices.broadcastState(
                     localRaceCar.getVelocity(),
                     localRaceCar.getBodyPosition(),
                     localRaceCar.getAngle(),

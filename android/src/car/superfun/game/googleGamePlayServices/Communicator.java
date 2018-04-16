@@ -77,10 +77,6 @@ public class Communicator {
                     handleStateMessage(buffer, senderId);
                     break;
                 }
-                case ('I'): {
-                    handleInterimScoreMessage(buffer, senderId);
-                    break;
-                }
                 case ('F'): {
                     handleFinalScoreMessage(buffer, senderId);
                     break;
@@ -99,9 +95,18 @@ public class Communicator {
         }
     };
 
+    public void broadcastScore(int score, boolean isPositive) {
+        ByteBuffer messageBuffer = ByteBuffer.allocate(7);
+        messageBuffer.putChar(0, 'F'); // F for finished
+        messageBuffer.putInt(2, score);
+        byte isPositiveNum = isPositive ? (byte) 1 : (byte) 0;
+        messageBuffer.put(6, isPositiveNum);
+
+        broadcastReliableMessage(messageBuffer.array());
+    }
+
 
     public void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
-
         ByteBuffer messageBuffer = ByteBuffer.allocate(34);
 
         messageBuffer.putChar(0, 'S'); // S for state
@@ -118,9 +123,6 @@ public class Communicator {
 
         messageBuffer.putFloat(26, forward);
         messageBuffer.putFloat(30, rotation);
-
-//        Gdx.app.log("my timestamp", "" + timestamp);
-//        GlobalVariables.logVector(position, "My position");
 
         // Send to all the other participants.
         for (Participant p : setUpGame.participants) {
@@ -235,9 +237,4 @@ public class Communicator {
                 25,
                 TimeUnit.MILLISECONDS);
     }
-
-
-
-
-
 }
