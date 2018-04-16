@@ -16,6 +16,9 @@ public final class GlobalVariables {
     // For converting between coordinate systems
     public static final float PIXELS_TO_METERS = 100f;
 
+    // Volume
+    public static final float MUSIC_VOLUME = 1f;
+    public static final float SOUND_VOLUME = 1f;
 
     // Game mode specific filters are made from 0b 0000 0001 0000 0000 and up.
     // I.e. leave the first 8 entity bits for globals

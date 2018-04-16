@@ -1,5 +1,7 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
+import android.provider.Settings;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -41,7 +43,7 @@ public class GladiatorMode extends GameMode {
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
 
         gladiatorSong.setLooping(true);
-        gladiatorSong.setVolume(0.6f);
+        gladiatorSong.setVolume(GlobalVariables.MUSIC_VOLUME);
         gladiatorSong.play();
 
         score = 5;

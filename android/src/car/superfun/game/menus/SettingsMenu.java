@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -33,6 +34,9 @@ public class SettingsMenu extends State {
 
         table.setPosition(0,Gdx.graphics.getHeight());
 
+        Skin skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        skin.getFont("default-font").getData().setScale(4f,4f);
+
         ButtonActor backButton = new ButtonActor(new Sprite(new Texture("menu-buttons/back.png")));
         backButton.addListener(new InputListener(){
             @Override
@@ -43,22 +47,16 @@ public class SettingsMenu extends State {
             }
         });
 
-        table.add(backButton).expandX().top().left().padBottom(120);
-
+        table.add(backButton).expandX().left().colspan(2).padBottom(-60);
         table.row();
-
-        //BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/bahnschrift.ttf"));
-        //Label.LabelStyle labelStyle = new Label.LabelStyle("default-font", Color.BLACK);
-        Skin skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        skin.getFont("default-font").getData().setScale(4f,4f);
-
-        CheckBox music = new CheckBox("", skin);
-        CheckBox sounds = new CheckBox("Mute sounds:", skin);
-
-        table.add(new Label("Mute music:",skin));
-        table.add(music);
+        table.add(new Label("Settings", skin)).center().colspan(2);
         table.row();
-        table.add(sounds);
+        table.add(new Label("Music volume", skin)).right().padRight(80);
+        table.add(new Slider(0f, 1f, 0.1f, false, skin)).left().width(stage.getWidth()/6);¨pl
+                pø
+
+
+
         stage.addActor(table);
 
         Gdx.input.setInputProcessor(stage);
