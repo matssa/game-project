@@ -103,6 +103,8 @@ public class GladiatorMode extends GameMode {
             startX -= 100;
         }
 
+        setLocalRaceCar(new Vector2());
+
         googleGameServices.readyToStart();
     }
 

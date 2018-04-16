@@ -5,12 +5,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
-import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GoogleGameServices;
-import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
+import car.superfun.game.NewState;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
@@ -36,7 +33,7 @@ public class MainMenu extends State {
                 googleGameServices.signOut();
             }
             if(isOnJoin()){
-                googleGameServices.startQuickGame();
+                googleGameServices.startQuickGame(NewState.RACE_MODE);
                 GameStateManager.getInstance().push(new GameBrowser());
             }
             if(isOnHost()){
@@ -52,7 +49,8 @@ public class MainMenu extends State {
                 GameStateManager.getInstance().push(race);
             }
             if(isOnExtraSettings()){
-                GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, false));
+                googleGameServices.startQuickGame(NewState.GLADIATOR_MODE);
+                GameStateManager.getInstance().push(new GameBrowser());
             }
         }
     }
