@@ -41,7 +41,7 @@ public class AndroidLauncher extends AndroidApplication {
         super.onCreate(savedInstanceState);
 
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-        this.carSuperFun = new CarSuperFun(googleGameServices);
+        this.carSuperFun = new CarSuperFun(googleGameServices, this);
         initialize(carSuperFun, config);
 
         this.setUpGame = new SetUpGame(this);

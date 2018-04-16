@@ -24,6 +24,7 @@ public class CarSuperFun extends ApplicationAdapter {
     private GameStateManager gsm;
     private SpriteBatch batch;
     private GoogleGameServices googleGameServices;
+    private AndroidLauncher androidLauncher;
 
     private boolean createNewGame = false;
     private boolean justPressedBack;
@@ -34,8 +35,9 @@ public class CarSuperFun extends ApplicationAdapter {
      * Sets up the app
      */
 
-    public CarSuperFun(GoogleGameServices googleGameServices) {
+    public CarSuperFun(GoogleGameServices googleGameServices, AndroidLauncher androidLauncher) {
         this.googleGameServices = googleGameServices;
+        this.androidLauncher = androidLauncher;
     }
 
     @Override
@@ -104,8 +106,9 @@ public class CarSuperFun extends ApplicationAdapter {
         // Unless the current state is the bottom state (should be MainMenu),
         // in such case the app is closed
         if (Gdx.input.isKeyPressed(Input.Keys.BACK) && !justPressedBack) {
-            if (gsm.isOnlyOneLeft()) {
-                Gdx.app.exit(); // TODO this can no longer be reached
+            if (gsm.isInMainMenu()) {
+                androidLauncher.finish();
+                System.exit(0);
             } else {
                 justPressedBack = true;
                 new Timer().schedule(new TimerTask() {
@@ -113,7 +116,7 @@ public class CarSuperFun extends ApplicationAdapter {
                     public void run() {
                         justPressedBack = false;
                     }
-                }, 1500);
+                }, 800);
                 gsm.pop();
             }
         }
