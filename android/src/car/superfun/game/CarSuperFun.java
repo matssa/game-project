@@ -46,8 +46,6 @@ public class CarSuperFun extends ApplicationAdapter {
         //sets the color to black
         Gdx.gl.glClearColor(0, 0, 0, 1);
 
-        // Starts the game in MainMenu
-
         gsm.push(new LoginMenu(googleGameServices));
 
         // Take control of the back button
