@@ -164,11 +164,11 @@ public class Communicator {
                     });
         }
     }
-
-    private void handleInterimScoreMessage(ByteBuffer buffer, String senderId) {
-    }
-
     private void handleFinalScoreMessage(ByteBuffer buffer, String senderId) {
+        int score = buffer.getInt(2);
+        boolean isPositive = (buffer.get(6) == 1);
+//        String senderName = getNicknameSomething(senderId);
+
         finishedParticipants.add(senderId);
     }
 
