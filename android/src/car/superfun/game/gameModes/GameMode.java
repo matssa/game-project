@@ -17,7 +17,6 @@ import car.superfun.game.GoogleGameServices;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.car.CarController;
 import car.superfun.game.car.LocalCarController;
-import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.states.State;
 
@@ -27,7 +26,6 @@ public abstract class GameMode extends State {
     protected OrthographicCamera camera;
     protected SpriteBatch camBatch;
 
-    protected Array<OpponentCar> opponentCars;
     protected Array<Vector2> startPositions;
 
     protected LocalCarController localCarController;
