@@ -133,12 +133,29 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void update(float dt) {
-        world.step(1f/60f, 6, 2);
-        localCarController.update();
+        if (!googleGameServices.gameStarted() && !singlePlayer) {
+            return;
+        }
+        for (OpponentCar car : opponentCars) {
+            car.update(dt);
+        }
         localCar.update(dt);
+        world.step(dt, 2, 1); // Using deltaTime
+
         camera.position.set(localCar.getSpritePosition(), 0);
         camera.position.set(localCar.getSpritePosition().add(localCar.getVelocity().scl(10f)), 0);
         camera.up.set(localCar.getDirectionVector(), 0);
+
+        localCarController.update();
+        if (!singlePlayer) {
+            googleGameServices.broadcast(
+                    localCar.getVelocity(),
+                    localCar.getBodyPosition(),
+                    localCar.getAngle(),
+                    localCarController.getForward(),
+                    localCarController.getRotation());
+
+        }
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
