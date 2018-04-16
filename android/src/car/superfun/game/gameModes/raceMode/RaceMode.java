@@ -8,15 +8,13 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
-import com.instacart.library.truetime.TrueTime;
+import com.google.android.gms.games.multiplayer.Participant;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.Collections;
 
-import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
 import car.superfun.game.TrackBuilder;
@@ -42,6 +40,7 @@ public class RaceMode extends GameMode {
     private Array<OpponentCar> opponentCars;
     private int amountOfCheckpoints;
     private boolean singlePlayer;
+    private Array<Vector2> startPositions;
 
 
     public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
@@ -76,20 +75,23 @@ public class RaceMode extends GameMode {
         checkpointDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         checkpointDef.isSensor = true;
 
+
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
 
-        // This should be set in GGS, no? Through the setLocalRaceCar method?
-        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
 
-        int startX = 1900;
+        startPositions = TrackBuilder.getPoints(tiledMap, "starting_points");
 
         Array<OpponentCarController> opponentCarControllers = googleGameServices.getOpponentCarControllers();
 
+        ArrayList<String> participantIDs = getSortedParticipents();
         opponentCars = new Array<OpponentCar>();
         for (OpponentCarController opponentCarController : opponentCarControllers) {
-            opponentCars.add(new OpponentCar(new Vector2(startX, 11000), opponentCarController, world));
-            startX -= 100;
+            int index = participantIDs.indexOf(opponentCarController.partisipentID);
+            opponentCars.add(new OpponentCar(new Vector2(startPositions.get(index).x, startPositions.get(index).y), opponentCarController, world));
         }
+
+        // This should be set in GGS, no? Through the setLocalRaceCar method?
+        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, amountOfCheckpoints);
 
         // Enables testing mode
         if (GlobalVariables.TESTING_MODE) {
@@ -101,6 +103,16 @@ public class RaceMode extends GameMode {
         }
 
         googleGameServices.readyToStart();
+    }
+
+    private ArrayList<String> getSortedParticipents() {
+        ArrayList<Participant> participants = googleGameServices.getParticipants();
+        ArrayList<String> participantIDs = new ArrayList<>();
+        for (Participant participant : participants) {
+            participantIDs.add(participant.getParticipantId());
+        }
+        Collections.sort(participantIDs);
+        return participantIDs;
     }
 
     private class checkpointUserData implements UserDataCreater {

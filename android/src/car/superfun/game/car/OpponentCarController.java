@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 public class OpponentCarController implements CarController {
     public float forward;
     public float rotation;
+    public String partisipentID;
     private OpponentCar controlledCar;
 
     public OpponentCarController() {
@@ -12,8 +13,10 @@ public class OpponentCarController implements CarController {
         rotation = 0;
     }
 
-    public void setControlledCar(OpponentCar controlledCar) {
+    public void setControlledCar(OpponentCar controlledCar, String partisipentID) {
+
         this.controlledCar = controlledCar;
+        this.partisipentID = partisipentID;
     }
 
     public void setForward(float forward) {

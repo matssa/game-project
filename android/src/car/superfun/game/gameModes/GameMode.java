@@ -24,6 +24,8 @@ public abstract class GameMode extends State {
         camBatch = new SpriteBatch();
 
         world = new World(new Vector2(0,0), true);
+
+
     }
 
     public void render(SpriteBatch sb) {
