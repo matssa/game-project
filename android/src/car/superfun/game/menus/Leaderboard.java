@@ -38,6 +38,8 @@ public class Leaderboard extends State {
     private Stage stage;
     private ArrayList<Player> playerList;
     private Table table;
+    private Skin headerSkin, skin;
+    private ButtonActor backButton;
 
     private boolean isPositive;
     private ScoreFormatter formatter;
@@ -54,7 +56,22 @@ public class Leaderboard extends State {
         table.align(Align.center|Align.top);
         table.setPosition(0, stage.getHeight());
         //table.setDebug(true);
+        headerSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        headerSkin.getFont("default-font").getData().setScale(6f,6f);
+        skin.getFont("default-font").getData().setScale(4f,4f);
 
+        backButton = new ButtonActor(new Sprite(new Texture("menu-buttons/back.png")));
+        backButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                GameStateManager.getInstance().pop();
+                Gdx.input.setInputProcessor(MainMenu.stage);
+                return true;
+            }
+        });
+
+        stage.addActor(table);
         fillTable();
         Gdx.input.setInputProcessor(stage);
         return leaderboard;
@@ -74,21 +91,6 @@ public class Leaderboard extends State {
     }
 
     public void fillTable(){
-        Skin headerSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        Skin skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        headerSkin.getFont("default-font").getData().setScale(6f,6f);
-        skin.getFont("default-font").getData().setScale(4f,4f);
-
-        ButtonActor backButton = new ButtonActor(new Sprite(new Texture("menu-buttons/back.png")));
-        backButton.addListener(new InputListener(){
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                GameStateManager.getInstance().pop();
-                Gdx.input.setInputProcessor(MainMenu.stage);
-                return true;
-            }
-        });
-
         table.add(backButton).expandX().left().colspan(3).padBottom(-60);
         table.row();
         table.add(new Label("Leaderboard", headerSkin)).center().colspan(3);
@@ -98,7 +100,7 @@ public class Leaderboard extends State {
         table.add(new Label("Score", skin));
         if(!playerList.isEmpty()){
             int pos = 1;
-            if(!isPositive){
+            if(isPositive){
                 for(int i = playerList.size()-1; i>= 0; i--){
                     table.row();
                     table.add(new Label(Integer.toString(pos)+".", skin)).padRight(80);
@@ -116,12 +118,6 @@ public class Leaderboard extends State {
                 }
             }
         }
-
-        stage.addActor(table);
-    }
-
-    public void setBool(boolean isPositive){
-        this.isPositive = isPositive;
     }
 
     private void updateTable(String player, int score){
@@ -144,25 +140,6 @@ public class Leaderboard extends State {
         } else {
             placePlayer(player, score);
         }
-    }
-
-    private String msToString(int ms){
-        String milliseconds = Integer.toString(ms%1000);
-        while(milliseconds.length() < 3){
-            milliseconds = "0" + milliseconds;
-        }
-        String seconds = Integer.toString((ms/1000)%60);
-        while(seconds.length() < 2){
-            seconds = "0" + seconds;
-        }
-        int minutes = (ms/(1000*60))%60;
-        String time;
-        if(!(minutes == 0)){
-            time = minutes + ":" + seconds + ":" + milliseconds;
-        }else{
-            time = seconds + ":" + milliseconds;
-        }
-        return time;
     }
 
     @Override
