@@ -128,8 +128,8 @@ public class AndroidLauncher extends AndroidApplication {
         }
 
         @Override
-        public void broadcastScore(int score, boolean isPositive) {
-            communicator.broadcastScore(score, isPositive);
+        public void broadcastScore(int score) {
+            communicator.broadcastScore(score);
         }
 
         @Override

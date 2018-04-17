@@ -12,7 +12,7 @@ import car.superfun.game.car.OpponentCarController;
 public interface GoogleGameServices {
 
     void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
-    void broadcastScore(int score, boolean isPositive);
+    void broadcastScore(int score);
 
     Array<OpponentCarController> getOpponentCarControllers();
 

@@ -98,12 +98,10 @@ public class Communicator {
         }
     };
 
-    public void broadcastScore(int score, boolean isPositive) {
-        ByteBuffer messageBuffer = ByteBuffer.allocate(7);
+    public void broadcastScore(int score) {
+        ByteBuffer messageBuffer = ByteBuffer.allocate(6);
         messageBuffer.putChar(0, 'F'); // F for finished
         messageBuffer.putInt(2, score);
-        byte isPositiveNum = isPositive ? (byte) 1 : (byte) 0;
-        messageBuffer.put(6, isPositiveNum);
 
         broadcastReliableMessage(messageBuffer.array());
     }
@@ -168,9 +166,8 @@ public class Communicator {
     }
     private void handleFinalScoreMessage(ByteBuffer buffer, String senderId) {
         int score = buffer.getInt(2);
-        boolean isPositive = (buffer.get(6) == 1);
-//        String senderName = getNicknameSomething(senderId);
-        Leaderboard.getInstance().newPlayerScore(senderId, score);
+        String senderName = participantCarControllers.get(senderId).getParticipant().getDisplayName();
+        Leaderboard.getInstance().newPlayerScore(senderName, score);
     }
 
     private void handleStateMessage(ByteBuffer buffer, String senderId) {
