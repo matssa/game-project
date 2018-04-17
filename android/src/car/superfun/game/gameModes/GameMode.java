@@ -1,26 +1,52 @@
 package car.superfun.game.gameModes;
 
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import car.superfun.game.GlobalVariables;
+import car.superfun.game.GoogleGameServices;
+import car.superfun.game.MapLoader;
+import car.superfun.game.TrackBuilder;
+import car.superfun.game.car.CarController;
+import car.superfun.game.car.LocalCarController;
+import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.states.State;
 
-/**
- * Created by kristian on 14.03.18.
- */
 
 public abstract class GameMode extends State {
 
     protected OrthographicCamera camera;
     protected SpriteBatch camBatch;
+
+    protected Array<Vector2> startPositions;
+
+    protected LocalCarController localCarController;
+
+    protected boolean singlePlayer = true;
     protected World world;
 
-    protected GameMode() {
-        super();
+    protected TiledMap tiledMap;
+    protected TiledMapRenderer tiledMapRenderer;
+
+    protected GoogleGameServices googleGameServices;
+
+    protected GameMode(String mapPath, GoogleGameServices googleGameServices, boolean isSinglePlayer) {
+        this.singlePlayer = isSinglePlayer;
+
+        world = new World(new Vector2(0, 0), true);
+        tiledMap = new MapLoader(world).load(mapPath);
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
         camera.zoom = camera.zoom * 1.4f;
@@ -28,9 +54,40 @@ public abstract class GameMode extends State {
 
         ShaderProgram shader = SpriteBatch.createDefaultShader();
         camBatch = new SpriteBatch(1024, shader);
-//        camBatch.defaultVertexDataType = Mesh.VertexDataType.VertexBufferObject;
 
-        world = new World(new Vector2(0,0), true);
+        localCarController = new LocalCarController(googleGameServices.getLocalParticipant());
+
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, camBatch);
+
+        this.googleGameServices = googleGameServices;
+
+        startPositions = TrackBuilder.getPoints(tiledMap, "starting_points");
+
+        setUpMap();
+
+        googleGameServices.readyToStart(isSinglePlayer);
+    }
+
+    protected void setStartPositions(SetStartPositionCallback callback) {
+        ArrayList<CarController> carControllers = new ArrayList<>();
+        for (CarController carController : googleGameServices.getOpponentCarControllers()) {
+            carControllers.add(carController);
+        }
+
+        carControllers.add(localCarController);
+        Collections.sort(carControllers);
+
+        for (int i = 0; i < carControllers.size(); i++) {
+            if (carControllers.get(i) instanceof OpponentCarController) {
+                callback.addOpponentCar(startPositions.get(i), (OpponentCarController) carControllers.get(i));
+            } else if (carControllers.get(i) instanceof LocalCarController) {
+                callback.addLocalCar(startPositions.get(i), localCarController, this);
+            }
+        }
+    }
+
+    protected void initiateStartPositions(String layer) {
+        startPositions = TrackBuilder.getPoints(tiledMap, layer);
     }
 
     public void render(SpriteBatch sb) {
@@ -43,7 +100,24 @@ public abstract class GameMode extends State {
         this.renderHud(sb);
     }
 
+    protected void setUpMap() {
+        // Set the normal walls
+        FixtureDef wallDef = new FixtureDef();
+        wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
+        wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
+
+        TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
+
+    }
+
     protected abstract void renderWithCamera(SpriteBatch sb, OrthographicCamera camera);
+
     protected abstract void renderHud(SpriteBatch sb);
+
     public abstract void endGame();
+
+    public interface SetStartPositionCallback {
+        void addOpponentCar(Vector2 position, OpponentCarController opponentCarController);
+        void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode);
+    }
 }

@@ -19,8 +19,16 @@ public final class GlobalVariables {
     // For converting between coordinate systems
     public static final float PIXELS_TO_METERS = 100f;
 
+    // Volume
+    public static final float MUSIC_VOLUME = 1f;
+    public static final float SOUND_VOLUME = 1f;
+
     // Enable testing mode to make localCar drive by itself
     public static final boolean TESTING_MODE = false;
+
+    public static final boolean SINGLE_PLAYER = false;
+
+    public static final int START_DELAY_MS = 3000;
 
     // Below are some logging classes that are useful for debug and tweaking purposes
 

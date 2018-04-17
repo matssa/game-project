@@ -5,20 +5,32 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.utils.Array;
 
-import car.superfun.game.car.LocalCarController;
 import car.superfun.game.GlobalVariables;
+import car.superfun.game.GoogleGameServices;
 import car.superfun.game.TrackBuilder;
+import car.superfun.game.car.LocalCarController;
+import car.superfun.game.car.OpponentCar;
+import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
 
-
 public class GladiatorMode extends GameMode {
+
+
+    // Path to map
+    private final static String MAP_PATH = "tiled_maps/gladiator.tmx";
+
+    // Car textures
+    private final static String[] TEXTURE_PATHS = new String[]{
+            "racing-pack/PNG/Cars/car_black_5.png",
+            "racing-pack/PNG/Cars/car_blue_5.png",
+            "racing-pack/PNG/Cars/car_red_5.png",
+            "racing-pack/PNG/Cars/car_green_5.png",
+    };
 
     // Filters
     static final short DEATH_ENTITY = 0b1 << 8;
@@ -28,41 +40,59 @@ public class GladiatorMode extends GameMode {
     private final Sound dustWallCrash;
     private final Music gladiatorSong;
 
-    TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
+    private Array<OpponentCar> opponentCars = new Array<OpponentCar>();
 
-    private LocalCarController localCarController;
     private LocalGladiatorCar localCar;
-    private int score;
-    private float boost;
 
-    public GladiatorMode() {
-        super();
+    private int score = 5;
+    private float boost = 10;
+
+    public GladiatorMode(GoogleGameServices googleGameServices, boolean isSinglePlayer) {
+        super(MAP_PATH, googleGameServices, isSinglePlayer);
 
         // Audio
         gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
 
         gladiatorSong.setLooping(true);
-        gladiatorSong.setVolume(0.6f);
+        gladiatorSong.setVolume(GlobalVariables.MUSIC_VOLUME);
         gladiatorSong.play();
-
-        score = 5;
-        boost = 10;
-        localCarController = new LocalCarController();
-        localCar = new LocalGladiatorCar(this, new Vector2(6000, 6000), localCarController, world, score, dustWallCrash);
-
-        // Set the map
-        tiledMap = new TmxMapLoader().load("tiled_maps/gladiator.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         world.setContactListener(new GladiatorContactListener());
 
-        // Set the normal walls
-        FixtureDef wallDef = new FixtureDef();
-        wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
-        wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
-        TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
+        setUpMap();
+
+        // place all participants cars in the map
+        setStartPositions(setStartPositionsCallback);
+    }
+
+    private SetStartPositionCallback setStartPositionsCallback = new SetStartPositionCallback() {
+        // Used to set different color to different players cars
+        private int texturePathIndex = 0;
+
+        @Override
+        public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
+            opponentCars.add(new OpponentCar(position, opponentCarController, world, TEXTURE_PATHS[texturePathIndex]));
+            incrementTexturePath();
+        }
+
+        @Override
+        public void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode) {
+            localCar = new LocalGladiatorCar((GladiatorMode) thisGameMode, position, localCarController, world, score, dustWallCrash, TEXTURE_PATHS[texturePathIndex]);
+            incrementTexturePath();
+        }
+
+        private void incrementTexturePath() {
+            if (texturePathIndex < TEXTURE_PATHS.length) {
+                texturePathIndex++;
+            }
+        }
+    };
+
+
+
+    protected void setUpMap() {
+        super.setUpMap();
 
         // Set the death walls
         FixtureDef deathZoneDef = new FixtureDef();
@@ -77,22 +107,38 @@ public class GladiatorMode extends GameMode {
         boostZone.filter.categoryBits = BOOST_ZONE;
         boostZone.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         TrackBuilder.buildLayer(tiledMap, world, "boost_zone", boostZone);
-    }
 
-    @Override
-    public void handleInput() {
 
+        // Get starting positions for map
+        initiateStartPositions("starting_points");
     }
 
 
     @Override
     public void update(float dt) {
-        world.step(1f/60f, 6, 2);
-        localCarController.update();
+        if (!googleGameServices.gameStarted() && !singlePlayer) {
+            return;
+        }
+        for (OpponentCar car : opponentCars) {
+            car.update(dt);
+        }
         localCar.update(dt);
+
+        world.step(dt, 2, 1); // Using deltaTime
+
         camera.position.set(localCar.getSpritePosition(), 0);
         camera.position.set(localCar.getSpritePosition().add(localCar.getVelocity().scl(10f)), 0);
         camera.up.set(localCar.getDirectionVector(), 0);
+
+        localCarController.update();
+        if (!singlePlayer) {
+            googleGameServices.broadcastState(
+                    localCar.getVelocity(),
+                    localCar.getBodyPosition(),
+                    localCar.getAngle(),
+                    localCarController.getForward(),
+                    localCarController.getRotation());
+        }
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
@@ -101,7 +147,9 @@ public class GladiatorMode extends GameMode {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         localCar.render(sb);
-
+        for (OpponentCar car : opponentCars) {
+            car.render(sb);
+        }
     }
 
     // Renders objects that have a static position on the screen. Is called by superclass
@@ -118,6 +166,7 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void endGame() {
+        Gdx.app.log("endGame", "GladiatorMode endgame");
         // TODO: send data to leaderboard
         this.dispose();
     }

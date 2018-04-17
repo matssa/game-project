@@ -1,5 +1,7 @@
 package car.superfun.game;
 
+import android.util.Log;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -7,11 +9,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.menus.LoginMenu;
+import car.superfun.game.menus.MainMenu;
 import car.superfun.game.states.GameStateManager;
 
 
@@ -19,15 +24,20 @@ public class CarSuperFun extends ApplicationAdapter {
 
     private GameStateManager gsm;
     private SpriteBatch batch;
+    private GoogleGameServices googleGameServices;
     private AndroidLauncher androidLauncher;
 
+    private boolean createNewGame = false;
     private boolean justPressedBack;
+
+    ArrayList<NewState> statesToBeCreated = new ArrayList<>();
 
     /**
      * Sets up the app
      */
 
-    public CarSuperFun(AndroidLauncher androidLauncher) {
+    public CarSuperFun(GoogleGameServices googleGameServices, AndroidLauncher androidLauncher) {
+        this.googleGameServices = googleGameServices;
         this.androidLauncher = androidLauncher;
     }
 
@@ -39,15 +49,44 @@ public class CarSuperFun extends ApplicationAdapter {
         gsm = GameStateManager.getInstance();
 
         //sets the color to black
-        Gdx.gl.glClearColor(0, 0, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
 
         // Starts the game in MainMenu
 
-        gsm.push(new LoginMenu(androidLauncher));
+        gsm.push(new LoginMenu(googleGameServices));
 
         // Take control of the back button
         Gdx.input.setCatchBackKey(true);
         justPressedBack = false;
+    }
+
+
+    @Override
+    public void resume() {
+        super.resume();
+
+        // Initiate all states in the enum list
+        for(NewState state : statesToBeCreated) {
+            switch (state){
+                case RACE_MODE:
+                    Log.d("CarSuperFun", "Pushed RaceMode");
+                    GameStateManager.getInstance().push(new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
+                    break;
+                case MAIN_MENU:
+                    Log.d("CarSuperFun", "Pushed MainMenu");
+                    GameStateManager.getInstance().push(new MainMenu(googleGameServices));
+                    break;
+                case LOGIN_MENU:
+                    Log.d("CarSuperFun", "Pushed LoginMenu");
+                    GameStateManager.getInstance().push(new LoginMenu(googleGameServices));
+                    break;
+                case GLADIATOR_MODE:
+                    Log.d("CarSuperFun", "Pushed GladiatorMode");
+                    GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
+                    break;
+            }
+        }
+        statesToBeCreated.clear();
     }
 
     /**
@@ -70,8 +109,9 @@ public class CarSuperFun extends ApplicationAdapter {
         // Unless the current state is the bottom state (should be MainMenu),
         // in such case the app is closed
         if (Gdx.input.isKeyPressed(Input.Keys.BACK) && !justPressedBack) {
-            if (gsm.isOnlyOneLeft()) {
-                Gdx.app.exit(); // TODO this can no longer be reached
+            if (gsm.isInMainMenu()) {
+                androidLauncher.finish();
+                System.exit(0);
             } else {
                 justPressedBack = true;
                 new Timer().schedule(new TimerTask() {
@@ -79,7 +119,7 @@ public class CarSuperFun extends ApplicationAdapter {
                     public void run() {
                         justPressedBack = false;
                     }
-                }, 1500);
+                }, 800);
                 gsm.pop();
             }
         }
@@ -93,7 +133,12 @@ public class CarSuperFun extends ApplicationAdapter {
         batch.dispose();
     }
 
-    public void startGame(AndroidLauncher androidLauncher) {
-        gsm.push(new RaceMode(androidLauncher, false));
+
+    /**
+     * Adds the enum corresponding to the class that will be initiated on next resume
+     * @param newState
+     */
+    public void createNewState(NewState newState) {
+        statesToBeCreated.add(newState);
     }
 }

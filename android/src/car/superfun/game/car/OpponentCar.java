@@ -21,24 +21,17 @@ public class OpponentCar extends Car {
     private int receivedTimestamp;
 
     private boolean doUpdate;
-//    private boolean lostLastPackage;
 
     GlobalVariables.AvgLogger posDiffLogger;
 
-    public OpponentCar(Vector2 position, OpponentCarController opponentCarController, World world) {
+    public OpponentCar(Vector2 position, OpponentCarController opponentCarController, World world, String texturePath) {
         super(position,
-                new Sprite(new Texture("racing-pack/PNG/Cars/car_red_5.png")),
+                new Sprite(new Texture(texturePath)),
                 opponentCarController,
                 world,
                 GlobalVariables.OPPONENT_ENTITY);
         opponentCarController.setControlledCar(this);
         doUpdate = false;
-//        lostLastPackage = false;
-//        posDiffLogger = new AvgLogger(10, "Average position difference", 0.001f);
-    }
-
-    public void setTransform(float x, float y, float angle) {
-        body.setTransform(x, y, angle);
     }
 
     public void update(float dt){

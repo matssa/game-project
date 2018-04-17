@@ -10,10 +10,6 @@ import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
@@ -34,11 +30,11 @@ public class TrackBuilder {
         MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
         Array<Vector2> points = new Array<>();
 
-            for (MapObject mapObject : mapObjects) {
-                float x = Float.parseFloat(mapObject.getProperties().get("x").toString());
-                float y = Float.parseFloat(mapObject.getProperties().get("y").toString());
-                points.add(new Vector2(x, y));
-            }
+        for (MapObject mapObject : mapObjects) {
+            float x = Float.parseFloat(mapObject.getProperties().get("x").toString());
+            float y = Float.parseFloat(mapObject.getProperties().get("y").toString());
+            points.add(new Vector2(x, y));
+        }
 
         return points;
     }
@@ -100,16 +96,14 @@ public class TrackBuilder {
 
     private static Shape getShape(MapObject mapObject) throws ClassNotFoundException {
         Shape shape;
-        if (mapObject instanceof TextureMapObject) {
-            Gdx.app.log("mapObject", "is instance of textureMapObject");
+        if (mapObject instanceof PolylineMapObject) { // Test polylines first, since this is the objects we are actually using
+            shape = getPolyline((PolylineMapObject)mapObject);
+        }
+        else if (mapObject instanceof TextureMapObject) {
             shape = getTile((TiledMapTileMapObject) mapObject);
-//            shape = getRectangle((RectangleMapObject) mapObject);
         }
         else if (mapObject instanceof PolygonMapObject) {
             shape = getPolygon((PolygonMapObject)mapObject);
-        }
-        else if (mapObject instanceof PolylineMapObject) {
-            shape = getPolyline((PolylineMapObject)mapObject);
         }
         else if (mapObject instanceof CircleMapObject) {
             shape = getCircle((CircleMapObject)mapObject);
@@ -119,19 +113,14 @@ public class TrackBuilder {
         return shape;
     }
 
+
+    // This is not being used yet, but will be used to register object tiles from Tiled in the future
     private static PolygonShape getTile(TiledMapTileMapObject tileObject) {
-//        Sprite sprite;
-//        tileObject.getTile().getTextureRegion().getTexture();
-
-//        float x = tileObject.
-        Gdx.app.log("in method", "PolygonShape");
-
-        Gdx.app.log("getX()", "" + tileObject.getX());
-        Gdx.app.log("getScaleX()", "" + tileObject.getScaleX());
-        Gdx.app.log("getRegionWidth()", "" + tileObject.getTile().getTextureRegion().getRegionWidth());
-
-//        shape.setAsBox(tileObject.getTile().getTextureRegion().getRegionWidth() );
-//        shape.setAsBox((sprite.getWidth() / 2) / CarSuperFun.PIXELS_TO_METERS, (sprite.getHeight() / 2) / CarSuperFun.PIXELS_TO_METERS);
+//        Gdx.app.log("in method", "PolygonShape");
+//
+//        Gdx.app.log("getX()", "" + tileObject.getX());
+//        Gdx.app.log("getScaleX()", "" + tileObject.getScaleX());
+//        Gdx.app.log("getRegionWidth()", "" + tileObject.getTile().getTextureRegion().getRegionWidth());
 
         float width = tileObject.getTextureRegion().getRegionWidth() / (2 * GlobalVariables.PIXELS_TO_METERS);
         float height = tileObject.getTextureRegion().getRegionHeight() / (2 * GlobalVariables.PIXELS_TO_METERS);
@@ -143,6 +132,8 @@ public class TrackBuilder {
         return shape;
     }
 
+    // Not in used at the present time.
+    // Nor is it possible to register rectangle objects from Tiled now, so when that will be implemented this method might be used.
     private static PolygonShape getRectangle(RectangleMapObject rectangleObject) {
         Rectangle rectangle;
         PolygonShape polygonShape;
@@ -155,6 +146,7 @@ public class TrackBuilder {
         return polygonShape;
     }
 
+    // This has not been tested, as we don't use circles yet.
     private static CircleShape getCircle(CircleMapObject circleMapObject) {
         Circle circle;
         CircleShape circleShape;
@@ -166,6 +158,7 @@ public class TrackBuilder {
         return circleShape;
     }
 
+    // There seems to be something fishy about this method, but we are not using polygon/rectangle map objects yet.
     private static PolygonShape getPolygon(PolygonMapObject polygonMapObject) {
         PolygonShape polygonShape;
         float[] vertices;
@@ -183,6 +176,7 @@ public class TrackBuilder {
         return polygonShape;
     }
 
+    // PolyLines are the only map objects currently in use. So this method is the only method that is properly tested.
     private static ChainShape getPolyline(PolylineMapObject polylineMapObject) {
         float[] vertices = polylineMapObject.getPolyline().getTransformedVertices();
         Vector2[] worldVertices = new Vector2[vertices.length / 2];
@@ -197,5 +191,7 @@ public class TrackBuilder {
         chainShape.createChain(worldVertices);
         return chainShape;
     }
+
+
 
 }

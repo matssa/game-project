@@ -1,6 +1,7 @@
 package car.superfun.game.menus;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
@@ -8,11 +9,14 @@ import com.badlogic.gdx.math.Circle;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
-public class HostMenu extends State{
-    private Texture background, backButton;
 
-    public HostMenu(){
-        background = new Texture("background.png");
+public class LoadingScreen extends State {
+
+    private Texture backButton;
+
+
+    public LoadingScreen(){
+
         backButton = new Texture("menu-buttons/back.png");
     }
 
@@ -32,14 +36,14 @@ public class HostMenu extends State{
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
-        sb.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         sb.draw(backButton, 120, 890);
         sb.end();
     }
 
     @Override
     public void dispose() {
-        background.dispose();
         backButton.dispose();
     }
 
