@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Stack;
 
+import car.superfun.game.menus.MainMenu;
+
 
 /**
  * This class handles the different states the game can be in, that is menu, game, game over etc...
@@ -91,10 +93,9 @@ public class GameStateManager {
         }
     }
 
-    public boolean isEmpty() {
-        return states.isEmpty();
+    public State peek() {
+        return states.peek();
     }
-    public boolean isOnlyOneLeft() {
-        return (states.size() == 1);
-    }
+
+    public boolean isInMainMenu() { return (states.peek() instanceof MainMenu); }
 }

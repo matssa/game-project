@@ -18,13 +18,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import car.superfun.game.AndroidLauncher;
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.car.CarController;
 import car.superfun.game.car.OpponentCarController;
+import car.superfun.game.menus.Leaderboard;
 
 
 public class Communicator {
@@ -35,15 +39,13 @@ public class Communicator {
 
     private SetUpGame setUpGame;
 
-    // Participants who sent us their final score.
-    Set<String> finishedParticipants = new HashSet<>();
-
     public Map<String, CarController> participantCarControllers = new HashMap<>();
 
     private int lastTimestamp = 0;
     private int readyParticipants = 0;
-    private long startTime = 0;
     private long myReadyTime = 0L;
+
+    public long startTime = 0;
     public boolean gameStarted = false;
 
 
@@ -57,11 +59,11 @@ public class Communicator {
         participantCarControllers.put(id, controller);
     }
 
-    public Array<CarController> getOpponentCarControllers() {
-        Array<CarController> opponentCarControllers = new Array<>(participantCarControllers.size());
+    public Array<OpponentCarController> getOpponentCarControllers() {
+        Array<OpponentCarController> opponentCarControllers = new Array<>(participantCarControllers.size());
         for (Map.Entry<String, CarController> entry : participantCarControllers.entrySet()) {
-            if(!entry.getKey().equals(setUpGame.myId)) {
-                opponentCarControllers.add(entry.getValue());
+            if(!entry.getKey().equals(setUpGame.myId) && entry.getValue() instanceof OpponentCarController) {
+                opponentCarControllers.add((OpponentCarController) entry.getValue());
             }
         }
         return opponentCarControllers;
@@ -77,10 +79,6 @@ public class Communicator {
             switch (buffer.getChar(0)) {
                 case ('S'): {
                     handleStateMessage(buffer, senderId);
-                    break;
-                }
-                case ('I'): {
-                    handleInterimScoreMessage(buffer, senderId);
                     break;
                 }
                 case ('F'): {
@@ -101,6 +99,13 @@ public class Communicator {
         }
     };
 
+    public void broadcastScore(int score) {
+        ByteBuffer messageBuffer = ByteBuffer.allocate(6);
+        messageBuffer.putChar(0, 'F'); // F for finished
+        messageBuffer.putInt(2, score);
+
+        broadcastReliableMessage(messageBuffer.array());
+    }
 
     public void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
         ByteBuffer messageBuffer = ByteBuffer.allocate(34);
@@ -119,9 +124,6 @@ public class Communicator {
 
         messageBuffer.putFloat(26, forward);
         messageBuffer.putFloat(30, rotation);
-
-//        Gdx.app.log("my timestamp", "" + timestamp);
-//        GlobalVariables.logVector(position, "My position");
 
         // Send to all the other participants.
         for (Participant p : setUpGame.participants) {
@@ -163,12 +165,10 @@ public class Communicator {
                     });
         }
     }
-
-    private void handleInterimScoreMessage(ByteBuffer buffer, String senderId) {
-    }
-
     private void handleFinalScoreMessage(ByteBuffer buffer, String senderId) {
-        finishedParticipants.add(senderId);
+        int score = buffer.getInt(2);
+        String senderName = participantCarControllers.get(senderId).getParticipant().getDisplayName();
+        Leaderboard.getInstance().newPlayerScore(senderName, score);
     }
 
     private void handleStateMessage(ByteBuffer buffer, String senderId) {
@@ -202,7 +202,7 @@ public class Communicator {
         ByteBuffer messageBuffer = ByteBuffer.allocate(10);
         messageBuffer.putChar(0, 'R');
 
-        myReadyTime = TrueTime.now().getTime() + 3000;
+        myReadyTime = TrueTime.now().getTime() + GlobalVariables.START_DELAY_MS;
         messageBuffer.putLong(2, myReadyTime);
 
         newParticipantReady(myReadyTime);
@@ -216,9 +216,20 @@ public class Communicator {
             this.startTime = newStartTime;
         }
         if (readyParticipants == setUpGame.participants.size()) {
+            Gdx.app.log("all participants have joined", "starting game in " + (startTime - TrueTime.now().getTime()) + " ms");
+            startGame();
 //            startRenderService();
-            gameStarted = true;
         }
+    }
+
+    private void startGame() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Gdx.app.log("GAME STARTED", "GO GO GO!!!");
+                gameStarted = true;
+            }
+        }, startTime - TrueTime.now().getTime());
     }
 
     // Seems like it's best to make libGDX do the rendering by itself for now
@@ -236,9 +247,4 @@ public class Communicator {
                 25,
                 TimeUnit.MILLISECONDS);
     }
-
-
-
-
-
 }

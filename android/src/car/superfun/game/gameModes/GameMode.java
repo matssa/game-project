@@ -29,7 +29,6 @@ public abstract class GameMode extends State {
     protected Array<Vector2> startPositions;
 
     protected LocalCarController localCarController;
-    protected Array<CarController> opponentCarControllers;
 
     protected boolean singlePlayer = true;
     protected World world;
@@ -62,9 +61,8 @@ public abstract class GameMode extends State {
     }
 
     protected void setStartPositions(SetStartPositionCallback callback) {
-        opponentCarControllers = googleGameServices.getOpponentCarControllers();
         ArrayList<CarController> carControllers = new ArrayList<>();
-        for (CarController carController : opponentCarControllers) {
+        for (CarController carController : googleGameServices.getOpponentCarControllers()) {
             carControllers.add(carController);
         }
 
@@ -75,7 +73,7 @@ public abstract class GameMode extends State {
             if (carControllers.get(i) instanceof OpponentCarController) {
                 callback.addOpponentCar(startPositions.get(i), (OpponentCarController) carControllers.get(i));
             } else if (carControllers.get(i) instanceof LocalCarController) {
-                callback.addLocalCar(startPositions.get(i), localCarController);
+                callback.addLocalCar(startPositions.get(i), localCarController, this);
             }
         }
     }
@@ -104,4 +102,8 @@ public abstract class GameMode extends State {
 
     public abstract void endGame();
 
+    public interface SetStartPositionCallback {
+        void addOpponentCar(Vector2 position, OpponentCarController opponentCarController);
+        void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode);
+    }
 }

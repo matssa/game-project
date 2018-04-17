@@ -17,8 +17,6 @@ import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
-import car.superfun.game.gameModes.SetStartPositionCallback;
-
 
 public class GladiatorMode extends GameMode {
 
@@ -49,23 +47,18 @@ public class GladiatorMode extends GameMode {
 
     private LocalGladiatorCar localCar;
 
-    private GladiatorMode gladiatorMode;
-
     private int score = 5;
     private float boost = 10;
 
     public GladiatorMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super(MAP_PATH, googleGameServices, singlePlayer);
 
-        // set gladiatorMode = this, used in callback
-        gladiatorMode = this;
-
         // Audio
         gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
 
         gladiatorSong.setLooping(true);
-        gladiatorSong.setVolume(0.6f);
+        gladiatorSong.setVolume(GlobalVariables.MUSIC_VOLUME);
         gladiatorSong.play();
 
         // configure map
@@ -81,17 +74,17 @@ public class GladiatorMode extends GameMode {
         @Override
         public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
             opponentCars.add(new OpponentCar(position, opponentCarController, world, TEXTURE_PATHS[texturePathIndex]));
-            incrementTexurePath();
+            incrementTexturePath();
         }
 
         @Override
-        public void addLocalCar(Vector2 position, LocalCarController localCarController) {
-            localCar = new LocalGladiatorCar(gladiatorMode, position, localCarController, world, score, dustWallCrash, TEXTURE_PATHS[texturePathIndex]);
-            incrementTexurePath();
+        public void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode) {
+            localCar = new LocalGladiatorCar((GladiatorMode) thisGameMode, position, localCarController, world, score, dustWallCrash, TEXTURE_PATHS[texturePathIndex]);
+            incrementTexturePath();
         }
     };
 
-    private void incrementTexurePath() {
+    private void incrementTexturePath() {
         if (texturePathIndex < TEXTURE_PATHS.length) {
             texturePathIndex++;
         }
@@ -148,7 +141,7 @@ public class GladiatorMode extends GameMode {
 
         localCarController.update();
         if (!singlePlayer) {
-            googleGameServices.broadcast(
+            googleGameServices.broadcastState(
                     localCar.getVelocity(),
                     localCar.getBodyPosition(),
                     localCar.getAngle(),
@@ -182,6 +175,7 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void endGame() {
+        Gdx.app.log("endGame", "GladiatorMode endgame");
         // TODO: send data to leaderboard
         this.dispose();
     }
