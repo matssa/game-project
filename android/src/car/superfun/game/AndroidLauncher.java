@@ -14,11 +14,11 @@ import com.badlogic.gdx.utils.Array;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.games.GamesActivityResultCodes;
-
+import com.google.android.gms.games.multiplayer.Participant;
 import com.instacart.library.truetime.TrueTime;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
 
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.googleGamePlayServices.Communicator;
@@ -116,6 +116,10 @@ public class AndroidLauncher extends AndroidApplication {
         }
     }
 
+    public void setNewState(NewState newState) {
+        this.newState = newState;
+    }
+
     public GoogleGameServices googleGameServices = new GoogleGameServices() {
 
         @Override
@@ -172,12 +176,19 @@ public class AndroidLauncher extends AndroidApplication {
         public long getStartTime() {
             return communicator.startTime;
         }
+
+        public ArrayList<Participant> getParticipants () {
+            return setUpGame.participants;
+        }
+
+        @Override
+        public String getMyID () {
+            return setUpGame.myId;
+        }
+
+        @Override
+        public Participant getLocalParticipant() {
+            return setUpGame.getLocalParticipant();
+        }
     };
-
-    public void setNewState(NewState newState) {
-        this.newState = newState;
-    }
-
 }
-
-

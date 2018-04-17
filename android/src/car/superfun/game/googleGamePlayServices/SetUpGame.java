@@ -32,6 +32,7 @@ import java.util.List;
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.NewState;
 import car.superfun.game.R;
+import car.superfun.game.car.CarController;
 import car.superfun.game.car.OpponentCarController;
 
 
@@ -50,6 +51,9 @@ public class SetUpGame {
     private String playerId;
 
     public String roomId;
+
+    private Participant localParticipant;
+
 
     public final static int RC_WAITING_ROOM = 10002;
 
@@ -381,11 +385,15 @@ public class SetUpGame {
     public void waitingRoomReady() {
         for(Participant participant : participants) {
             if (participant.getParticipantId().equals(myId)) {
+                localParticipant = participant;
                 continue;
             }
-            OpponentCarController opponentCarController = new OpponentCarController();
+            CarController opponentCarController = new OpponentCarController(participant);
             communicator.putParticipantController(participant.getParticipantId(), opponentCarController);
         }
+    }
+    public Participant getLocalParticipant() {
+        return localParticipant;
     }
 
 

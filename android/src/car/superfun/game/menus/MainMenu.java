@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
 import car.superfun.game.actor.ButtonActor;
 import car.superfun.game.gameModes.raceMode.RaceMode;
@@ -67,7 +68,7 @@ public class MainMenu extends State {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                RaceMode race = new RaceMode(googleGameService);
+                RaceMode race = new RaceMode(googleGameService, GlobalVariables.SINGLE_PLAYER);
 
 //                race.setLocalRaceCar(new Vector2(1600, 11000));
 //                Array<Vector2> opponentCars = new Array<Vector2>();

@@ -13,7 +13,6 @@ import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.instacart.library.truetime.TrueTime;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import car.superfun.game.AndroidLauncher;
+import car.superfun.game.car.CarController;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.menus.Leaderboard;
 
@@ -38,7 +38,7 @@ public class Communicator {
 
     private SetUpGame setUpGame;
 
-    public Map<String, OpponentCarController> participantCarControllers = new HashMap<>();
+    public Map<String, CarController> participantCarControllers = new HashMap<>();
 
     private int lastTimestamp = 0;
     private int readyParticipants = 0;
@@ -54,14 +54,16 @@ public class Communicator {
         this.androidLauncher = androidLauncher;
     }
 
-    public void putParticipantController(String id, OpponentCarController controller){
+    public void putParticipantController(String id, CarController controller){
         participantCarControllers.put(id, controller);
     }
 
     public Array<OpponentCarController> getOpponentCarControllers() {
-        Array<OpponentCarController> opponentCarControllers = new Array<OpponentCarController>(participantCarControllers.size());
-        for (Map.Entry<String, OpponentCarController> entry : participantCarControllers.entrySet()) {
-            opponentCarControllers.add(entry.getValue());
+        Array<OpponentCarController> opponentCarControllers = new Array<>(participantCarControllers.size());
+        for (Map.Entry<String, CarController> entry : participantCarControllers.entrySet()) {
+            if(!entry.getKey().equals(setUpGame.myId) && entry.getValue() instanceof OpponentCarController) {
+                opponentCarControllers.add((OpponentCarController) entry.getValue());
+            }
         }
         return opponentCarControllers;
     }
@@ -105,7 +107,6 @@ public class Communicator {
 
         broadcastReliableMessage(messageBuffer.array());
     }
-
 
     public void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
         ByteBuffer messageBuffer = ByteBuffer.allocate(34);
@@ -173,7 +174,7 @@ public class Communicator {
     }
 
     private void handleStateMessage(ByteBuffer buffer, String senderId) {
-        OpponentCarController opponentCarController = participantCarControllers.get(senderId);
+        OpponentCarController opponentCarController = (OpponentCarController) participantCarControllers.get(senderId);
         if (!opponentCarController.hasControlledCar()) {
             Gdx.app.error("opponentCarController missing car", "id: " + senderId);
             return;
