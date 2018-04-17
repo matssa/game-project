@@ -43,7 +43,6 @@ public class OpponentCar extends Car {
     }
 
     private void updateState(Vector2 position, float angle, Vector2 velocity, int timeDiff, int timestamp) {
-        Gdx.app.log("timeDiff", "" + timeDiff);
         Vector2 travelledDistance = velocity.cpy().scl((0.5f * carController.getForward() + 1f) * 5 * (float) timeDiff / 10000f);
         Vector2 updatedPosition = position.cpy().add(travelledDistance);
         Vector2 positionDifference = updatedPosition.cpy().sub(body.getPosition());

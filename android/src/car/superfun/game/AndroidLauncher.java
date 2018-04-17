@@ -99,7 +99,6 @@ public class AndroidLauncher extends AndroidApplication {
                             .withNtpHost("time.google.com")
                             .withLoggingEnabled(false)
                             .withConnectionTimeout(3_1428)
-                            .withSharedPreferences(getApplicationContext())
                             .initialize();
                 } catch (IOException ex) {
                     Gdx.app.log("IOException from TrueTime:", ex.getMessage());

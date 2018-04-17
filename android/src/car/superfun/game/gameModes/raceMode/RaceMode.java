@@ -141,7 +141,7 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
-        if (!googleGameServices.gameStarted() && !GlobalVariables.SINGLE_PLAYER) {
+        if (!googleGameServices.gameStarted() && !singlePlayer) {
             return;
         }
         for (OpponentCar car : opponentCars) {

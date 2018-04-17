@@ -201,7 +201,7 @@ public class Communicator {
         ByteBuffer messageBuffer = ByteBuffer.allocate(10);
         messageBuffer.putChar(0, 'R');
 
-        myReadyTime = TrueTime.now().getTime() + 2000;
+        myReadyTime = TrueTime.now().getTime() + 3000;
         messageBuffer.putLong(2, myReadyTime);
 
         newParticipantReady(myReadyTime);
@@ -215,9 +215,9 @@ public class Communicator {
             this.startTime = newStartTime;
         }
         if (readyParticipants == setUpGame.participants.size()) {
+            Gdx.app.log("all participants have joined", "starting game in " + (startTime - TrueTime.now().getTime()) + " ms");
             startGame();
 //            startRenderService();
-            gameStarted = true;
         }
     }
 
@@ -225,6 +225,7 @@ public class Communicator {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
+                Gdx.app.log("GAME STARTED", "GO GO GO!!!");
                 gameStarted = true;
             }
         }, startTime - TrueTime.now().getTime());
