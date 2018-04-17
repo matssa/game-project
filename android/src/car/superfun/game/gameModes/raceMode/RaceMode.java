@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
+import com.instacart.library.truetime.TrueTime;
 
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
@@ -19,6 +20,8 @@ import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
+import car.superfun.game.menus.Leaderboard;
+import car.superfun.game.states.GameStateManager;
 
 public class RaceMode extends GameMode {
 
@@ -71,7 +74,7 @@ public class RaceMode extends GameMode {
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
 
         // This should be set in GGS, no? Through the setLocalRaceCar method?
-        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, googleGameServices, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(2000, 11000), localCarController, world, this, amountOfCheckpoints);
 
         int startX = 1900;
 
@@ -125,7 +128,7 @@ public class RaceMode extends GameMode {
     public void setLocalRaceCar(Vector2 position) {
         // TODO: implement some way to save starting position together with the map
         // (1600, 11000) is an appropriate starting place in simpleMap
-        localRaceCar = new LocalRaceCar(new Vector2(1600, 10900), localCarController, world, googleGameServices, amountOfCheckpoints);
+        localRaceCar = new LocalRaceCar(new Vector2(1600, 10900), localCarController, world, this, amountOfCheckpoints);
     }
 
     @Override
@@ -183,8 +186,32 @@ public class RaceMode extends GameMode {
 
     @Override
     public void endGame() {
-        // TODO: Implement a proper way to exit the game
+        int timeSinceStart = (int) (TrueTime.now().getTime() - googleGameServices.getStartTime() % 2147483648L);
+        googleGameServices.broadcastScore(timeSinceStart, false);
+        GameStateManager.getInstance().set(Leaderboard.getInstance().initialize(new RaceModeScoreFormatter(), false));
     }
 
+    public class RaceModeScoreFormatter implements Leaderboard.ScoreFormatter {
+
+        @Override
+        public String formatScore(int ms) {
+            String milliseconds = Integer.toString(ms%1000);
+            while(milliseconds.length() < 3){
+                milliseconds = "0" + milliseconds;
+            }
+            String seconds = Integer.toString((ms/1000)%60);
+            while(seconds.length() < 2){
+                seconds = "0" + seconds;
+            }
+            int minutes = (ms/(1000*60))%60;
+            String time;
+            if(!(minutes == 0)){
+                time = minutes + ":" + seconds + ":" + milliseconds;
+            }else{
+                time = seconds + ":" + milliseconds;
+            }
+            return time;
+        }
+    }
 }
 

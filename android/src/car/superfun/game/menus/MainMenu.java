@@ -56,14 +56,7 @@ public class MainMenu extends State {
         joinButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                //androidLauncher.startQuickGame();
-                Leaderboard leaderboard = Leaderboard.getInstance();
-                leaderboard.setBool(true);
-                leaderboard.placePlayer("Per", 123456);
-                leaderboard.placePlayer("Kari", 234567);
-
-                leaderboard.initialize();
-                GameStateManager.getInstance().push(leaderboard);
+                // start new game
                 return true;
             }
         });

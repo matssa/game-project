@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.car.OpponentCarController;
+import car.superfun.game.menus.Leaderboard;
 
 
 public class Communicator {
@@ -36,9 +37,6 @@ public class Communicator {
     private AndroidLauncher androidLauncher;
 
     private SetUpGame setUpGame;
-
-    // Participants who sent us their final score.
-    Set<String> finishedParticipants = new HashSet<>();
 
     public Map<String, OpponentCarController> participantCarControllers = new HashMap<>();
 
@@ -171,8 +169,7 @@ public class Communicator {
         int score = buffer.getInt(2);
         boolean isPositive = (buffer.get(6) == 1);
 //        String senderName = getNicknameSomething(senderId);
-
-        finishedParticipants.add(senderId);
+        Leaderboard.getInstance().newPlayerScore(senderId, score);
     }
 
     private void handleStateMessage(ByteBuffer buffer, String senderId) {

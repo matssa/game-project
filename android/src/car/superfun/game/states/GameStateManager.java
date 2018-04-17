@@ -93,5 +93,9 @@ public class GameStateManager {
         }
     }
 
+    public State peek() {
+        return states.peek();
+    }
+
     public boolean isInMainMenu() { return (states.peek() instanceof MainMenu); }
 }

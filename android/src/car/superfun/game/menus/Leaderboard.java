@@ -36,14 +36,18 @@ public class Leaderboard extends State {
     // Rest of the owl
     private Texture background;
     private Stage stage;
-    private ArrayList<ArrayList<String>> playerList;
+    private ArrayList<Player> playerList;
     private Table table;
+
     private boolean isPositive;
+    private ScoreFormatter formatter;
     //private ArrayList<String> placement = ArrayList<>
 
-    public void initialize(){
+    public Leaderboard initialize(ScoreFormatter formatter, boolean isPositive){
         this.stage = new Stage(new ScreenViewport());
         background = new Texture("background.png");
+        this.isPositive = isPositive;
+        this.formatter = formatter;
 
         table = new Table();
         table.setWidth(stage.getWidth());
@@ -52,6 +56,7 @@ public class Leaderboard extends State {
         //table.setDebug(true);
         fillTable();
         Gdx.input.setInputProcessor(stage);
+        return leaderboard;
     }
 
     @Override
@@ -82,9 +87,8 @@ public class Leaderboard extends State {
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                //GameStateManager.getInstance().pop();
-                //Gdx.input.setInputProcessor(MainMenu.stage);
-                updateTable("haxor", 999999);
+                GameStateManager.getInstance().pop();
+                Gdx.input.setInputProcessor(MainMenu.stage);
                 return true;
             }
         });
@@ -102,16 +106,16 @@ public class Leaderboard extends State {
                 for(int i = playerList.size()-1; i>= 0; i--){
                     table.row();
                     table.add(new Label(Integer.toString(pos)+".", skin)).padRight(80);
-                    table.add(new Label(playerList.get(i).get(0), skin)).padRight(80);
-                    table.add(new Label(playerList.get(i).get(1), skin));
+                    table.add(new Label(playerList.get(i).getName(), skin)).padRight(80);
+                    table.add(new Label(formatter.formatScore(playerList.get(i).getScore()), skin));
                     pos += 1;
                 }
             }else{
-                for(ArrayList<String> player : playerList){
+                for(Player player : playerList){
                     table.row();
                     table.add(new Label(Integer.toString(pos)+".", skin)).padRight(150);
-                    table.add(new Label(player.get(0), skin)).padRight(150);
-                    table.add(new Label(player.get(1), skin));
+                    table.add(new Label(player.getName(), skin)).padRight(150);
+                    table.add(new Label(formatter.formatScore(player.getScore()), skin));
                     pos += 1;
                 }
             }
@@ -124,21 +128,26 @@ public class Leaderboard extends State {
         this.isPositive = isPositive;
     }
 
-    public void updateTable(String player, int score){
+    private void updateTable(String player, int score){
         table.clearChildren();
         placePlayer(player, score);
         fillTable();
     }
 
-    public void placePlayer(String player, int score){
+    private void placePlayer(String name, int score){
         if(playerList == null){
             playerList = new ArrayList<>();
         }
-        ArrayList<String> tempList = new ArrayList<>();
-        tempList.add(player);
-        String time = msToString(score);
-        tempList.add(time);
-        playerList.add(tempList);
+        Player player = new Player(name, score);
+        playerList.add(player);
+    }
+
+    public void newPlayerScore(String player, int score) {
+        if (GameStateManager.getInstance().peek() == leaderboard) {
+            updateTable(player, score);
+        } else {
+            placePlayer(player, score);
+        }
     }
 
     private String msToString(int ms){
@@ -164,5 +173,28 @@ public class Leaderboard extends State {
     public void dispose() {
         stage.dispose();
         background.dispose();
+        playerList.clear();
+    }
+
+    public interface ScoreFormatter {
+        String formatScore(int score);
+    }
+
+    private class Player {
+        private String name;
+        private int score;
+
+        public Player(String name, int score) {
+            this.name = name;
+            this.score = score;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getScore() {
+            return score;
+        }
     }
 }

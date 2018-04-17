@@ -19,11 +19,11 @@ public class LocalRaceCar extends LocalCar {
 
     private boolean doRotate;
     private float rotateBy;
-    private GoogleGameServices googleGameServices;
+    private RaceMode raceMode;
 
-    public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world, GoogleGameServices googleGameServices, int amountOfCheckpoints) {
+    public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world,  RaceMode raceMode, int amountOfCheckpoints) {
         super(position, localCarController, world);
-        this.googleGameServices = googleGameServices;
+        this.raceMode = raceMode;
         passedCheckpoints = new boolean[amountOfCheckpoints];
         Arrays.fill(passedCheckpoints, Boolean.FALSE);
         completedRounds = 0;
@@ -40,9 +40,8 @@ public class LocalRaceCar extends LocalCar {
             completedRounds++;
             Gdx.app.log("GOAL PASSED!", "" + completedRounds + " rounds passed");
             Arrays.fill(passedCheckpoints, Boolean.FALSE);
-            if (completedRounds == 3 && !GlobalVariables.SINGLE_PLAYER) {
-                int timeSinceStart = (int) (TrueTime.now().getTime() - googleGameServices.getStartTime() % 2147483648L);
-                googleGameServices.broadcastScore(timeSinceStart, false);
+            if (completedRounds == 1 && !GlobalVariables.SINGLE_PLAYER) {
+                raceMode.endGame();
             }
         }
     }
