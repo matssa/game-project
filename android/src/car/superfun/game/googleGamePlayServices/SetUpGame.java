@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.WindowManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -79,7 +78,7 @@ public class SetUpGame {
         return communicator;
     }
 
-    public void startQuickGame(NewState newState) {
+    public void startQuickGame(NewState newState ) {
         androidLauncher.setNewState(newState);
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
@@ -93,23 +92,18 @@ public class SetUpGame {
                         .setAutoMatchCriteria(autoMatchCriteria)
                         .build();
 
-        // prevent screen from sleeping during handshake
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         // create room:
         Games.getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
                 .create(joinedRoomConfig);
     }
 
     private RoomUpdateCallback roomUpdateCallback = new RoomUpdateCallback() {
-
         // Called when room has been created
         @Override
         public void onRoomCreated(int statusCode, Room room) {
             Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
             if (statusCode != GamesCallbackStatusCodes.OK) {
                 Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
-                showGameError();
                 return;
             }
 
@@ -119,14 +113,12 @@ public class SetUpGame {
             // show the waiting room UI
             showWaitingRoom(room);
         }
-
         // Called when room is fully connected.
         @Override
         public void onRoomConnected(int statusCode, Room room) {
             Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
             if (statusCode != GamesCallbackStatusCodes.OK) {
                 Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
-                showGameError();
                 return;
             }
             updateRoom(room);
@@ -137,31 +129,24 @@ public class SetUpGame {
             Log.d(TAG, "onJoinedRoom(" + statusCode + ", " + room + ")");
             if (statusCode != GamesCallbackStatusCodes.OK) {
                 Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
-                showGameError();
                 return;
             }
-
             // show the waiting room UI
             showWaitingRoom(room);
         }
 
-        // Called when we've successfully left the room (this happens a result of voluntarily leaving
-        // via a call to leaveRoom(). If we get disconnected, we get onDisconnectedFromRoom()).
         @Override
         public void onLeftRoom(int statusCode, @NonNull String roomId) {
-            // we have left the room; return to main screen.
             Log.d(TAG, "onLeftRoom, code " + statusCode);
-            getMenuScreen();
         }
     };
 
     private RoomStatusUpdateCallback roomStatusCallbackHandler = new RoomStatusUpdateCallback() {
-        // Called when we are connected to the room. We're not ready to play yet! (maybe not everybody
-        // is connected yet).
         @Override
         public void onConnectedToRoom(Room room) {
             Log.d(TAG, "onConnectedToRoom.");
 
+            participants.clear();
             //get participants and my ID:
             participants = room.getParticipants();
             myId = room.getParticipantId(playerId);
@@ -171,25 +156,14 @@ public class SetUpGame {
                 roomId = room.getRoomId();
             }
 
-            // print out the list of participants (for debug purposes)
-            Log.d(TAG, "Room ID: " + roomId);
-            Log.d(TAG, "My ID " + myId);
-            Log.d(TAG, "<< CONNECTED TO ROOM>>");
         }
 
-        // Called when we get disconnected from the room. We return to the main screen.
         @Override
         public void onDisconnectedFromRoom(Room room) {
             roomId = null;
             joinedRoomConfig = null;
-            showGameError();
         }
 
-
-        // We treat most of the room update callbacks in the same way: we update our list of
-        // participants and update the display. In a real game we would also have to check if that
-        // change requires some action like removing the corresponding player avatar from the screen,
-        // etc.
         @Override
         public void onPeerDeclined(Room room, @NonNull List<String> arg1) {
             updateRoom(room);
@@ -202,6 +176,10 @@ public class SetUpGame {
 
         @Override
         public void onP2PDisconnected(@NonNull String participant) {
+            int index = participants.indexOf(participant);
+            if(index >= 0) {
+                participants.remove(index);
+            }
         }
 
         @Override
@@ -215,7 +193,9 @@ public class SetUpGame {
 
         @Override
         public void onPeerLeft(Room room, @NonNull List<String> peersWhoLeft) {
+
             updateRoom(room);
+            communicator.updateParticipents(peersWhoLeft);
         }
 
         @Override
@@ -239,10 +219,7 @@ public class SetUpGame {
         }
     };
 
-    // Leave the room.
     public void leaveRoom() {
-        Log.d(TAG, "Leaving room.");
-        stopKeepingScreenOn();
         if (roomId != null) {
             realTimeMultiplayerClient.leave(joinedRoomConfig, roomId)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -254,15 +231,9 @@ public class SetUpGame {
                     });
 
         }
-        getMenuScreen();
     }
 
-    // Show the waiting room UI to track the progress of other players as they enter the
-    // room and get connected.
     void showWaitingRoom(Room room) {
-        // minimum number of players required for our game
-        // For simplicity, we require everyone to join the game before we start it
-        // (this is signaled by Integer.MAX_VALUE).
         final int MIN_PLAYERS = Integer.MAX_VALUE;
         realTimeMultiplayerClient.getWaitingRoomIntent(room, MIN_PLAYERS)
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
@@ -293,7 +264,6 @@ public class SetUpGame {
                         @Override
                         public void onSuccess(Player player) {
                             playerId = player.getPlayerId();
-                            getMenuScreen();
                         }
                     })
                     .addOnFailureListener(createFailureListener("There was a problem getting the player id!"));
@@ -357,32 +327,18 @@ public class SetUpGame {
                 .show();
     }
 
-
-    // Clears the flag that keeps the screen on.
-    void stopKeepingScreenOn() {
-        androidLauncher.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    // Show error message about game being cancelled and return to main screen.
-    void showGameError() {
-        new AlertDialog.Builder(androidLauncher)
-                .setMessage(androidLauncher.getString(R.string.game_problem))
-                .setNeutralButton(android.R.string.ok, null).create();
-
-        getMenuScreen();
-    }
-
-    private void getMenuScreen() {
-        // TODO show menu screen here
-        Log.d(TAG, "Show menu screen");
-    }
-
     private void updateRoom(Room room) {
-        // TODO show waiting room
-        Log.d(TAG, "Do some stuff");
+        if (room != null) {
+            participants = room.getParticipants();
+        }
+        else{
+            participants.clear();
+            communicator.clearParticipantCarController();
+        }
     }
 
     public void waitingRoomReady() {
+        communicator.clearParticipantCarController();
         for(Participant participant : participants) {
             if (participant.getParticipantId().equals(myId)) {
                 localParticipant = participant;
@@ -392,6 +348,7 @@ public class SetUpGame {
             communicator.putParticipantController(participant.getParticipantId(), opponentCarController);
         }
     }
+
     public Participant getLocalParticipant() {
         return localParticipant;
     }

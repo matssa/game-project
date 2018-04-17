@@ -16,6 +16,7 @@ import com.instacart.library.truetime.TrueTime;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -47,20 +48,23 @@ public class Communicator {
     public boolean gameStarted = false;
 
 
-
     public Communicator(AndroidLauncher androidLauncher, SetUpGame setUpGame) {
         this.setUpGame = setUpGame;
         this.androidLauncher = androidLauncher;
     }
 
-    public void putParticipantController(String id, CarController controller){
+    public void putParticipantController(String id, CarController controller) {
         participantCarControllers.put(id, controller);
+    }
+
+    public void clearParticipantCarController() {
+        participantCarControllers.clear();
     }
 
     public Array<CarController> getOpponentCarControllers() {
         Array<CarController> opponentCarControllers = new Array<>(participantCarControllers.size());
         for (Map.Entry<String, CarController> entry : participantCarControllers.entrySet()) {
-            if(!entry.getKey().equals(setUpGame.myId)) {
+            if (!entry.getKey().equals(setUpGame.myId)) {
                 opponentCarControllers.add(entry.getValue());
             }
         }
@@ -236,9 +240,12 @@ public class Communicator {
                 25,
                 TimeUnit.MILLISECONDS);
     }
+    public void updateParticipents(List<String> peersWhoLeft) {
+        for(String id : peersWhoLeft) {
+            OpponentCarController controller = (OpponentCarController) participantCarControllers.get(id);
+            controller.getControlledCar().setRender(false);
+        }
 
-
-
-
+    }
 
 }
