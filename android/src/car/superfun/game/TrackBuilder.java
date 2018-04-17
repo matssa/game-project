@@ -154,4 +154,17 @@ public class TrackBuilder {
         return chainShape;
     }
 
+    public static Array<Vector2> getPoints(Map map, String layerName) {
+        MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
+        Array<Vector2> points = new Array<>();
+
+        for (MapObject mapObject : mapObjects) {
+            float x = Float.parseFloat(mapObject.getProperties().get("x").toString());
+            float y = Float.parseFloat(mapObject.getProperties().get("y").toString());
+            points.add(new Vector2(x, y));
+        }
+
+        return points;
+    }
+
 }

@@ -15,15 +15,15 @@ public class LocalGladiatorCar extends LocalCar {
     private int score;
     private Sound dustWallCrash;
     GladiatorMode gameClass;
-    
 
-    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, LocalCarController localCarController, World world, Integer score, Sound dustWallCrash){
-        super(position, localCarController, world);
+
+    public LocalGladiatorCar(GladiatorMode gameClass, Vector2 position, LocalCarController localCarController, World world, Integer score, Sound dustWallCrash, String texturePath) {
+        super(position, localCarController, world, texturePath);
         this.score = score;
         this.dustWallCrash = dustWallCrash;
         this.gameClass = gameClass;
     }
-    
+
 
     public void hitDeathWalls() {
         score -= 1;
@@ -32,7 +32,7 @@ public class LocalGladiatorCar extends LocalCar {
             gameClass.endGame();
         }
     }
-    
+
 
     public void hitByCar() {
         // TODO: Let the cars crash and bounce.
