@@ -129,11 +129,6 @@ public class GladiatorMode extends GameMode {
         getStartPositions("starting_points");
     }
 
-    @Override
-    public void handleInput() {
-
-    }
-
 
     @Override
     public void update(float dt) {
