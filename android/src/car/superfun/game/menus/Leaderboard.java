@@ -54,6 +54,7 @@ public class Leaderboard extends State {
         table.align(Align.center|Align.top);
         table.setPosition(0, stage.getHeight());
         //table.setDebug(true);
+
         fillTable();
         Gdx.input.setInputProcessor(stage);
         return leaderboard;

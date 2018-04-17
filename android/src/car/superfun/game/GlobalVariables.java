@@ -26,7 +26,7 @@ public final class GlobalVariables {
     // Enable testing mode to make localCar drive by itself
     public static final boolean TESTING_MODE = false;
 
-    public static final boolean SINGLE_PLAYER = true;
+    public static final boolean SINGLE_PLAYER = false;
 
     // Below are some logging classes that are useful for debug and tweaking purposes
 

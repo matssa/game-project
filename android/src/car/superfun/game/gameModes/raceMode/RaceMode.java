@@ -198,6 +198,7 @@ public class RaceMode extends GameMode {
             Gdx.app.log("You won!", "" + timeSinceStart + " milliseconds used");
             return;
         }
+        Leaderboard.getInstance().newPlayerScore(googleGameServices.getMyID(), timeSinceStart);
         googleGameServices.broadcastScore(timeSinceStart, false);
         GameStateManager.getInstance().set(Leaderboard.getInstance().initialize(scoreFormatter, false));
     }
