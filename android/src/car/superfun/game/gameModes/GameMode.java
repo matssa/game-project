@@ -73,7 +73,7 @@ public abstract class GameMode extends State {
             if (carControllers.get(i) instanceof OpponentCarController) {
                 callback.addOpponentCar(startPositions.get(i), (OpponentCarController) carControllers.get(i));
             } else if (carControllers.get(i) instanceof LocalCarController) {
-                callback.addLocalCar(startPositions.get(i), localCarController);
+                callback.addLocalCar(startPositions.get(i), localCarController, this);
             }
         }
     }
@@ -104,6 +104,6 @@ public abstract class GameMode extends State {
 
     public interface SetStartPositionCallback {
         void addOpponentCar(Vector2 position, OpponentCarController opponentCarController);
-        void addLocalCar(Vector2 position, LocalCarController localCarController);
+        void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode);
     }
 }

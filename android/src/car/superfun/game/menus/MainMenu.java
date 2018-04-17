@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
+import car.superfun.game.NewState;
 import car.superfun.game.actor.ButtonActor;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
@@ -22,11 +23,12 @@ public class MainMenu extends State {
     public static Stage stage = new Stage(new ScreenViewport());
   
     private Texture background;
+    private final GoogleGameServices googleGameServices;
 
-    public MainMenu(GoogleGameServices googleGameServices) {
+    public MainMenu(final GoogleGameServices googleGameServices) {
         background = new Texture("background.png");
 
-        final GoogleGameServices googleGameService = googleGameServices;
+        this.googleGameServices = googleGameServices;
 
 
         Table table = new Table();
@@ -57,7 +59,8 @@ public class MainMenu extends State {
         joinButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                // start new game
+                googleGameServices.startQuickGame(NewState.RACE_MODE);
+                GameStateManager.getInstance().push(new GameBrowser());
                 return true;
             }
         });
@@ -68,7 +71,7 @@ public class MainMenu extends State {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 GameStateManager.getInstance().push(new HostMenu());
                 // starting PlayState instead, so that we can test the game
-                RaceMode race = new RaceMode(googleGameService, GlobalVariables.SINGLE_PLAYER);
+                RaceMode race = new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER);
 
 //                race.setLocalRaceCar(new Vector2(1600, 11000));
 //                Array<Vector2> opponentCars = new Array<Vector2>();

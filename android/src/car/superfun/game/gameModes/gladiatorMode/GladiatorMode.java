@@ -47,16 +47,11 @@ public class GladiatorMode extends GameMode {
 
     private LocalGladiatorCar localCar;
 
-    private GladiatorMode thisGladiatorMode;
-
     private int score = 5;
     private float boost = 10;
 
     public GladiatorMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super(MAP_PATH, googleGameServices, singlePlayer);
-
-        // set thisGladiatorMode = this, used in callback
-        thisGladiatorMode = this;
 
         // Audio
         gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
@@ -79,17 +74,17 @@ public class GladiatorMode extends GameMode {
         @Override
         public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
             opponentCars.add(new OpponentCar(position, opponentCarController, world, TEXTURE_PATHS[texturePathIndex]));
-            incrementTexurePath();
+            incrementTexturePath();
         }
 
         @Override
-        public void addLocalCar(Vector2 position, LocalCarController localCarController) {
-            localCar = new LocalGladiatorCar(thisGladiatorMode, position, localCarController, world, score, dustWallCrash, TEXTURE_PATHS[texturePathIndex]);
-            incrementTexurePath();
+        public void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode) {
+            localCar = new LocalGladiatorCar((GladiatorMode) thisGameMode, position, localCarController, world, score, dustWallCrash, TEXTURE_PATHS[texturePathIndex]);
+            incrementTexturePath();
         }
     };
 
-    private void incrementTexurePath() {
+    private void incrementTexturePath() {
         if (texturePathIndex < TEXTURE_PATHS.length) {
             texturePathIndex++;
         }
@@ -185,6 +180,7 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void endGame() {
+        Gdx.app.log("endGame", "GladiatorMode endgame");
         // TODO: send data to leaderboard
         this.dispose();
     }

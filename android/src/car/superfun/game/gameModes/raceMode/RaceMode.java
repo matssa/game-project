@@ -1,5 +1,6 @@
 package car.superfun.game.gameModes.raceMode;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -46,8 +47,6 @@ public class RaceMode extends GameMode {
 
     private int amountOfCheckpoints;
 
-    public RaceMode thisRaceMode;
-
     public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super(MAP_PATH, googleGameServices, singlePlayer);
 
@@ -70,7 +69,6 @@ public class RaceMode extends GameMode {
         if (!singlePlayer) {
             googleGameServices.readyToStart();
         }
-        thisRaceMode = this;
     }
 
     /**
@@ -98,7 +96,7 @@ public class RaceMode extends GameMode {
         checkpointDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY;
         checkpointDef.isSensor = true;
 
-        // returnes the amount of checkpoints for the given map
+        // returns the amount of checkpoints for the given map
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
 
         // Get starting positions for map
@@ -112,17 +110,17 @@ public class RaceMode extends GameMode {
         @Override
         public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
             opponentCars.add(new OpponentCar(position, opponentCarController, world, TEXTURE_PATHS[texturePathIndex]));
-            incrementTexurePath();
+            incrementTexturePath();
         }
 
         @Override
-        public void addLocalCar(Vector2 position, LocalCarController localCarController) {
-            localRaceCar = new LocalRaceCar(position, localCarController, world, thisRaceMode, amountOfCheckpoints, TEXTURE_PATHS[texturePathIndex]);
-            incrementTexurePath();
+        public void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode) {
+            localRaceCar = new LocalRaceCar(position, localCarController, world, (RaceMode) thisGameMode, amountOfCheckpoints, TEXTURE_PATHS[texturePathIndex]);
+            incrementTexturePath();
         }
     };
 
-    private void incrementTexurePath() {
+    private void incrementTexturePath() {
         if (texturePathIndex < TEXTURE_PATHS.length) {
             texturePathIndex++;
         }
@@ -195,7 +193,11 @@ public class RaceMode extends GameMode {
 
     @Override
     public void endGame() {
-        int timeSinceStart = (int) (TrueTime.now().getTime() - googleGameServices.getStartTime() % 2147483648L);
+        int timeSinceStart = (int) ((TrueTime.now().getTime() - googleGameServices.getStartTime()) % 2147483648L);
+        if (singlePlayer) {
+            Gdx.app.log("You won!", "" + timeSinceStart + " milliseconds used");
+            return;
+        }
         googleGameServices.broadcastScore(timeSinceStart, false);
         GameStateManager.getInstance().set(Leaderboard.getInstance().initialize(scoreFormatter, false));
     }
