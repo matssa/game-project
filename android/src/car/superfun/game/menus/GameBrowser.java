@@ -20,7 +20,6 @@ public class GameBrowser extends State{
         backButton = new Texture("menu-buttons/back.png");
     }
 
-    @Override
     public void handleInput() {
         if(Gdx.input.justTouched()) {
             if (isOnBack()) {

@@ -25,7 +25,6 @@ public class MainMenu extends State {
         extraSettings = new Texture(("menu-buttons/settings.png"));
     }
 
-    @Override
     public void handleInput() {
         if(Gdx.input.justTouched()){
             if(isOnSettings()){
