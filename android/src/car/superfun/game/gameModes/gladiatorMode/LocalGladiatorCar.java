@@ -4,6 +4,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.LocalCar;
 
@@ -27,7 +28,7 @@ public class LocalGladiatorCar extends LocalCar {
 
     public void hitDeathWalls() {
         score -= 1;
-        dustWallCrash.play(0.8f);
+        dustWallCrash.play(GlobalVariables.SOUND_VOLUME);
         if (score <= 0) {
             gameClass.endGame();
         }

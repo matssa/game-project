@@ -7,23 +7,29 @@ import com.google.android.gms.games.multiplayer.Participant;
 import java.util.ArrayList;
 
 import car.superfun.game.car.CarController;
+import car.superfun.game.car.OpponentCarController;
 
 public interface GoogleGameServices {
 
-    public abstract void broadcast(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
-    public abstract Array<CarController> getOpponentCarControllers();
+    void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
+    void broadcastScore(int score);
 
-    public abstract boolean isSignedIn();
-    public abstract void signOut();
-    public abstract void startSignInIntent();
+    Array<OpponentCarController> getOpponentCarControllers();
 
-    public abstract void startQuickGame(NewState newState);
-    public abstract void leaveRoom();
-    public abstract void readyToStart();
-    public abstract boolean gameStarted();
-    public abstract ArrayList<Participant> getParticipants();
-    public abstract String getMyID();
+    boolean isSignedIn();
+    void signOut();
+    void startSignInIntent();
 
+    ArrayList<Participant> getParticipants();
+    String getMyID();
 
-    public abstract Participant getLocalParticipant();
+    void startQuickGame(NewState newState);
+    void leaveRoom();
+
+    void readyToStart();
+    boolean gameStarted();
+
+    long getStartTime();
+
+    Participant getLocalParticipant();
 }

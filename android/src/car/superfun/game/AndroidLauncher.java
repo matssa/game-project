@@ -20,7 +20,7 @@ import com.instacart.library.truetime.TrueTime;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import car.superfun.game.car.CarController;
+import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.googleGamePlayServices.Communicator;
 import car.superfun.game.googleGamePlayServices.SetUpGame;
 import car.superfun.game.googleGamePlayServices.SignIn;
@@ -41,7 +41,7 @@ public class AndroidLauncher extends AndroidApplication {
         super.onCreate(savedInstanceState);
 
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-        this.carSuperFun = new CarSuperFun(googleGameServices);
+        this.carSuperFun = new CarSuperFun(googleGameServices, this);
         initialize(carSuperFun, config);
 
         this.setUpGame = new SetUpGame(this);
@@ -115,15 +115,24 @@ public class AndroidLauncher extends AndroidApplication {
         }
     }
 
+    public void setNewState(NewState newState) {
+        this.newState = newState;
+    }
+
     public GoogleGameServices googleGameServices = new GoogleGameServices() {
 
         @Override
-        public void broadcast(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
+        public void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
             communicator.broadcastState(velocity, position, angle, forward, rotation);
         }
 
         @Override
-        public Array<CarController> getOpponentCarControllers() {
+        public void broadcastScore(int score) {
+            communicator.broadcastScore(score);
+        }
+
+        @Override
+        public Array<OpponentCarController> getOpponentCarControllers() {
             return communicator.getOpponentCarControllers();
         }
 
@@ -163,12 +172,16 @@ public class AndroidLauncher extends AndroidApplication {
         }
 
         @Override
-        public ArrayList<Participant> getParticipants() {
+        public long getStartTime() {
+            return communicator.startTime;
+        }
+
+        public ArrayList<Participant> getParticipants () {
             return setUpGame.participants;
         }
 
         @Override
-        public String getMyID() {
+        public String getMyID () {
             return setUpGame.myId;
         }
 
@@ -177,9 +190,4 @@ public class AndroidLauncher extends AndroidApplication {
             return setUpGame.getLocalParticipant();
         }
     };
-
-    public void setNewState(NewState newState) {
-        this.newState = newState;
-    }
-
 }

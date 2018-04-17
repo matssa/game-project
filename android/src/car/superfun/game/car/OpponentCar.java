@@ -21,7 +21,6 @@ public class OpponentCar extends Car {
     private int receivedTimestamp;
 
     private boolean doUpdate;
-//    private boolean lostLastPackage;
 
     GlobalVariables.AvgLogger posDiffLogger;
 
@@ -33,12 +32,6 @@ public class OpponentCar extends Car {
                 GlobalVariables.OPPONENT_ENTITY);
         opponentCarController.setControlledCar(this);
         doUpdate = false;
-//        lostLastPackage = false;
-//        posDiffLogger = new AvgLogger(10, "Average position difference", 0.001f);
-    }
-
-    public void setTransform(float x, float y, float angle) {
-        body.setTransform(x, y, angle);
     }
 
     public void update(float dt){

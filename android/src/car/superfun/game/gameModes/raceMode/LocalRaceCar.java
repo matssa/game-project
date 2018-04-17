@@ -16,9 +16,11 @@ public class LocalRaceCar extends LocalCar {
 
     private boolean doRotate;
     private float rotateBy;
+    private RaceMode raceMode;
 
-    public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world, int amountOfCheckpoints, String texturePath) {
+    public LocalRaceCar(Vector2 position, LocalCarController localCarController, World world,  RaceMode raceMode, int amountOfCheckpoints, String texturePath) {
         super(position, localCarController, world, texturePath);
+        this.raceMode = raceMode;
         passedCheckpoints = new boolean[amountOfCheckpoints];
         Arrays.fill(passedCheckpoints, Boolean.FALSE);
         completedRounds = 0;
@@ -35,15 +37,16 @@ public class LocalRaceCar extends LocalCar {
             completedRounds++;
             Gdx.app.log("GOAL PASSED!", "" + completedRounds + " rounds passed");
             Arrays.fill(passedCheckpoints, Boolean.FALSE);
+            if (completedRounds == 1) {
+                raceMode.endGame();
+            }
         }
     }
 
     public void update(float dt) {
         super.update(dt);
         if (GlobalVariables.TESTING_MODE && doRotate) {
-//            float newAngle = body.getTransform().getRotation() + rotateBy;
             body.setTransform(body.getPosition(), body.getTransform().getRotation() + rotateBy);
-//            body.setTransform(20f, 110.4f, (float) (-Math.PI / 2));
             doRotate = false;
             rotateBy = 0f;
         }
