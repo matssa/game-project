@@ -7,9 +7,6 @@ public abstract class State {
     protected State() {
     }
 
-    //Handles input from user
-    public abstract void handleInput();
-
     //Updates the state
     public abstract void update(float dt);
 

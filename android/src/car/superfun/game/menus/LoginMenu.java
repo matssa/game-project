@@ -24,7 +24,6 @@ public class LoginMenu extends State{
     }
 
 
-    @Override
     public void handleInput() {
         if(Gdx.input.justTouched()) {
             if (loginButton.getBoundingRectangle().contains(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY())) {

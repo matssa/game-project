@@ -61,11 +61,6 @@ public class Leaderboard extends State {
     }
 
     @Override
-    public void handleInput() {
-
-    }
-
-    @Override
     public void update(float dt) {
     }
 

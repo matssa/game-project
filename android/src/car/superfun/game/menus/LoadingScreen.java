@@ -9,9 +9,6 @@ import com.badlogic.gdx.math.Circle;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
-/**
- * Created by pcipc on 14.04.2018.
- */
 
 public class LoadingScreen extends State {
 
@@ -23,7 +20,6 @@ public class LoadingScreen extends State {
         backButton = new Texture("menu-buttons/back.png");
     }
 
-    @Override
     public void handleInput() {
         if(Gdx.input.justTouched()) {
             if (isOnBack()) {

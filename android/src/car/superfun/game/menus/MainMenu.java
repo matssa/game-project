@@ -96,13 +96,7 @@ public class MainMenu extends State {
     }
 
     @Override
-    public void handleInput() {
-
-    }
-
-    @Override
     public void update(float dt) {
-        handleInput();
     }
 
     @Override

@@ -61,13 +61,8 @@ public class SettingsMenu extends State {
         Gdx.input.setInputProcessor(stage);
     }
 
-    public void handleInput(){
-
-    }
-
     @Override
     public void update(float dt) {
-        handleInput();
     }
 
     @Override

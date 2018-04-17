@@ -138,10 +138,6 @@ public class RaceMode extends GameMode {
         }
     }
 
-    @Override
-    public void handleInput() {
-
-    }
 
     @Override
     public void update(float dt) {
