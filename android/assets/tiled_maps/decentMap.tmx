@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="left-down" width="50" height="50" tilewidth="256" tileheight="256" infinite="0" nextobjectid="21">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="left-down" width="50" height="50" tilewidth="256" tileheight="256" infinite="0" nextobjectid="27">
  <tileset firstgid="1" source="../tiles/roadTiles.tsx"/>
  <tileset firstgid="112" source="../tiles/fenceTiles.tsx"/>
  <layer name="grass" width="50" height="50" locked="1">
@@ -245,8 +245,17 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="starting_points" locked="1">
-  <object id="20" x="5632" y="3584">
+ <objectgroup name="starting_points">
+  <object id="20" x="5888" y="3264">
+   <point/>
+  </object>
+  <object id="24" x="5888" y="3456">
+   <point/>
+  </object>
+  <object id="25" x="5888" y="3712">
+   <point/>
+  </object>
+  <object id="26" x="5888" y="3904">
    <point/>
   </object>
  </objectgroup>
