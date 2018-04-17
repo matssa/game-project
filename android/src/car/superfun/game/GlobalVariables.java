@@ -28,6 +28,8 @@ public final class GlobalVariables {
 
     public static final boolean SINGLE_PLAYER = false;
 
+    public static final int START_DELAY_MS = 3000;
+
     // Below are some logging classes that are useful for debug and tweaking purposes
 
     public static void logVector(Vector2 vector, String tag) {

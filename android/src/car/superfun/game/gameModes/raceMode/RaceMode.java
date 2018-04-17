@@ -141,6 +141,10 @@ public class RaceMode extends GameMode {
 
     @Override
     public void update(float dt) {
+        camera.position.set(localRaceCar.getSpritePosition(), 0);
+        camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
+        camera.up.set(localRaceCar.getDirectionVector(), 0);
+
         if (!googleGameServices.gameStarted() && !singlePlayer) {
             return;
         }
@@ -150,9 +154,6 @@ public class RaceMode extends GameMode {
         localRaceCar.update(dt);
         world.step(dt, 2, 1); // Using deltaTime
 
-        camera.position.set(localRaceCar.getSpritePosition(), 0);
-        camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
-        camera.up.set(localRaceCar.getDirectionVector(), 0);
 
         localCarController.update();
         if (!GlobalVariables.SINGLE_PLAYER) {

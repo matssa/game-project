@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import car.superfun.game.AndroidLauncher;
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.car.CarController;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.menus.Leaderboard;
@@ -201,7 +202,7 @@ public class Communicator {
         ByteBuffer messageBuffer = ByteBuffer.allocate(10);
         messageBuffer.putChar(0, 'R');
 
-        myReadyTime = TrueTime.now().getTime() + 3000;
+        myReadyTime = TrueTime.now().getTime() + GlobalVariables.START_DELAY_MS;
         messageBuffer.putLong(2, myReadyTime);
 
         newParticipantReady(myReadyTime);
