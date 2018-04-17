@@ -8,9 +8,6 @@ import com.badlogic.gdx.math.Circle;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
-/**
- * Created by Jonas on 13.03.2018.
- */
 
 public class GameBrowser extends State{
     private Texture background, backButton;
