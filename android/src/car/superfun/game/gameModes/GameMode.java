@@ -35,7 +35,7 @@ public abstract class GameMode extends State {
 
     protected LocalCarController localCarController;
 
-    protected boolean singlePlayer = true;
+    protected boolean singlePlayer;
     protected World world;
 
     protected TiledMap tiledMap;

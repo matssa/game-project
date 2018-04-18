@@ -26,7 +26,7 @@ public final class GlobalVariables {
     // Enable testing mode to make localCar drive by itself
     public static final boolean TESTING_MODE = false;
 
-    public static final boolean SINGLE_PLAYER = false;
+    public static final boolean SINGLE_PLAYER = true;
 
     public static final int START_DELAY_MS = 3000;
 
