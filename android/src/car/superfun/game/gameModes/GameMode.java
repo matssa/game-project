@@ -1,5 +1,7 @@
 package car.superfun.game.gameModes;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -49,7 +51,8 @@ public abstract class GameMode extends State {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
-        camera.zoom = camera.zoom * 1.4f;
+
+        camera.zoom = camera.zoom * 1.4f * (3 / Gdx.graphics.getDensity());
         camera.update();
 
         ShaderProgram shader = SpriteBatch.createDefaultShader();
