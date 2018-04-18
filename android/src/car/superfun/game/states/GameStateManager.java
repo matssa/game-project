@@ -20,12 +20,12 @@ public class GameStateManager {
     //Stack containing the states in use
     private Stack<State> states = new Stack<State>();;
 
-    //Changed the contructor to private so that the only way to init the class is from the class
+    //Changed the constructor to private so that the only way to init the class is from the class
     //itself
     private GameStateManager(){
     }
 
-    //Returnes the one and only instance of the class
+    //Returns the one and only instance of the class
     public static GameStateManager getInstance() {
         if(gameStateManager == null) {
             gameStateManager = new GameStateManager();
