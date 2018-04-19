@@ -171,6 +171,8 @@ public class Communicator {
         int score = buffer.getInt(2);
         String senderName = participantCarControllers.get(senderId).getParticipant().getDisplayName();
         Leaderboard.getInstance().newPlayerScore(senderName, score);
+        setUpGame.
+        participantCarControllers.get(setUpGame.myId).getControlledCar();
     }
 
     private void handleStateMessage(ByteBuffer buffer, String senderId) {
