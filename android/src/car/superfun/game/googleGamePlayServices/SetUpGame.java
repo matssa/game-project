@@ -194,7 +194,7 @@ public class SetUpGame {
         public void onPeerLeft(Room room, @NonNull List<String> peersWhoLeft) {
 
             updateRoom(room);
-            communicator.updateParticipents(peersWhoLeft);
+            communicator.updateParticipants(peersWhoLeft);
         }
 
         @Override
@@ -345,6 +345,7 @@ public class SetUpGame {
             }
             OpponentCarController opponentCarController = new OpponentCarController(participant);
             communicator.putParticipantController(participant.getParticipantId(), opponentCarController);
+            communicator.initiateTimestampMap();
         }
     }
 
