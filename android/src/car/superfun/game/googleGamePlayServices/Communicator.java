@@ -16,6 +16,7 @@ import com.instacart.library.truetime.TrueTime;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -49,21 +50,24 @@ public class Communicator {
     public boolean gameStarted = false;
 
 
-
     public Communicator(AndroidLauncher androidLauncher, SetUpGame setUpGame) {
         this.setUpGame = setUpGame;
         this.androidLauncher = androidLauncher;
     }
 
-    public void putParticipantController(String id, CarController controller){
+    public void putParticipantController(String id, CarController controller) {
         participantCarControllers.put(id, controller);
     }
 
-    public Array<OpponentCarController> getOpponentCarControllers() {
-        Array<OpponentCarController> opponentCarControllers = new Array<>(participantCarControllers.size());
+    public void clearParticipantCarController() {
+        participantCarControllers.clear();
+    }
+
+    public Array<CarController> getOpponentCarControllers() {
+        Array<CarController> opponentCarControllers = new Array<>(participantCarControllers.size());
         for (Map.Entry<String, CarController> entry : participantCarControllers.entrySet()) {
-            if(!entry.getKey().equals(setUpGame.myId) && entry.getValue() instanceof OpponentCarController) {
-                opponentCarControllers.add((OpponentCarController) entry.getValue());
+            if (!entry.getKey().equals(setUpGame.myId)) {
+                opponentCarControllers.add(entry.getValue());
             }
         }
         return opponentCarControllers;
@@ -165,6 +169,7 @@ public class Communicator {
                     });
         }
     }
+
     private void handleFinalScoreMessage(ByteBuffer buffer, String senderId) {
         int score = buffer.getInt(2);
         String senderName = participantCarControllers.get(senderId).getParticipant().getDisplayName();
@@ -247,4 +252,12 @@ public class Communicator {
                 25,
                 TimeUnit.MILLISECONDS);
     }
+
+    public void updateParticipents(List<String> peersWhoLeft) {
+        for (String id : peersWhoLeft) {
+            OpponentCarController controller = (OpponentCarController) participantCarControllers.get(id);
+            controller.getControlledCar().setRender(false);
+        }
+    }
+
 }

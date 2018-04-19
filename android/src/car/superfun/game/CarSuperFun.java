@@ -64,11 +64,11 @@ public class CarSuperFun extends ApplicationAdapter {
         super.resume();
 
         // Initiate all states in the enum list
-        for(NewState state : statesToBeCreated) {
-            switch (state){
+        for (NewState state : statesToBeCreated) {
+            switch (state) {
                 case RACE_MODE:
                     Log.d("CarSuperFun", "Pushed RaceMode");
-                    GameStateManager.getInstance().push(new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
+                    GameStateManager.getInstance().set(new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
                     break;
                 case MAIN_MENU:
                     Log.d("CarSuperFun", "Pushed MainMenu");
@@ -80,7 +80,7 @@ public class CarSuperFun extends ApplicationAdapter {
                     break;
                 case GLADIATOR_MODE:
                     Log.d("CarSuperFun", "Pushed GladiatorMode");
-                    GameStateManager.getInstance().push(new GladiatorMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
+                    GameStateManager.getInstance().set(new GladiatorMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
                     break;
             }
         }
@@ -117,10 +117,14 @@ public class CarSuperFun extends ApplicationAdapter {
                         justPressedBack = false;
                     }
                 }, 800);
+                if (gsm.isGameMode()) {
+                    googleGameServices.leaveRoom();
+                }
                 gsm.pop();
             }
         }
     }
+
     /**
      * get gsm to dispose
      */
@@ -133,6 +137,7 @@ public class CarSuperFun extends ApplicationAdapter {
 
     /**
      * Adds the enum corresponding to the class that will be initiated on next resume
+     *
      * @param newState
      */
     public void createNewState(NewState newState) {
