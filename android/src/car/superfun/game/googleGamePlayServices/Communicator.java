@@ -39,7 +39,7 @@ public class Communicator {
 
     public Map<String, OpponentCarController> participantCarControllers = new HashMap<>();
 
-    private int lastTimestamp = 0;
+    private Map<String, Integer> lastTimestamps = new HashMap<>();
     private int readyParticipants = 0;
     private long myReadyTime = 0L;
 
@@ -58,6 +58,12 @@ public class Communicator {
 
     public void clearParticipantCarController() {
         participantCarControllers.clear();
+    }
+
+    public void initiateTimestampMap() {
+        for (OpponentCarController opponent : participantCarControllers.values()) {
+            lastTimestamps.put(opponent.getParticipant().getParticipantId(), new Integer(0));
+        }
     }
 
     public Array<OpponentCarController> getOpponentCarControllers() {
@@ -183,11 +189,11 @@ public class Communicator {
         }
 
         int packageTimestamp = buffer.getInt(2);
-        if (packageTimestamp < lastTimestamp) {
+        if (packageTimestamp < lastTimestamps.get(senderId)) {
             Gdx.app.log("package loss", "out of order package arrived. timestamp: " + packageTimestamp);
             return; // Dropping outdated message
         }
-        lastTimestamp = packageTimestamp;
+        lastTimestamps.put(senderId, new Integer(packageTimestamp));
         int timeDiff = Math.abs(((int) (TrueTime.now().getTime() % 2147483648L)) - packageTimestamp);
 
         Vector2 velocity = new Vector2(buffer.getFloat(6), buffer.getFloat(10));
@@ -256,7 +262,7 @@ public class Communicator {
                 TimeUnit.MILLISECONDS);
     }
 
-    public void updateParticipents(List<String> peersWhoLeft) {
+    public void updateParticipants(List<String> peersWhoLeft) {
         for (String id : peersWhoLeft) {
             OpponentCarController controller = (OpponentCarController) participantCarControllers.get(id);
             controller.getControlledCar().setRender(false);
