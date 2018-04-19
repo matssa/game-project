@@ -102,7 +102,7 @@ public class GameStateManager {
         return states.peek();
     }
 
-    public boolean isGameMode() {
+    public boolean isInGameMode() {
         if (!states.empty()) {
             return states.peek() instanceof GameMode;
         }

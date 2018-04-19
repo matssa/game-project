@@ -2,7 +2,6 @@ package car.superfun.game.menus;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -11,11 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
 import car.superfun.game.NewState;
 import car.superfun.game.actor.ButtonActor;
-import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -23,13 +20,9 @@ public class MainMenu extends State {
     public static Stage stage = new Stage(new ScreenViewport());
   
     private Texture background;
-    private final GoogleGameServices googleGameServices;
 
     public MainMenu(final GoogleGameServices googleGameServices) {
         background = new Texture("background.png");
-
-        this.googleGameServices = googleGameServices;
-
 
         Table table = new Table();
         table.setWidth(stage.getWidth());
@@ -37,7 +30,7 @@ public class MainMenu extends State {
 
         table.setPosition(0, Gdx.graphics.getHeight());
 
-        ButtonActor settingsButton = new ButtonActor(new Sprite(new Texture("menu-buttons/settings.png")));
+        ButtonActor settingsButton = new ButtonActor("menu-buttons/settings.png");
         settingsButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -46,44 +39,29 @@ public class MainMenu extends State {
             }
         });
 
-        ButtonActor extraSettingsButton = new ButtonActor(new Sprite(new Texture("menu-buttons/settings.png")));
-        extraSettingsButton.addListener(new InputListener() {
+        ButtonActor raceButton = new ButtonActor("menu-buttons/race.png");
+        raceButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                //GameStateManager.getInstance().push(new GladiatorMode());
+                GameStateManager.getInstance().push(new GameSettings(NewState.RACE_MODE, googleGameServices));
                 return true;
             }
         });
 
-        ButtonActor joinButton = new ButtonActor(new Sprite(new Texture("menu-buttons/join.png")));
-        joinButton.addListener(new InputListener() {
+        ButtonActor gladiatorButton = new ButtonActor("menu-buttons/gladiator.png");
+        gladiatorButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                googleGameServices.startQuickGame(NewState.RACE_MODE);
-                GameStateManager.getInstance().push(new GameBrowser());
+                GameStateManager.getInstance().push(new GameSettings(NewState.GLADIATOR_MODE, googleGameServices));
                 return true;
             }
         });
 
-        ButtonActor hostButton = new ButtonActor(new Sprite(new Texture("menu-buttons/host.png")));
-        hostButton.addListener(new InputListener(){
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                GameStateManager.getInstance().push(new HostMenu());
-                // starting PlayState instead, so that we can test the game
-                RaceMode race = new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER);
-
-                GameStateManager.getInstance().push(race);
-                return true;
-            }
-        });
-
-        table.add(extraSettingsButton).expandX().top().left();
-        table.add(settingsButton).expandX().top().right().padBottom(120);
+        table.add(settingsButton).expandX().top().right().padBottom(120).padRight(stage.getWidth()/50).padTop(stage.getHeight()/30);
         table.row();
-        table.add(joinButton).padBottom(120).colspan(2);
+        table.add(raceButton).padBottom(120).center();
         table.row();
-        table.add(hostButton).colspan(2);
+        table.add(gladiatorButton).center();
 
         stage.addActor(table);
 

@@ -151,8 +151,8 @@ public class AndroidLauncher extends AndroidApplication {
         }
 
         @Override
-        public void startQuickGame(NewState newState) {
-            setUpGame.startQuickGame(newState);
+        public void startQuickGame(NewState newState, int numberOfPlayers) {
+            setUpGame.startQuickGame(newState, numberOfPlayers);
         }
 
         @Override
