@@ -6,7 +6,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.menus.LoginMenu;
 import car.superfun.game.menus.MainMenu;
 import car.superfun.game.states.GameStateManager;
+import car.superfun.game.states.NewState;
 
 
 public class CarSuperFun extends ApplicationAdapter {

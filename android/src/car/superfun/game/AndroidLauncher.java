@@ -24,6 +24,7 @@ import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.googleGamePlayServices.Communicator;
 import car.superfun.game.googleGamePlayServices.SetUpGame;
 import car.superfun.game.googleGamePlayServices.SignIn;
+import car.superfun.game.states.NewState;
 
 public class AndroidLauncher extends AndroidApplication {
 

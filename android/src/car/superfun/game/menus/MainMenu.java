@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
-import car.superfun.game.NewState;
+import car.superfun.game.states.NewState;
 import car.superfun.game.actor.ButtonActor;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.states.GameStateManager;
