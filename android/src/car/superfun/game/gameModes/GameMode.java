@@ -68,6 +68,8 @@ public abstract class GameMode extends State {
 
         setUpMap();
 
+        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+
         googleGameServices.readyToStart(isSinglePlayer);
     }
 

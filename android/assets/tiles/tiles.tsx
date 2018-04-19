@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="roadTiles" tilewidth="256" tileheight="256" tilecount="49" columns="0">
+<tileset name="roadTiles" tilewidth="256" tileheight="256" tilecount="53" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="256" height="256" source="fence/fenceLargeTurn-0-0.png"/>
@@ -228,5 +228,37 @@
  </tile>
  <tile id="112">
   <image width="128" height="256" source="overlay/goalLine.png"/>
+ </tile>
+ <tile id="113">
+  <image width="256" height="256" source="fence/fenceShift-0-0.png"/>
+  <objectgroup draworder="index">
+   <object id="2" x="224" y="256">
+    <polyline points="-1,0 32,-1"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="114">
+  <image width="256" height="256" source="fence/fenceShift-0-1.png"/>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="9">
+    <polyline points="0,0 223,-9"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="115">
+  <image width="256" height="256" source="fence/fenceShift2-0-0.png"/>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="247">
+    <polyline points="0,0 223,9"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="116">
+  <image width="256" height="256" source="fence/fenceShift2-0-1.png"/>
+  <objectgroup draworder="index">
+   <object id="1" x="256" y="1">
+    <polyline points="0,0 -33,-1"/>
+   </object>
+  </objectgroup>
  </tile>
 </tileset>

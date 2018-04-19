@@ -30,7 +30,7 @@ public final class GlobalVariables {
 
     public static final int START_DELAY_MS = 3000;
 
-    // Below are some logging classes that are useful for debug and tweaking purposes
+    // Below are some logging methods / class that are useful for debug and tweaking purposes
 
     public static void logVector(Vector2 vector, String tag) {
         Gdx.app.log(tag, "(" + vector.x + ", " + vector.y + ")");

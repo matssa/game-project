@@ -60,8 +60,12 @@ public class Car {
 
         shape.dispose();
 
+//        acceleration = 850.0f;
+//        steering = 175.0f;
+//        grip = 10;
+
         acceleration = 850.0f;
-        steering = 175.0f;
+        steering = 100.0f;
         grip = 10;
 
         this.carController = carController;

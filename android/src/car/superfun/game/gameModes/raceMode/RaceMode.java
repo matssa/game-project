@@ -29,7 +29,7 @@ public class RaceMode extends GameMode {
 
     // Car textures
     private final static String[] TEXTURE_PATHS = new String[]{
-            "racing-pack/PNG/Cars/car_black_5.png",
+            "racing-pack/PNG/Cars/car_yellow_5.png",
             "racing-pack/PNG/Cars/car_blue_5.png",
             "racing-pack/PNG/Cars/car_red_5.png",
             "racing-pack/PNG/Cars/car_green_5.png",
@@ -111,23 +111,8 @@ public class RaceMode extends GameMode {
         }
     };
 
-
-    private class checkpointUserData implements UserDataCreater {
-        private int id;
-
-        public checkpointUserData() {
-            id = 0;
-        }
-
-        public Object getUserData() {
-            return id++;
-        }
-    }
-
-
     @Override
     public void update(float dt) {
-        camera.position.set(localRaceCar.getSpritePosition(), 0);
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
         camera.up.set(localRaceCar.getDirectionVector(), 0);
 
@@ -187,8 +172,8 @@ public class RaceMode extends GameMode {
         GameStateManager.getInstance().set(Leaderboard.getInstance().initialize(scoreFormatter, false));
     }
 
+    // A callback for formating score. Makes sure to format the RaceMode score as minutes, seconds and millis.
     private Leaderboard.ScoreFormatter scoreFormatter = new Leaderboard.ScoreFormatter() {
-
         @Override
         public String formatScore(int ms) {
             String milliseconds = Integer.toString(ms%1000);
@@ -209,5 +194,20 @@ public class RaceMode extends GameMode {
             return time;
         }
     };
+
+    // The purpose of this class is simply to let us pass a function to TrackBuilder.buildLayerWithUserData.
+    // What will happen is that each checkpoint object in Box2d gets an unique id as its userdata.
+    // This is important when making sure that the user has indeed traversed the whole map.
+    private class checkpointUserData implements UserDataCreater {
+        private int id;
+
+        public checkpointUserData() {
+            id = 0;
+        }
+
+        public Object getUserData() {
+            return id++;
+        }
+    }
 }
 

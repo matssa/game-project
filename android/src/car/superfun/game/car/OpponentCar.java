@@ -1,14 +1,10 @@
 package car.superfun.game.car;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import com.instacart.library.truetime.TrueTime;
 
-import car.superfun.game.CarSuperFun;
 import car.superfun.game.GlobalVariables;
 
 public class OpponentCar extends Car {
@@ -61,11 +57,6 @@ public class OpponentCar extends Car {
         } else {
             newAngle = angle;
         }
-
-//        Gdx.app.log("their timestamp", "" + timestamp);
-//        Gdx.app.log("time right now", "" + (int) (TrueTime.now().getTime() % 2147483648L));
-//        GlobalVariables.logVector(position, "received position");
-//        GlobalVariables.logVector(newPosition, "new position");
 
         body.setTransform(newPosition, newAngle);
         body.setLinearVelocity(velocity);
