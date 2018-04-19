@@ -126,7 +126,7 @@ public class RaceMode extends GameMode {
         world.step(dt, 2, 1); // Using deltaTime
 
         localCarController.update();
-        if (!GlobalVariables.SINGLE_PLAYER) {
+        if (!singlePlayer) {
             googleGameServices.broadcastState(
                     localRaceCar.getVelocity(),
                     localRaceCar.getBodyPosition(),
@@ -189,7 +189,7 @@ public class RaceMode extends GameMode {
             if (!(minutes == 0)) {
                 time = minutes + ":" + seconds + "," + milliseconds;
             } else {
-                time = seconds + ":" + milliseconds;
+                time = seconds + "," + milliseconds;
             }
             return time;
         }

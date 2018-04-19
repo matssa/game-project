@@ -73,4 +73,8 @@ public class OpponentCar extends Car {
 
         doUpdate = true;
     }
+
+    public void setRender(boolean render){
+        super.render = render;
+    }
 }
