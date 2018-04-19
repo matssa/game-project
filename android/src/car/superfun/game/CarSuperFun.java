@@ -43,7 +43,7 @@ public class CarSuperFun extends ApplicationAdapter {
 
     @Override
     public void create() {
-        batch = new SpriteBatch(100);
+        batch = new SpriteBatch();
 //        batch.defaultVertexDataType = Mesh.VertexDataType.VertexBufferObject;
 
         gsm = GameStateManager.getInstance();
