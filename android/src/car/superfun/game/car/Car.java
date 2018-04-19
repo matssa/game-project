@@ -13,7 +13,7 @@ import car.superfun.game.GlobalVariables;
 
 import static java.lang.Math.abs;
 
-public class Car {
+public abstract class Car {
     private float acceleration;
     private float steering;
     private float grip;
@@ -58,10 +58,6 @@ public class Car {
         body.createFixture(fixtureDef).setUserData(this);
 
         shape.dispose();
-
-//        acceleration = 850.0f;
-//        steering = 175.0f;
-//        grip = 10;
 
         acceleration = 850.0f;
         steering = 100.0f;
