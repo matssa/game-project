@@ -21,7 +21,9 @@ public interface GoogleGameServices {
 
     void startQuickGame(NewState newState);
     void leaveRoom();
-    void readyToStart();
+
+    void readyToStart(boolean isSinglePlayer);
+
     boolean gameStarted();
     ArrayList<Participant> getParticipants();
     String getMyID();

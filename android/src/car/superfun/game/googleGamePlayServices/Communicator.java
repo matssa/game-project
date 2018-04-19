@@ -200,7 +200,11 @@ public class Communicator {
     }
 
 
-    public void readyToStart() {
+    public void readyToStart(boolean isSinglePlayer) {
+        if (isSinglePlayer) {
+            gameStarted = true;
+            return;
+        }
         ByteBuffer messageBuffer = ByteBuffer.allocate(10);
         messageBuffer.putChar(0, 'R');
 

@@ -53,7 +53,6 @@ public class AndroidLauncher extends AndroidApplication {
         ClockSynchronizer clockSync = new ClockSynchronizer();
         clockSync.start();
         Gdx.graphics.setContinuousRendering(true);
-
     }
 
     @Override
@@ -162,8 +161,8 @@ public class AndroidLauncher extends AndroidApplication {
         }
 
         @Override
-        public void readyToStart() {
-            communicator.readyToStart();
+        public void readyToStart(boolean isSinglePlayer) {
+            communicator.readyToStart(isSinglePlayer);
         }
 
         @Override

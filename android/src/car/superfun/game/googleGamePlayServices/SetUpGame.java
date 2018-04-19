@@ -81,7 +81,7 @@ public class SetUpGame {
         androidLauncher.setNewState(newState);
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 2, 0);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(2, 2, 0);
 
         // build the room config:
         joinedRoomConfig =

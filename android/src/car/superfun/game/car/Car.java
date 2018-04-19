@@ -59,8 +59,12 @@ public class Car {
 
         shape.dispose();
 
+//        acceleration = 850.0f;
+//        steering = 175.0f;
+//        grip = 10;
+
         acceleration = 850.0f;
-        steering = 175.0f;
+        steering = 100.0f;
         grip = 10;
 
         this.carController = carController;
@@ -98,7 +102,6 @@ public class Car {
         sprite.setPosition((body.getTransform().getPosition().x * GlobalVariables.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
                 (body.getTransform().getPosition().y * GlobalVariables.PIXELS_TO_METERS) - sprite.getHeight()/2 );
         sprite.setRotation((float)Math.toDegrees(body.getAngle()));
-        sb.begin();
         sb.draw(sprite,
                 sprite.getX(),
                 sprite.getY(),
@@ -109,7 +112,6 @@ public class Car {
                 sprite.getScaleX(),
                 sprite.getScaleY(),
                 sprite.getRotation());
-        sb.end();
     }
 
     public Vector2 getVelocity() { return body.getLinearVelocity(); }

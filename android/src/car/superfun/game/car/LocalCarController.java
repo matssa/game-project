@@ -54,10 +54,6 @@ public class LocalCarController implements CarController {
     }
 
     public void update() {
-
-        forward = 0.4f;
-        rotation = 0.0f;
-
         boolean slider1Touched = false;
         boolean slider2Touched = false;
         for (int i = 0; i < 5; i++) {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class CarSuperFun extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
+//        batch.defaultVertexDataType = Mesh.VertexDataType.VertexBufferObject;
 
         gsm = GameStateManager.getInstance();
 
@@ -99,7 +101,8 @@ public class CarSuperFun extends ApplicationAdapter {
 
         // render the batch
         gsm.render(batch);
-
+//        int b = batch.maxSpritesInBatch;
+//        Gdx.app.log("max sprites in batch", "" + b);
 
         // TODO: implement this in a less hacky way
         // Pop the game state when pressing back.

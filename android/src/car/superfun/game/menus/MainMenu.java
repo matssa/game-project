@@ -73,11 +73,6 @@ public class MainMenu extends State {
                 // starting PlayState instead, so that we can test the game
                 RaceMode race = new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER);
 
-//                race.setLocalRaceCar(new Vector2(1600, 11000));
-//                Array<Vector2> opponentCars = new Array<Vector2>();
-//                opponentCars.add(new Vector2(1600, 11050));
-//                race.setOpponentCars(opponentCars);
-
                 GameStateManager.getInstance().push(race);
                 return true;
             }

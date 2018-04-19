@@ -58,11 +58,6 @@ public class OpponentCar extends Car {
             newAngle = angle;
         }
 
-//        Gdx.app.log("their timestamp", "" + timestamp);
-//        Gdx.app.log("time right now", "" + (int) (TrueTime.now().getTime() % 2147483648L));
-//        GlobalVariables.logVector(position, "received position");
-//        GlobalVariables.logVector(newPosition, "new position");
-
         body.setTransform(newPosition, newAngle);
         body.setLinearVelocity(velocity);
     }

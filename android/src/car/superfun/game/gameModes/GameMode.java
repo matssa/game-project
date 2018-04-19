@@ -1,19 +1,24 @@
 package car.superfun.game.gameModes;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+import car.superfun.game.GlobalVariables;
 import car.superfun.game.GoogleGameServices;
+import car.superfun.game.MapLoader;
 import car.superfun.game.TrackBuilder;
 import car.superfun.game.car.CarController;
 import car.superfun.game.car.LocalCarController;
@@ -30,7 +35,7 @@ public abstract class GameMode extends State {
 
     protected LocalCarController localCarController;
 
-    protected boolean singlePlayer = true;
+    protected boolean singlePlayer;
     protected World world;
 
     protected TiledMap tiledMap;
@@ -38,26 +43,36 @@ public abstract class GameMode extends State {
 
     protected GoogleGameServices googleGameServices;
 
-    protected GameMode(String mapPath, GoogleGameServices googleGameServices, boolean singlePlayer) {
-        this.singlePlayer = singlePlayer;
+    protected GameMode(String mapPath, GoogleGameServices googleGameServices, boolean isSinglePlayer) {
+        this.singlePlayer = isSinglePlayer;
 
-        tiledMap = new TmxMapLoader().load(mapPath);
+        world = new World(new Vector2(0, 0), true);
+        tiledMap = new MapLoader(world).load(mapPath);
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
-        camera.zoom = camera.zoom * 1.4f;
+
+        camera.zoom = camera.zoom * 1.4f * (3 / Gdx.graphics.getDensity());
         camera.update();
 
-        camBatch = new SpriteBatch();
+        // Using this specific SpriteBatch constructor is supposedly forcing VBO mode for mesh rendering,
+        // which seems to have a huge impact on performance.
+        ShaderProgram shader = SpriteBatch.createDefaultShader();
+        camBatch = new SpriteBatch(1024, shader);
 
         localCarController = new LocalCarController(googleGameServices.getLocalParticipant());
 
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
-        world = new World(new Vector2(0, 0), true);
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, camBatch);
 
         this.googleGameServices = googleGameServices;
 
         startPositions = TrackBuilder.getPoints(tiledMap, "starting_points");
+
+        setUpMap();
+
+        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+
+        googleGameServices.readyToStart(isSinglePlayer);
     }
 
     protected void setStartPositions(SetStartPositionCallback callback) {
@@ -78,11 +93,7 @@ public abstract class GameMode extends State {
         }
     }
 
-    protected void readyToStart() {
-        googleGameServices.readyToStart();
-    }
-
-    protected void getStartPositions(String layer) {
+    protected void initiateStartPositions(String layer) {
         startPositions = TrackBuilder.getPoints(tiledMap, layer);
     }
 
@@ -94,6 +105,16 @@ public abstract class GameMode extends State {
         camBatch.setProjectionMatrix(camera.combined);
         this.renderWithCamera(camBatch, camera);
         this.renderHud(sb);
+    }
+
+    protected void setUpMap() {
+        // Set the normal walls
+        FixtureDef wallDef = new FixtureDef();
+        wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
+        wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
+
+        TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
+
     }
 
     protected abstract void renderWithCamera(SpriteBatch sb, OrthographicCamera camera);
