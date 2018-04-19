@@ -2,7 +2,6 @@ package car.superfun.game.menus;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -55,13 +54,12 @@ public class Leaderboard extends State {
         table.setWidth(stage.getWidth());
         table.align(Align.center|Align.top);
         table.setPosition(0, stage.getHeight());
-        //table.setDebug(true);
         headerSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         headerSkin.getFont("default-font").getData().setScale(6f,6f);
         skin.getFont("default-font").getData().setScale(4f,4f);
 
-        backButton = new ButtonActor(new Sprite(new Texture("menu-buttons/back.png")));
+        backButton = new ButtonActor("menu-buttons/back.png");
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

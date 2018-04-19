@@ -146,10 +146,12 @@ public class GladiatorMode extends GameMode {
     public void renderWithCamera(SpriteBatch sb, OrthographicCamera camera) {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
+        sb.begin();
         localCar.render(sb);
         for (OpponentCar car : opponentCars) {
             car.render(sb);
         }
+        sb.end();
     }
 
     // Renders objects that have a static position on the screen. Is called by superclass

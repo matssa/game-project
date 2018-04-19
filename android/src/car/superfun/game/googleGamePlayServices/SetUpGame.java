@@ -63,7 +63,6 @@ public class SetUpGame {
     public String myId = null;
 
 
-
     // Client used to interact with the real time multiplayer system.
     public RealTimeMultiplayerClient realTimeMultiplayerClient = null;
 
@@ -77,11 +76,11 @@ public class SetUpGame {
         return communicator;
     }
 
-    public void startQuickGame(NewState newState ) {
+    public void startQuickGame(NewState newState, int numberOfPlayers) {
         androidLauncher.setNewState(newState);
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(2, 2, 0);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(numberOfPlayers, numberOfPlayers, 0);
 
         // build the room config:
         joinedRoomConfig =
@@ -112,6 +111,7 @@ public class SetUpGame {
             // show the waiting room UI
             showWaitingRoom(room);
         }
+
         // Called when room is fully connected.
         @Override
         public void onRoomConnected(int statusCode, Room room) {
@@ -176,7 +176,7 @@ public class SetUpGame {
         @Override
         public void onP2PDisconnected(@NonNull String participant) {
             int index = participants.indexOf(participant);
-            if(index >= 0) {
+            if (index >= 0) {
                 participants.remove(index);
             }
         }
@@ -269,6 +269,7 @@ public class SetUpGame {
         }
 
     }
+
     private OnFailureListener createFailureListener(final String string) {
         return new OnFailureListener() {
             @Override
@@ -329,8 +330,7 @@ public class SetUpGame {
     private void updateRoom(Room room) {
         if (room != null) {
             participants = room.getParticipants();
-        }
-        else{
+        } else {
             participants.clear();
             communicator.clearParticipantCarController();
         }
@@ -338,7 +338,7 @@ public class SetUpGame {
 
     public void waitingRoomReady() {
         communicator.clearParticipantCarController();
-        for(Participant participant : participants) {
+        for (Participant participant : participants) {
             if (participant.getParticipantId().equals(myId)) {
                 localParticipant = participant;
                 continue;
@@ -351,7 +351,6 @@ public class SetUpGame {
     public Participant getLocalParticipant() {
         return localParticipant;
     }
-
 
 
 }

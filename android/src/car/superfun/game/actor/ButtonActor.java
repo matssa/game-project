@@ -1,5 +1,6 @@
 package car.superfun.game.actor;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -9,16 +10,10 @@ public class ButtonActor extends Actor {
 
     private Sprite sprite;
 
-    public ButtonActor(Sprite sprite){
-        this.sprite = sprite;
+    public ButtonActor(String path){
+        this.sprite = new Sprite(new Texture(path));
         setBounds(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
         setTouchable(Touchable.enabled);
-        /*addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("Pressed");
-                return true;
-            }
-        });*/
     }
 
     @Override
@@ -28,7 +23,6 @@ public class ButtonActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        //sprite.draw(batch);
         batch.draw(sprite, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 }

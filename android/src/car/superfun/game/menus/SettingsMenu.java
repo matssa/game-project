@@ -37,7 +37,7 @@ public class SettingsMenu extends State {
         Skin skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         skin.getFont("default-font").getData().setScale(4f,4f);
 
-        ButtonActor backButton = new ButtonActor(new Sprite(new Texture("menu-buttons/back.png")));
+        ButtonActor backButton = new ButtonActor("menu-buttons/back.png");
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
