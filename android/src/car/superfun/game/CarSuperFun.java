@@ -27,7 +27,6 @@ public class CarSuperFun extends ApplicationAdapter {
     private GoogleGameServices googleGameServices;
     private AndroidLauncher androidLauncher;
 
-    private boolean createNewGame = false;
     private boolean justPressedBack;
 
     ArrayList<NewState> statesToBeCreated = new ArrayList<>();
@@ -44,14 +43,13 @@ public class CarSuperFun extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-//        batch.defaultVertexDataType = Mesh.VertexDataType.VertexBufferObject;
 
         gsm = GameStateManager.getInstance();
 
-        //sets the color to black
+        //sets the background color (not usually seen) to black
         Gdx.gl.glClearColor(0, 0, 0, 1);
 
-        // Starts the game in MainMenu
+        // Starts the game with logging in
 
         gsm.push(new LoginMenu(googleGameServices));
 
@@ -101,8 +99,6 @@ public class CarSuperFun extends ApplicationAdapter {
 
         // render the batch
         gsm.render(batch);
-//        int b = batch.maxSpritesInBatch;
-//        Gdx.app.log("max sprites in batch", "" + b);
 
         // TODO: implement this in a less hacky way
         // Pop the game state when pressing back.
