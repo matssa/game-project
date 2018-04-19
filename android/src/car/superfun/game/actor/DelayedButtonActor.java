@@ -13,6 +13,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.VisibleAction;
 public class DelayedButtonActor extends Actor {
     private Sprite sprite;
 
+    /*
+     * The DelayedButtonActor is a button which initially is invisible (and uninteractable).
+     * After x amount of seconds, the button appears.
+     */
+
     public DelayedButtonActor(String path){
         this.sprite = new Sprite(new Texture(path));
         setBounds(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
