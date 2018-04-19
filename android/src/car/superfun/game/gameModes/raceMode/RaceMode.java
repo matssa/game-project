@@ -177,21 +177,26 @@ public class RaceMode extends GameMode {
         @Override
         public String formatScore(int ms) {
             String milliseconds = Integer.toString(ms%1000);
-            while(milliseconds.length() < 3){
+            while (milliseconds.length() < 3){
                 milliseconds = "0" + milliseconds;
             }
             String seconds = Integer.toString((ms/1000)%60);
-            while(seconds.length() < 2){
+            while (seconds.length() < 2) {
                 seconds = "0" + seconds;
             }
             int minutes = (ms/(1000*60))%60;
             String time;
-            if(!(minutes == 0)){
-                time = minutes + ":" + seconds + ":" + milliseconds;
-            }else{
+            if (!(minutes == 0)) {
+                time = minutes + ":" + seconds + "," + milliseconds;
+            } else {
                 time = seconds + ":" + milliseconds;
             }
             return time;
+        }
+
+        @Override
+        public String scoreString() {
+            return "Time";
         }
     };
 

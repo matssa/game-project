@@ -27,7 +27,7 @@ public class Leaderboard extends State {
     }
 
     public static Leaderboard getInstance() {
-        if(leaderboard == null) {
+        if (leaderboard == null) {
             leaderboard = new Leaderboard();
         }
         return leaderboard;
@@ -97,19 +97,19 @@ public class Leaderboard extends State {
         table.row();
         table.add(new Label("Position", skin));
         table.add(new Label("Nickname", skin));
-        table.add(new Label("Score", skin));
-        if(!playerList.isEmpty()){
+        table.add(new Label(formatter.scoreString(), skin));
+        if (!playerList.isEmpty()){
             int pos = 1;
-            if(isPositive){
-                for(int i = playerList.size()-1; i>= 0; i--){
+            if (isPositive) {
+                for (int i = playerList.size()-1; i>= 0; i--) {
                     table.row();
                     table.add(new Label(Integer.toString(pos)+".", skin)).padRight(80);
                     table.add(new Label(playerList.get(i).getName(), skin)).padRight(80);
                     table.add(new Label(formatter.formatScore(playerList.get(i).getScore()), skin));
                     pos += 1;
                 }
-            }else{
-                for(Player player : playerList){
+            } else {
+                for (Player player : playerList) {
                     table.row();
                     table.add(new Label(Integer.toString(pos)+".", skin)).padRight(150);
                     table.add(new Label(player.getName(), skin)).padRight(150);
@@ -127,7 +127,7 @@ public class Leaderboard extends State {
     }
 
     private void placePlayer(String name, int score){
-        if(playerList == null){
+        if (playerList == null) {
             playerList = new ArrayList<>();
         }
         Player player = new Player(name, score);
@@ -151,6 +151,7 @@ public class Leaderboard extends State {
 
     public interface ScoreFormatter {
         String formatScore(int score);
+        String scoreString();
     }
 
     private class Player {
