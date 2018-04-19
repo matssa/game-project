@@ -29,7 +29,7 @@ public class GladiatorMode extends GameMode {
             "racing-pack/PNG/Cars/car_black_5.png",
             "racing-pack/PNG/Cars/car_blue_5.png",
             "racing-pack/PNG/Cars/car_red_5.png",
-            "racing-pack/PNG/Cars/car_green_5.png",
+            "racing-pack/PNG/Cars/car_yellow_5.png",
     };
 
     // Filters
