@@ -15,10 +15,8 @@ import com.instacart.library.truetime.TrueTime;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -27,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.car.CarController;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.menus.Leaderboard;
 
@@ -40,7 +37,7 @@ public class Communicator {
 
     private SetUpGame setUpGame;
 
-    public Map<String, CarController> participantCarControllers = new HashMap<>();
+    public Map<String, OpponentCarController> participantCarControllers = new HashMap<>();
 
     private int lastTimestamp = 0;
     private int readyParticipants = 0;
@@ -55,7 +52,7 @@ public class Communicator {
         this.androidLauncher = androidLauncher;
     }
 
-    public void putParticipantController(String id, CarController controller) {
+    public void putParticipantController(String id, OpponentCarController controller) {
         participantCarControllers.put(id, controller);
     }
 
@@ -63,9 +60,9 @@ public class Communicator {
         participantCarControllers.clear();
     }
 
-    public Array<CarController> getOpponentCarControllers() {
-        Array<CarController> opponentCarControllers = new Array<>(participantCarControllers.size());
-        for (Map.Entry<String, CarController> entry : participantCarControllers.entrySet()) {
+    public Array<OpponentCarController> getOpponentCarControllers() {
+        Array<OpponentCarController> opponentCarControllers = new Array<>(participantCarControllers.size());
+        for (Map.Entry<String, OpponentCarController> entry : participantCarControllers.entrySet()) {
             if (!entry.getKey().equals(setUpGame.myId)) {
                 opponentCarControllers.add(entry.getValue());
             }

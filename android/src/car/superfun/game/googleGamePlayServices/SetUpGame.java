@@ -31,7 +31,6 @@ import java.util.List;
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.NewState;
 import car.superfun.game.R;
-import car.superfun.game.car.CarController;
 import car.superfun.game.car.OpponentCarController;
 
 
@@ -344,7 +343,7 @@ public class SetUpGame {
                 localParticipant = participant;
                 continue;
             }
-            CarController opponentCarController = new OpponentCarController(participant);
+            OpponentCarController opponentCarController = new OpponentCarController(participant);
             communicator.putParticipantController(participant.getParticipantId(), opponentCarController);
         }
     }
