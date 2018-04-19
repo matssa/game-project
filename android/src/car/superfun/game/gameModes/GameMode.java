@@ -55,6 +55,8 @@ public abstract class GameMode extends State {
         camera.zoom = camera.zoom * 1.4f * (3 / Gdx.graphics.getDensity());
         camera.update();
 
+        // Using this specific SpriteBatch constructor is supposedly forcing VBO mode for mesh rendering,
+        // which seems to have a huge impact on performance.
         ShaderProgram shader = SpriteBatch.createDefaultShader();
         camBatch = new SpriteBatch(1024, shader);
 
