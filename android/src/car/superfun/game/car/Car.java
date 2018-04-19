@@ -25,9 +25,11 @@ public abstract class Car {
     protected Body body;
     protected Sprite sprite;
 
-    boolean render = true;
-
-    public Car(Vector2 position, Sprite sprite, CarController carController, World world, short filterCategoryBits){
+    public Car(Vector2 position,
+               Sprite sprite,
+               CarController carController,
+               World world,
+               short filterCategoryBits){
 
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
@@ -68,9 +70,6 @@ public abstract class Car {
     }
 
     public void update(float dt) {
-        if(!render){
-            return;
-        }
         frameRotation = carController.getRotation() * steering * dt;
         Vector2 direction = this.getDirectionVector();
 
@@ -92,9 +91,6 @@ public abstract class Car {
     }
 
     public void render(SpriteBatch sb) {
-        if(!render){
-            return;
-        }
         sprite.setPosition((body.getTransform().getPosition().x * GlobalVariables.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
                 (body.getTransform().getPosition().y * GlobalVariables.PIXELS_TO_METERS) - sprite.getHeight()/2 );
         sprite.setRotation((float)Math.toDegrees(body.getAngle()));

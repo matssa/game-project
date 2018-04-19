@@ -14,11 +14,9 @@ public class OpponentCar extends Car {
     private Vector2 receivedVelocity;
     private float receivedAngle;
     private int receivedTimeDiff;
-    private int receivedTimestamp;
 
     private boolean doUpdate;
-
-    GlobalVariables.AvgLogger posDiffLogger;
+    private boolean render;
 
     public OpponentCar(Vector2 position, OpponentCarController opponentCarController, World world, String texturePath) {
         super(position,
@@ -28,17 +26,21 @@ public class OpponentCar extends Car {
                 GlobalVariables.OPPONENT_ENTITY);
         opponentCarController.setControlledCar(this);
         doUpdate = false;
+        render = true;
     }
 
     public void update(float dt){
+        if (!render) {
+            return;
+        }
         if (doUpdate) {
             doUpdate = false;
-            updateState(receivedPosition, receivedAngle, receivedVelocity, receivedTimeDiff, receivedTimestamp);
+            updateState(receivedPosition, receivedAngle, receivedVelocity, receivedTimeDiff);
         }
         super.update(dt);
     }
 
-    private void updateState(Vector2 position, float angle, Vector2 velocity, int timeDiff, int timestamp) {
+    private void updateState(Vector2 position, float angle, Vector2 velocity, int timeDiff) {
         Vector2 travelledDistance = velocity.cpy().scl((0.5f * carController.getForward() + 1f) * 5 * (float) timeDiff / 10000f);
         Vector2 updatedPosition = position.cpy().add(travelledDistance);
         Vector2 positionDifference = updatedPosition.cpy().sub(body.getPosition());
@@ -62,19 +64,16 @@ public class OpponentCar extends Car {
         body.setLinearVelocity(velocity);
     }
 
-    // Timestamp is for logging purposes only
-    // TODO remove timestamp when finished using it
-    public void setMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff, int timestamp) {
+    public void setMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff) {
         receivedPosition = position;
         receivedVelocity = velocity;
         receivedAngle = angle;
         receivedTimeDiff = timeDiff;
-        receivedTimestamp = timestamp;
 
         doUpdate = true;
     }
 
     public void setRender(boolean render){
-        super.render = render;
+        this.render = render;
     }
 }
