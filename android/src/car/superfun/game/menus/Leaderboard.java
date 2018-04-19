@@ -101,16 +101,16 @@ public class Leaderboard extends State {
             if (isPositive) {
                 for (int i = playerList.size()-1; i>= 0; i--) {
                     table.row();
-                    table.add(new Label(Integer.toString(pos)+".", skin)).padRight(80);
-                    table.add(new Label(playerList.get(i).getName(), skin)).padRight(80);
+                    table.add(new Label(Integer.toString(pos)+".", skin));
+                    table.add(new Label(playerList.get(i).getName(), skin));
                     table.add(new Label(formatter.formatScore(playerList.get(i).getScore()), skin));
                     pos += 1;
                 }
             } else {
                 for (Player player : playerList) {
                     table.row();
-                    table.add(new Label(Integer.toString(pos)+".", skin)).padRight(150);
-                    table.add(new Label(player.getName(), skin)).padRight(150);
+                    table.add(new Label(Integer.toString(pos)+".", skin));
+                    table.add(new Label(player.getName(), skin));
                     table.add(new Label(formatter.formatScore(player.getScore()), skin));
                     pos += 1;
                 }
