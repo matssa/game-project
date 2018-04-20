@@ -68,7 +68,7 @@ public class SetUpGame {
 
     public SetUpGame(AndroidLauncher androidLauncher) {
         this.androidLauncher = androidLauncher;
-        this.communicator = new Communicator(androidLauncher, this);
+        this.communicator = new Communicator(this);
         lastTimestamp = 0;
     }
 

@@ -33,8 +33,6 @@ public class Communicator {
 
     final static String TAG = "Communicator";
 
-    private AndroidLauncher androidLauncher;
-
     private SetUpGame setUpGame;
 
     public Map<String, OpponentCarController> participantCarControllers = new HashMap<>();
@@ -47,9 +45,8 @@ public class Communicator {
     public boolean gameStarted = false;
 
 
-    public Communicator(AndroidLauncher androidLauncher, SetUpGame setUpGame) {
+    public Communicator(SetUpGame setUpGame) {
         this.setUpGame = setUpGame;
-        this.androidLauncher = androidLauncher;
     }
 
     public void putParticipantController(String id, OpponentCarController controller) {
@@ -177,7 +174,6 @@ public class Communicator {
         int score = buffer.getInt(2);
         String senderName = participantCarControllers.get(senderId).getParticipant().getDisplayName();
         Leaderboard.getInstance().newPlayerScore(senderName, score);
-        setUpGame.
         participantCarControllers.get(setUpGame.myId).getControlledCar();
     }
 
@@ -232,7 +228,6 @@ public class Communicator {
         if (readyParticipants == setUpGame.participants.size()) {
             Gdx.app.log("all participants have joined", "starting game in " + (startTime - TrueTime.now().getTime()) + " ms");
             startGame();
-//            startRenderService();
         }
     }
 
@@ -244,22 +239,6 @@ public class Communicator {
                 gameStarted = true;
             }
         }, startTime - TrueTime.now().getTime());
-    }
-
-    // Seems like it's best to make libGDX do the rendering by itself for now
-    // TODO: Test whether this does give a smoother simulation
-    private void startRenderService() {
-        Runnable renderRequester = new Runnable() {
-            @Override
-            public void run() {
-                Gdx.graphics.requestRendering();
-            }
-        };
-        ScheduledExecutorService renderService = Executors.newSingleThreadScheduledExecutor();
-        renderService.scheduleAtFixedRate(renderRequester,
-                startTime - TrueTime.now().getTime(),
-                25,
-                TimeUnit.MILLISECONDS);
     }
 
     public void updateParticipants(List<String> peersWhoLeft) {

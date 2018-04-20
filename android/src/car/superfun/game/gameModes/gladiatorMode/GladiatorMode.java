@@ -17,6 +17,7 @@ import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
 import car.superfun.game.menus.Leaderboard;
+import car.superfun.game.menus.ScoreFormatter;
 import car.superfun.game.states.GameStateManager;
 
 public class GladiatorMode extends GameMode {
@@ -180,7 +181,7 @@ public class GladiatorMode extends GameMode {
     }
 
     // A callback for formatting score. Makes sure to format the GladiatorMode score as lives left
-    private Leaderboard.ScoreFormatter scoreFormatter = new Leaderboard.ScoreFormatter() {
+    private ScoreFormatter scoreFormatter = new ScoreFormatter() {
         @Override
         public String formatScore(int livesLeft) {
             return "" + livesLeft;
