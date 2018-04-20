@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.googleGamePlayServices.GoogleGameServices;
@@ -22,10 +24,11 @@ import car.superfun.game.maps.TrackBuilder;
 import car.superfun.game.car.CarController;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCarController;
+import car.superfun.game.scoreHandling.HandlesScore;
 import car.superfun.game.states.State;
 
 
-public abstract class GameMode extends State {
+public abstract class GameMode extends State implements HandlesScore {
 
     protected OrthographicCamera camera;
     protected SpriteBatch camBatch;
@@ -42,15 +45,14 @@ public abstract class GameMode extends State {
 
     protected GoogleGameServices googleGameServices;
 
-    protected GameMode(String mapPath, GoogleGameServices googleGameServices, boolean isSinglePlayer) {
-        this.singlePlayer = isSinglePlayer;
+    protected Map<String, Integer> scoreTable = new HashMap<>();
 
-        world = new World(new Vector2(0, 0), true);
-        tiledMap = new MapLoader(world).load(mapPath);
+    protected GameMode(String mapPath, GoogleGameServices googleGameServices, boolean isSinglePlayer) {
+        this.googleGameServices = googleGameServices;
+        this.singlePlayer = isSinglePlayer;
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
-
         camera.zoom = camera.zoom * 1.4f * (3 / Gdx.graphics.getDensity());
         camera.update();
 
@@ -59,13 +61,13 @@ public abstract class GameMode extends State {
         ShaderProgram shader = SpriteBatch.createDefaultShader();
         camBatch = new SpriteBatch(1024, shader);
 
-        localCarController = new LocalCarController(googleGameServices.getLocalParticipant());
-
+        world = new World(new Vector2(0, 0), true);
+        tiledMap = new MapLoader(world).load(mapPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, camBatch);
 
-        this.googleGameServices = googleGameServices;
-
         startPositions = TrackBuilder.getPoints(tiledMap, "starting_points");
+
+        localCarController = new LocalCarController(googleGameServices.getLocalParticipant());
 
         setUpMap();
 
@@ -114,6 +116,11 @@ public abstract class GameMode extends State {
 
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
 
+    }
+
+    @Override
+    public void handleScore(String senderName, int score) {
+        scoreTable.put(senderName, score);
     }
 
     protected abstract void renderWithCamera(SpriteBatch sb, OrthographicCamera camera);

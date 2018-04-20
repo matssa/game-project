@@ -19,14 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.car.OpponentCarController;
-import car.superfun.game.menus.Leaderboard;
+import car.superfun.game.scoreHandling.HandlesScore;
+import car.superfun.game.scoreHandling.Leaderboard;
+import car.superfun.game.states.GameStateManager;
+import car.superfun.game.states.State;
 
 
 public class Communicator {
@@ -59,7 +58,7 @@ public class Communicator {
 
     public void initiateTimestampMap() {
         for (OpponentCarController opponent : participantCarControllers.values()) {
-            lastTimestamps.put(opponent.getParticipant().getParticipantId(), new Integer(0));
+            lastTimestamps.put(opponent.getParticipant().getParticipantId(), 0);
         }
     }
 
@@ -173,8 +172,13 @@ public class Communicator {
     private void handleFinalScoreMessage(ByteBuffer buffer, String senderId) {
         int score = buffer.getInt(2);
         String senderName = participantCarControllers.get(senderId).getParticipant().getDisplayName();
-        Leaderboard.getInstance().newPlayerScore(senderName, score);
-        participantCarControllers.get(setUpGame.myId).getControlledCar();
+
+        State currentState = GameStateManager.getInstance().peek();
+        if (currentState instanceof HandlesScore) {
+            ((HandlesScore) currentState).handleScore(senderName, score);
+        } else {
+            Gdx.app.error("No score handler", "A final score message has been received, but the current state could not handle it");
+        }
     }
 
     private void handleStateMessage(ByteBuffer buffer, String senderId) {

@@ -16,8 +16,8 @@ import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
-import car.superfun.game.menus.Leaderboard;
-import car.superfun.game.menus.ScoreFormatter;
+import car.superfun.game.scoreHandling.Leaderboard;
+import car.superfun.game.scoreHandling.ScoreFormatter;
 import car.superfun.game.states.GameStateManager;
 
 public class GladiatorMode extends GameMode {
@@ -48,6 +48,7 @@ public class GladiatorMode extends GameMode {
 
     private int score = 5;
     private float boost = 10;
+    private boolean endGameNextUpdate = false;
 
     public GladiatorMode(GoogleGameServices googleGameServices, boolean isSinglePlayer) {
         super(MAP_PATH, googleGameServices, isSinglePlayer);
@@ -141,6 +142,9 @@ public class GladiatorMode extends GameMode {
                     localCarController.getForward(),
                     localCarController.getRotation());
         }
+        if (endGameNextUpdate) {
+            endGame();
+        }
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
@@ -168,16 +172,27 @@ public class GladiatorMode extends GameMode {
         gladiatorSong.dispose();
     }
 
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     @Override
     public void endGame() {
         if (singlePlayer) {
             Gdx.app.log("You won!!!", ".. but you also died.. shit happens!");
             return;
         }
-        Leaderboard.getInstance().newPlayerScore(googleGameServices.getLocalParticipant().getDisplayName(), score);
         googleGameServices.broadcastScore(score);
-        GameStateManager.getInstance().set(Leaderboard.getInstance().initialize(scoreFormatter, true));
+        scoreTable.put(googleGameServices.getLocalParticipant().getDisplayName(), score);
+        Leaderboard leaderboard = new Leaderboard(scoreFormatter, true, scoreTable);
+        GameStateManager.getInstance().set(leaderboard);
         this.dispose();
+    }
+
+    @Override
+    public void handleScore(String senderName, int score) {
+        super.handleScore(senderName, score);
+        endGameNextUpdate = true;
     }
 
     // A callback for formatting score. Makes sure to format the GladiatorMode score as lives left

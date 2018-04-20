@@ -37,7 +37,7 @@ public class LocalRaceCar extends LocalCar {
             completedRounds++;
             Gdx.app.log("GOAL PASSED!", "" + completedRounds + " rounds passed");
             Arrays.fill(passedCheckpoints, Boolean.FALSE);
-            if (completedRounds == 3) {
+            if (completedRounds == 1) {
                 raceMode.endGame();
             }
         }

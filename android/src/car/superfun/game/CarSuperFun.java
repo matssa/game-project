@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import car.superfun.game.gameModes.GameMode;
 import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
 import car.superfun.game.googleGamePlayServices.GoogleGameServices;
@@ -112,7 +113,9 @@ public class CarSuperFun extends ApplicationAdapter {
             if (gsm.isInMainMenu()) {
                 androidLauncher.finish();
                 System.exit(0);
-            } else if(gsm.peek() instanceof LoadingScreen){
+            } else if(gsm.peek() instanceof LoadingScreen) {
+                return;
+            } else if(gsm.peek() instanceof GameMode) {
                 return;
             } else {
                 justPressedBack = true;

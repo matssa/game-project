@@ -29,6 +29,7 @@ public class LocalGladiatorCar extends LocalCar {
     public void hitDeathWalls() {
         score -= 1;
         dustWallCrash.play(GlobalVariables.SOUND_VOLUME);
+        gameClass.setScore(score);
         if (score <= 0) {
             gameClass.endGame();
         }

@@ -1,6 +1,7 @@
-package car.superfun.game.menus;
+package car.superfun.game.scoreHandling;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -13,51 +14,32 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import car.superfun.game.actors.ButtonActor;
+import car.superfun.game.menus.MainMenu;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
-public class Leaderboard extends State {
-    // Singleton
-    private static Leaderboard leaderboard = null;
+public class Leaderboard extends State implements HandlesScore {
 
-    private Leaderboard(){
-    }
-
-    public static Leaderboard getInstance() {
-        if (leaderboard == null) {
-            leaderboard = new Leaderboard();
-        }
-        return leaderboard;
-    }
-
-    // Rest of the owl
     private Texture background;
     private Stage stage;
-    private ArrayList<Player> playerList;
+    private ArrayList<Player> playerList = new ArrayList<>();
     private Table table;
     private Skin headerSkin, skin;
     private ButtonActor backButton;
 
     private boolean isPositive;
     private ScoreFormatter formatter;
-    //private ArrayList<String> placement = ArrayList<>
 
-    public Leaderboard initialize(ScoreFormatter formatter, boolean isPositive){
+    private boolean doUpdate = false;
+
+    public Leaderboard(ScoreFormatter formatter, boolean isPositive) {
         this.stage = new Stage(new ScreenViewport());
         background = new Texture("background.png");
         this.isPositive = isPositive;
         this.formatter = formatter;
-
-        table = new Table();
-        table.setWidth(stage.getWidth());
-        table.align(Align.center|Align.top);
-        table.setPosition(0, stage.getHeight());
-        headerSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        headerSkin.getFont("default-font").getData().setScale(6f,6f);
-        skin.getFont("default-font").getData().setScale(4f,4f);
 
         backButton = new ButtonActor("menu-buttons/back.png");
         backButton.addListener(new InputListener(){
@@ -69,14 +51,43 @@ public class Leaderboard extends State {
             }
         });
 
+        initTable();
+
         stage.addActor(table);
-        fillTable();
         Gdx.input.setInputProcessor(stage);
-        return leaderboard;
+    }
+
+    private void initTable() {
+        table = new Table();
+        table.setWidth(stage.getWidth());
+        table.align(Align.center|Align.top);
+        table.setPosition(0, stage.getHeight());
+        headerSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        headerSkin.getFont("default-font").getData().setScale(6f,6f);
+        skin.getFont("default-font").getData().setScale(4f,4f);
+
+    }
+
+    public Leaderboard(ScoreFormatter formatter, boolean isPositive, Map<String, Integer> scores) {
+        this(formatter, isPositive);
+        for (Map.Entry<String, Integer> scoreEntry : scores.entrySet()) {
+            placePlayer(scoreEntry.getKey(), scoreEntry.getValue());
+        }
+        fillTable();
     }
 
     @Override
     public void update(float dt) {
+        if (doUpdate) {
+            initTable();
+            fillTable();
+            Gdx.app.log("leaderboard", "update");
+            for (Player player : playerList) {
+                Gdx.app.log("player", player.getName() + ": " + player.getScore());
+            }
+            doUpdate = false;
+        }
     }
 
     @Override
@@ -119,25 +130,21 @@ public class Leaderboard extends State {
     }
 
     private void updateTable(String player, int score){
-        table.clearChildren();
+        initTable();
         placePlayer(player, score);
         fillTable();
+        Gdx.app.log("player", "" + score);
     }
 
     private void placePlayer(String name, int score){
-        if (playerList == null) {
-            playerList = new ArrayList<>();
-        }
         Player player = new Player(name, score);
         playerList.add(player);
     }
 
-    public void newPlayerScore(String player, int score) {
-        if (GameStateManager.getInstance().peek() == leaderboard) {
-            updateTable(player, score);
-        } else {
-            placePlayer(player, score);
-        }
+    @Override
+    public void handleScore(String player, int score) {
+        placePlayer(player, score);
+        doUpdate = true;
     }
 
     @Override
