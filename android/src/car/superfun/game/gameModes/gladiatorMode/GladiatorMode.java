@@ -5,14 +5,13 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.GoogleGameServices;
-import car.superfun.game.TrackBuilder;
+import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.maps.TrackBuilder;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;

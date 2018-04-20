@@ -1,7 +1,6 @@
 package car.superfun.game.gameModes;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -17,9 +16,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.GoogleGameServices;
-import car.superfun.game.MapLoader;
-import car.superfun.game.TrackBuilder;
+import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.maps.MapLoader;
+import car.superfun.game.maps.TrackBuilder;
 import car.superfun.game.car.CarController;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCarController;

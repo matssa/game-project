@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
 
-import car.superfun.game.actor.ButtonActor;
+import car.superfun.game.actors.ButtonActor;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -145,11 +145,6 @@ public class Leaderboard extends State {
         stage.dispose();
         background.dispose();
         playerList.clear();
-    }
-
-    public interface ScoreFormatter {
-        String formatScore(int score);
-        String scoreString();
     }
 
     private class Player {

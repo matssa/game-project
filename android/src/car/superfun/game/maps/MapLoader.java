@@ -1,4 +1,4 @@
-package car.superfun.game;
+package car.superfun.game.maps;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayers;
@@ -20,6 +20,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
+
+import car.superfun.game.GlobalVariables;
 
 public class MapLoader extends TmxMapLoader {
 

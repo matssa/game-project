@@ -9,14 +9,15 @@ import com.badlogic.gdx.utils.Array;
 import com.instacart.library.truetime.TrueTime;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.GoogleGameServices;
-import car.superfun.game.TrackBuilder;
-import car.superfun.game.UserDataCreater;
+import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.maps.TrackBuilder;
+import car.superfun.game.maps.UserDataCreater;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
 import car.superfun.game.menus.Leaderboard;
+import car.superfun.game.menus.ScoreFormatter;
 import car.superfun.game.states.GameStateManager;
 
 public class RaceMode extends GameMode {
@@ -173,7 +174,7 @@ public class RaceMode extends GameMode {
     }
 
     // A callback for formating score. Makes sure to format the RaceMode score as minutes, seconds and millis.
-    private Leaderboard.ScoreFormatter scoreFormatter = new Leaderboard.ScoreFormatter() {
+    private ScoreFormatter scoreFormatter = new ScoreFormatter() {
         @Override
         public String formatScore(int ms) {
             String milliseconds = Integer.toString(ms%1000);

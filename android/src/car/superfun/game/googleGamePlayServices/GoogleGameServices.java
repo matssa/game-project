@@ -1,4 +1,4 @@
-package car.superfun.game;
+package car.superfun.game.googleGamePlayServices;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
