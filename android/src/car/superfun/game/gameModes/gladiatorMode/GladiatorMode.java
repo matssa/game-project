@@ -16,6 +16,8 @@ import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
+import car.superfun.game.menus.Leaderboard;
+import car.superfun.game.states.GameStateManager;
 
 public class GladiatorMode extends GameMode {
 
@@ -167,8 +169,26 @@ public class GladiatorMode extends GameMode {
 
     @Override
     public void endGame() {
-        Gdx.app.log("endGame", "GladiatorMode endgame");
-        // TODO: send data to leaderboard
+        if (singlePlayer) {
+            Gdx.app.log("You won!!!", ".. but you also died.. shit happens!");
+            return;
+        }
+        Leaderboard.getInstance().newPlayerScore(googleGameServices.getLocalParticipant().getDisplayName(), score);
+        googleGameServices.broadcastScore(score);
+        GameStateManager.getInstance().set(Leaderboard.getInstance().initialize(scoreFormatter, true));
         this.dispose();
     }
+
+    // A callback for formatting score. Makes sure to format the GladiatorMode score as lives left
+    private Leaderboard.ScoreFormatter scoreFormatter = new Leaderboard.ScoreFormatter() {
+        @Override
+        public String formatScore(int livesLeft) {
+            return "" + livesLeft;
+        }
+
+        @Override
+        public String scoreString() {
+            return "Lives left";
+        }
+    };
 }
