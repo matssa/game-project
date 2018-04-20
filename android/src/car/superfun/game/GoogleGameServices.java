@@ -20,7 +20,7 @@ public interface GoogleGameServices {
     void signOut();
     void startSignInIntent();
 
-    void startQuickGame(NewState newState);
+    void startQuickGame(NewState newState, int numberOfPlayers);
     void leaveRoom();
 
     void readyToStart(boolean isSinglePlayer);

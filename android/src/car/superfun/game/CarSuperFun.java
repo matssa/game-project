@@ -14,6 +14,7 @@ import java.util.TimerTask;
 
 import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
 import car.superfun.game.gameModes.raceMode.RaceMode;
+import car.superfun.game.menus.LoadingScreen;
 import car.superfun.game.menus.LoginMenu;
 import car.superfun.game.menus.MainMenu;
 import car.superfun.game.states.GameStateManager;
@@ -69,6 +70,7 @@ public class CarSuperFun extends ApplicationAdapter {
                 case RACE_MODE:
                     Log.d("CarSuperFun", "Pushed RaceMode");
                     GameStateManager.getInstance().set(new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
+                    Gdx.input.setInputProcessor(null);
                     break;
                 case MAIN_MENU:
                     Log.d("CarSuperFun", "Pushed MainMenu");
@@ -81,6 +83,7 @@ public class CarSuperFun extends ApplicationAdapter {
                 case GLADIATOR_MODE:
                     Log.d("CarSuperFun", "Pushed GladiatorMode");
                     GameStateManager.getInstance().set(new GladiatorMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
+                    Gdx.input.setInputProcessor(null);
                     break;
             }
         }
@@ -108,6 +111,8 @@ public class CarSuperFun extends ApplicationAdapter {
             if (gsm.isInMainMenu()) {
                 androidLauncher.finish();
                 System.exit(0);
+            } else if(gsm.peek() instanceof LoadingScreen){
+                return;
             } else {
                 justPressedBack = true;
                 new Timer().schedule(new TimerTask() {
@@ -116,10 +121,11 @@ public class CarSuperFun extends ApplicationAdapter {
                         justPressedBack = false;
                     }
                 }, 800);
-                if (gsm.isGameMode()) {
+                if (gsm.isInGameMode()) {
                     googleGameServices.leaveRoom();
                 }
                 gsm.pop();
+                Gdx.input.setInputProcessor(MainMenu.stage);
             }
         }
     }

@@ -5,27 +5,42 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import car.superfun.game.actor.DelayedButtonActor;
+import car.superfun.game.actor.LoadingActor;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
-
 public class LoadingScreen extends State {
-
-    private Texture backButton;
-
+    private Stage stage;
 
     public LoadingScreen(){
+        this.stage = new Stage(new ScreenViewport());
 
-        backButton = new Texture("menu-buttons/back.png");
+        DelayedButtonActor backButton = new DelayedButtonActor("menu-buttons/backWhite.png");
+        backButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.input.setInputProcessor(MainMenu.stage);
+                GameStateManager.getInstance().pop();
+                return true;
+            }
+        });
+
+        backButton.setPosition(stage.getWidth()/50,(stage.getHeight()-backButton.getHeight())-(stage.getHeight()/30));
+        LoadingActor loadingActor = new LoadingActor("loading.png");
+        loadingActor.setPosition((stage.getWidth()/2)-(loadingActor.getWidth()/2), (stage.getHeight()/2)-(loadingActor.getHeight()/2));
+        stage.addActor(backButton);
+        stage.addActor(loadingActor);
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     public void handleInput() {
-        if(Gdx.input.justTouched()) {
-            if (isOnBack()) {
-                GameStateManager.getInstance().pop();
-            }
-        }
     }
 
     @Override
@@ -35,24 +50,13 @@ public class LoadingScreen extends State {
 
     @Override
     public void render(SpriteBatch sb) {
-        sb.begin();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        sb.draw(backButton, 120, 890);
-        sb.end();
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
     }
 
     @Override
     public void dispose() {
-        backButton.dispose();
-    }
-
-    private boolean isOnBack(){
-        Circle textureBounds = new Circle(120+backButton.getWidth()/2, (Gdx.graphics.getHeight() - 890)-backButton.getHeight()/2, backButton.getWidth()/2);
-        if(textureBounds.contains(Gdx.input.getX(), Gdx.input.getY())){
-            return true;
-        }else{
-            return false;
-        }
+        stage.dispose();
     }
 }
