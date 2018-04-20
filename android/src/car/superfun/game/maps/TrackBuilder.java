@@ -1,7 +1,6 @@
-package car.superfun.game;
+package car.superfun.game.maps;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -23,6 +22,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+
+import car.superfun.game.GlobalVariables;
+import car.superfun.game.maps.UserDataCreater;
 
 public class TrackBuilder {
 

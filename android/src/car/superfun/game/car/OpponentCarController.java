@@ -9,13 +9,13 @@ public class OpponentCarController implements CarController {
 
     public float forward;
     public float rotation;
-    private Participant participent;
+    private Participant participant;
     private OpponentCar controlledCar;
 
-    public OpponentCarController(Participant participent) {
+    public OpponentCarController(Participant participant) {
         forward = 0;
         rotation = 0;
-        this.participent = participent;
+        this.participant = participant;
     }
 
     public void setControlledCar(OpponentCar controlledCar) {
@@ -35,12 +35,12 @@ public class OpponentCarController implements CarController {
         this.rotation = rotation;
     }
 
-    public OpponentCar getControlledCar() {
-        return controlledCar;
+    public void setCarMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff) {
+        controlledCar.setMovement(position, angle, velocity, timeDiff);
     }
 
-    public void setCarMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff, int timestamp) {
-        controlledCar.setMovement(position, angle, velocity, timeDiff, timestamp);
+    public OpponentCar getControlledCar() {
+        return controlledCar;
     }
 
     public boolean hasControlledCar() {
@@ -49,7 +49,7 @@ public class OpponentCarController implements CarController {
 
     @Override
     public Participant getParticipant() {
-        return participent;
+        return participant;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class OpponentCarController implements CarController {
 
     @Override
     public int compareTo(@NonNull CarController carController) {
-        return participent.getParticipantId().compareTo(carController.getParticipant().getParticipantId());
+        return participant.getParticipantId().compareTo(carController.getParticipant().getParticipantId());
     }
 
 }

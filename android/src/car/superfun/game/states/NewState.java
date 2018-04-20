@@ -1,4 +1,4 @@
-package car.superfun.game;
+package car.superfun.game.states;
 
 public enum NewState {
     RACE_MODE,

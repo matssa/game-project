@@ -1,4 +1,4 @@
-package car.superfun.game;
+package car.superfun.game.maps;
 
 public interface UserDataCreater {
     Object getUserData();

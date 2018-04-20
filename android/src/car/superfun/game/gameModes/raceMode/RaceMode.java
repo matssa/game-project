@@ -9,14 +9,15 @@ import com.badlogic.gdx.utils.Array;
 import com.instacart.library.truetime.TrueTime;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.GoogleGameServices;
-import car.superfun.game.TrackBuilder;
-import car.superfun.game.UserDataCreater;
+import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.maps.TrackBuilder;
+import car.superfun.game.maps.UserDataCreater;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
-import car.superfun.game.menus.Leaderboard;
+import car.superfun.game.scoreHandling.Leaderboard;
+import car.superfun.game.scoreHandling.ScoreFormatter;
 import car.superfun.game.states.GameStateManager;
 
 public class RaceMode extends GameMode {
@@ -85,32 +86,6 @@ public class RaceMode extends GameMode {
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
     }
 
-    /**
-     * Callback used to create the opponent cars and the localCar.
-     */
-    private SetStartPositionCallback startPositionCallback = new SetStartPositionCallback() {
-        // Used to set different color to different players cars
-        private int texturePathIndex = 0;
-
-        @Override
-        public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
-            opponentCars.add(new OpponentCar(position, opponentCarController, world, TEXTURE_PATHS[texturePathIndex]));
-            incrementTexturePath();
-        }
-
-        @Override
-        public void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode) {
-            localRaceCar = new LocalRaceCar(position, localCarController, world, (RaceMode) thisGameMode, amountOfCheckpoints, TEXTURE_PATHS[texturePathIndex]);
-            incrementTexturePath();
-        }
-
-        private void incrementTexturePath() {
-            if (texturePathIndex < TEXTURE_PATHS.length) {
-                texturePathIndex++;
-            }
-        }
-    };
-
     @Override
     public void update(float dt) {
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
@@ -167,13 +142,42 @@ public class RaceMode extends GameMode {
             Gdx.app.log("You won!", "" + timeSinceStart + " milliseconds used");
             return;
         }
-        Leaderboard.getInstance().newPlayerScore(googleGameServices.getLocalParticipant().getDisplayName(), timeSinceStart);
         googleGameServices.broadcastScore(timeSinceStart);
-        GameStateManager.getInstance().set(Leaderboard.getInstance().initialize(scoreFormatter, false));
+        scoreTable.put(googleGameServices.getLocalParticipant().getDisplayName(), timeSinceStart);
+        Leaderboard leaderboard = new Leaderboard(scoreFormatter, false, scoreTable);
+        GameStateManager.getInstance().set(leaderboard);
     }
 
-    // A callback for formating score. Makes sure to format the RaceMode score as minutes, seconds and millis.
-    private Leaderboard.ScoreFormatter scoreFormatter = new Leaderboard.ScoreFormatter() {
+    /**
+     * Callback used to create the opponent cars and the localCar.
+     */
+    private SetStartPositionCallback startPositionCallback = new SetStartPositionCallback() {
+        // Used to set different color to different players cars
+        private int texturePathIndex = 0;
+
+        @Override
+        public void addOpponentCar(Vector2 position, OpponentCarController opponentCarController) {
+            opponentCars.add(new OpponentCar(position, opponentCarController, world, TEXTURE_PATHS[texturePathIndex]));
+            incrementTexturePath();
+        }
+
+        @Override
+        public void addLocalCar(Vector2 position, LocalCarController localCarController, GameMode thisGameMode) {
+            localRaceCar = new LocalRaceCar(position, localCarController, world, (RaceMode) thisGameMode, amountOfCheckpoints, TEXTURE_PATHS[texturePathIndex]);
+            incrementTexturePath();
+        }
+
+        private void incrementTexturePath() {
+            if (texturePathIndex < TEXTURE_PATHS.length) {
+                texturePathIndex++;
+            }
+        }
+    };
+
+    /**
+     * A callback for formatting score. Makes sure to format the RaceMode score as minutes, seconds and millis.
+     */
+    private ScoreFormatter scoreFormatter = new ScoreFormatter() {
         @Override
         public String formatScore(int ms) {
             String milliseconds = Integer.toString(ms%1000);
@@ -200,9 +204,11 @@ public class RaceMode extends GameMode {
         }
     };
 
-    // The purpose of this class is simply to let us pass a function to TrackBuilder.buildLayerWithUserData.
-    // What will happen is that each checkpoint object in Box2d gets an unique id as its userdata.
-    // This is important when making sure that the user has indeed traversed the whole map.
+    /**
+     * The purpose of this class is simply to let us pass a function to TrackBuilder.buildLayerWithUserData.
+     * What will happen is that each checkpoint object in Box2d gets an unique id as its userdata.
+     * This is important when making sure that the user has indeed traversed the whole map.
+     */
     private class checkpointUserData implements UserDataCreater {
         private int id;
 

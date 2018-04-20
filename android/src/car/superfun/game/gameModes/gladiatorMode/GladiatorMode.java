@@ -5,18 +5,20 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.GoogleGameServices;
-import car.superfun.game.TrackBuilder;
+import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.maps.TrackBuilder;
 import car.superfun.game.car.LocalCarController;
 import car.superfun.game.car.OpponentCar;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
+import car.superfun.game.scoreHandling.Leaderboard;
+import car.superfun.game.scoreHandling.ScoreFormatter;
+import car.superfun.game.states.GameStateManager;
 
 public class GladiatorMode extends GameMode {
 
@@ -46,6 +48,7 @@ public class GladiatorMode extends GameMode {
 
     private int score = 5;
     private float boost = 10;
+    private boolean endGameNextUpdate = false;
 
     public GladiatorMode(GoogleGameServices googleGameServices, boolean isSinglePlayer) {
         super(MAP_PATH, googleGameServices, isSinglePlayer);
@@ -139,6 +142,9 @@ public class GladiatorMode extends GameMode {
                     localCarController.getForward(),
                     localCarController.getRotation());
         }
+        if (endGameNextUpdate) {
+            endGame();
+        }
     }
 
     // Renders objects that had a static position in the gameworld. Is called by superclass
@@ -166,10 +172,39 @@ public class GladiatorMode extends GameMode {
         gladiatorSong.dispose();
     }
 
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     @Override
     public void endGame() {
-        Gdx.app.log("endGame", "GladiatorMode endgame");
-        // TODO: send data to leaderboard
+        if (singlePlayer) {
+            Gdx.app.log("You won!!!", ".. but you also died.. shit happens!");
+            return;
+        }
+        googleGameServices.broadcastScore(score);
+        scoreTable.put(googleGameServices.getLocalParticipant().getDisplayName(), score);
+        Leaderboard leaderboard = new Leaderboard(scoreFormatter, true, scoreTable);
+        GameStateManager.getInstance().set(leaderboard);
         this.dispose();
     }
+
+    @Override
+    public void handleScore(String senderName, int score) {
+        super.handleScore(senderName, score);
+        endGameNextUpdate = true;
+    }
+
+    // A callback for formatting score. Makes sure to format the GladiatorMode score as lives left
+    private ScoreFormatter scoreFormatter = new ScoreFormatter() {
+        @Override
+        public String formatScore(int livesLeft) {
+            return "" + livesLeft;
+        }
+
+        @Override
+        public String scoreString() {
+            return "Lives left";
+        }
+    };
 }

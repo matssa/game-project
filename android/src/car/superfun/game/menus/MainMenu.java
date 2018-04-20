@@ -10,9 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import car.superfun.game.GoogleGameServices;
-import car.superfun.game.NewState;
-import car.superfun.game.actor.ButtonActor;
+import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.states.NewState;
+import car.superfun.game.actors.ButtonActor;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
