@@ -115,8 +115,6 @@ public class CarSuperFun extends ApplicationAdapter {
                 System.exit(0);
             } else if(gsm.peek() instanceof LoadingScreen) {
                 return;
-            } else if(gsm.peek() instanceof GameMode) {
-                return;
             } else {
                 justPressedBack = true;
                 new Timer().schedule(new TimerTask() {

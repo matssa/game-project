@@ -51,13 +51,6 @@ public class Leaderboard extends State implements HandlesScore {
             }
         });
 
-        initTable();
-
-        stage.addActor(table);
-        Gdx.input.setInputProcessor(stage);
-    }
-
-    private void initTable() {
         table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center|Align.top);
@@ -67,6 +60,8 @@ public class Leaderboard extends State implements HandlesScore {
         headerSkin.getFont("default-font").getData().setScale(6f,6f);
         skin.getFont("default-font").getData().setScale(4f,4f);
 
+        stage.addActor(table);
+        Gdx.input.setInputProcessor(stage);
     }
 
     public Leaderboard(ScoreFormatter formatter, boolean isPositive, Map<String, Integer> scores) {
@@ -80,7 +75,7 @@ public class Leaderboard extends State implements HandlesScore {
     @Override
     public void update(float dt) {
         if (doUpdate) {
-            initTable();
+            table.clearChildren();
             fillTable();
             Gdx.app.log("leaderboard", "update");
             for (Player player : playerList) {
@@ -127,13 +122,6 @@ public class Leaderboard extends State implements HandlesScore {
                 }
             }
         }
-    }
-
-    private void updateTable(String player, int score){
-        initTable();
-        placePlayer(player, score);
-        fillTable();
-        Gdx.app.log("player", "" + score);
     }
 
     private void placePlayer(String name, int score){
