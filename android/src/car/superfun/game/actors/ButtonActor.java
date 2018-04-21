@@ -7,8 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
 public class ButtonActor extends Actor {
-
     private Sprite sprite;
+
+    /*
+     * The ButtonActor creates a simple button from an image.
+     * What happens when it is tapped, has to be set when it is initialized.
+     */
 
     public ButtonActor(String path){
         this.sprite = new Sprite(new Texture(path));
