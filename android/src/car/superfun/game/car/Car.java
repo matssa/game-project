@@ -13,7 +13,7 @@ import car.superfun.game.GlobalVariables;
 
 import static java.lang.Math.abs;
 
-public class Car {
+public abstract class Car {
     private float acceleration;
     private float steering;
     private float grip;
@@ -25,9 +25,11 @@ public class Car {
     protected Body body;
     protected Sprite sprite;
 
-    boolean render = true;
-
-    public Car(Vector2 position, Sprite sprite, CarController carController, World world, short filterCategoryBits){
+    public Car(Vector2 position,
+               Sprite sprite,
+               CarController carController,
+               World world,
+               short filterCategoryBits){
 
         this.sprite = sprite;
         this.sprite.setPosition(position.x, position.y);
@@ -59,12 +61,8 @@ public class Car {
 
         shape.dispose();
 
-//        acceleration = 850.0f;
-//        steering = 175.0f;
-//        grip = 10;
-
-        acceleration = 850.0f;
-        steering = 100.0f;
+        acceleration = 25.0f;
+        steering = 4.0f;
         grip = 10;
 
         this.carController = carController;
@@ -72,10 +70,7 @@ public class Car {
     }
 
     public void update(float dt) {
-        if(!render){
-            return;
-        }
-        frameRotation = carController.getRotation() * steering * dt;
+        frameRotation = carController.getRotation() * steering;
         Vector2 direction = this.getDirectionVector();
 
         float traction = abs(body.getLinearVelocity().dot(direction.cpy().rotate(90 + 45 * carController.getRotation())));
@@ -91,14 +86,11 @@ public class Car {
             body.setLinearVelocity(body.getLinearVelocity().rotate(velocityRotator).scl(sidewaysVelocityDampening));
         }
 
-        body.applyForceToCenter(direction.scl(carController.getForward() * acceleration * dt), true);
+        body.applyForceToCenter(direction.scl(carController.getForward() * acceleration), true);
         body.setAngularVelocity(frameRotation);
     }
 
     public void render(SpriteBatch sb) {
-        if(!render){
-            return;
-        }
         sprite.setPosition((body.getTransform().getPosition().x * GlobalVariables.PIXELS_TO_METERS) - sprite.getWidth()/2 ,
                 (body.getTransform().getPosition().y * GlobalVariables.PIXELS_TO_METERS) - sprite.getHeight()/2 );
         sprite.setRotation((float)Math.toDegrees(body.getAngle()));

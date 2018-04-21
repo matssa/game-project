@@ -1,7 +1,5 @@
 package car.superfun.game.googleGamePlayServices;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -14,14 +12,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Set;
-
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.CarSuperFun;
-import car.superfun.game.NewState;
-import car.superfun.game.menus.LoginMenu;
-import car.superfun.game.menus.MainMenu;
-import car.superfun.game.states.GameStateManager;
+import car.superfun.game.states.NewState;
 
 
 public class SignIn  {

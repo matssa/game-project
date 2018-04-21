@@ -19,21 +19,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import car.superfun.game.AndroidLauncher;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.car.OpponentCarController;
-import car.superfun.game.menus.Leaderboard;
+import car.superfun.game.scoreHandling.HandlesScore;
+import car.superfun.game.scoreHandling.Leaderboard;
+import car.superfun.game.states.GameStateManager;
+import car.superfun.game.states.State;
 
 
 public class Communicator {
 
     final static String TAG = "Communicator";
-
-    private AndroidLauncher androidLauncher;
 
     private SetUpGame setUpGame;
 
@@ -47,9 +44,8 @@ public class Communicator {
     public boolean gameStarted = false;
 
 
-    public Communicator(AndroidLauncher androidLauncher, SetUpGame setUpGame) {
+    public Communicator(SetUpGame setUpGame) {
         this.setUpGame = setUpGame;
-        this.androidLauncher = androidLauncher;
     }
 
     public void putParticipantController(String id, OpponentCarController controller) {
@@ -62,7 +58,7 @@ public class Communicator {
 
     public void initiateTimestampMap() {
         for (OpponentCarController opponent : participantCarControllers.values()) {
-            lastTimestamps.put(opponent.getParticipant().getParticipantId(), new Integer(0));
+            lastTimestamps.put(opponent.getParticipant().getParticipantId(), 0);
         }
     }
 
@@ -176,7 +172,13 @@ public class Communicator {
     private void handleFinalScoreMessage(ByteBuffer buffer, String senderId) {
         int score = buffer.getInt(2);
         String senderName = participantCarControllers.get(senderId).getParticipant().getDisplayName();
-        Leaderboard.getInstance().newPlayerScore(senderName, score);
+
+        State currentState = GameStateManager.getInstance().peek();
+        if (currentState instanceof HandlesScore) {
+            ((HandlesScore) currentState).handleScore(senderName, score);
+        } else {
+            Gdx.app.error("No score handler", "A final score message has been received, but the current state could not handle it");
+        }
     }
 
     private void handleStateMessage(ByteBuffer buffer, String senderId) {
@@ -202,7 +204,7 @@ public class Communicator {
         float rotation = buffer.getFloat(30);
 
         opponentCarController.setForwardAndRotation(forward, rotation);
-        opponentCarController.setCarMovement(position, angle, velocity, timeDiff, packageTimestamp);
+        opponentCarController.setCarMovement(position, angle, velocity, timeDiff);
     }
 
 
@@ -230,7 +232,6 @@ public class Communicator {
         if (readyParticipants == setUpGame.participants.size()) {
             Gdx.app.log("all participants have joined", "starting game in " + (startTime - TrueTime.now().getTime()) + " ms");
             startGame();
-//            startRenderService();
         }
     }
 
@@ -242,22 +243,6 @@ public class Communicator {
                 gameStarted = true;
             }
         }, startTime - TrueTime.now().getTime());
-    }
-
-    // Seems like it's best to make libGDX do the rendering by itself for now
-    // TODO: Test whether this does give a smoother simulation
-    private void startRenderService() {
-        Runnable renderRequester = new Runnable() {
-            @Override
-            public void run() {
-                Gdx.graphics.requestRendering();
-            }
-        };
-        ScheduledExecutorService renderService = Executors.newSingleThreadScheduledExecutor();
-        renderService.scheduleAtFixedRate(renderRequester,
-                startTime - TrueTime.now().getTime(),
-                25,
-                TimeUnit.MILLISECONDS);
     }
 
     public void updateParticipants(List<String> peersWhoLeft) {

@@ -1,4 +1,4 @@
-package car.superfun.game.actor;
+package car.superfun.game.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -14,11 +14,12 @@ public class DelayedButtonActor extends Actor {
     private Sprite sprite;
 
     /*
-     * The DelayedButtonActor is a button which initially is invisible (and uninteractable).
-     * After x amount of seconds, the button appears.
+     * The DelayedButtonActor creates a simple button from a provided image.
+     * It is initially invisible and uninteractable, but appears after x amount of seconds.
+     * What happens when it is tapped, has to be set when it is initialized.
      */
 
-    public DelayedButtonActor(String path){
+    public DelayedButtonActor(String path, float seconds){
         this.sprite = new Sprite(new Texture(path));
         setBounds(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
 
@@ -28,7 +29,7 @@ public class DelayedButtonActor extends Actor {
         TouchableAction setUntouchable = new TouchableAction();
         setUntouchable.setTouchable(Touchable.disabled);
 
-        DelayAction delay = new DelayAction(5f);
+        DelayAction delay = new DelayAction(seconds);
 
         VisibleAction setVisible = new VisibleAction();
         setVisible.setVisible(true);

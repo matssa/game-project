@@ -10,9 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import car.superfun.game.GoogleGameServices;
-import car.superfun.game.NewState;
-import car.superfun.game.actor.ButtonActor;
+import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.states.NewState;
+import car.superfun.game.actors.ButtonActor;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -24,12 +24,13 @@ public class MainMenu extends State {
     public MainMenu(final GoogleGameServices googleGameServices) {
         background = new Texture("background.png");
 
+        // Create a scene2d table to make it easier to position elements
         Table table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center | Align.top);
-
         table.setPosition(0, Gdx.graphics.getHeight());
 
+        // Initialize buttons needed
         ButtonActor settingsButton = new ButtonActor("menu-buttons/settings.png");
         settingsButton.addListener(new InputListener() {
             @Override
@@ -57,14 +58,15 @@ public class MainMenu extends State {
             }
         });
 
+        // Add buttons to table
         table.add(settingsButton).expandX().top().right().padBottom(120).padRight(stage.getWidth()/50).padTop(stage.getHeight()/30);
         table.row();
         table.add(raceButton).padBottom(120).center();
         table.row();
         table.add(gladiatorButton).center();
 
-        stage.addActor(table);
 
+        stage.addActor(table);
         Gdx.input.setInputProcessor(stage);
     }
 

@@ -1,4 +1,4 @@
-package car.superfun.game.actor;
+package car.superfun.game.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -10,8 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.RotateByAction;
 import static com.badlogic.gdx.scenes.scene2d.actions.RepeatAction.FOREVER;
 
 public class LoadingActor extends Actor {
-
     private Sprite sprite;
+
+    /*
+     * The LoadingActor creates a rotating sprite of the image provided.
+     */
 
     public LoadingActor(String path){
         this.sprite = new Sprite(new Texture(path));
