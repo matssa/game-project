@@ -47,28 +47,32 @@ public class GladiatorMode extends GameMode {
     private LocalGladiatorCar localCar;
 
     private int score = 5;
+    /*
+    Boost is not yet integrated.
     private float boost = 10;
+    */
     private boolean endGameNextUpdate = false;
 
     public GladiatorMode(GoogleGameServices googleGameServices, boolean isSinglePlayer) {
         super(MAP_PATH, googleGameServices, isSinglePlayer);
 
         // Audio
-        gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
-
+        gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
         gladiatorSong.setLooping(true);
         gladiatorSong.setVolume(GlobalVariables.MUSIC_VOLUME);
         gladiatorSong.play();
 
         world.setContactListener(new GladiatorContactListener());
 
+        // Build the map with collision lines and spawn points.
         setUpMap();
 
         // place all participants cars in the map
         setStartPositions(setStartPositionsCallback);
     }
 
+    // Set the car on its place in the map and gives it a unique color.
     private SetStartPositionCallback setStartPositionsCallback = new SetStartPositionCallback() {
         // Used to set different color to different players cars
         private int texturePathIndex = 0;
@@ -122,6 +126,8 @@ public class GladiatorMode extends GameMode {
         if (!googleGameServices.gameStarted() && !singlePlayer) {
             return;
         }
+
+        // Updates the opponents.
         for (OpponentCar car : opponentCars) {
             car.update(dt);
         }
@@ -129,10 +135,12 @@ public class GladiatorMode extends GameMode {
 
         world.step(dt, 2, 1); // Using deltaTime
 
+        // Update the camera
         camera.position.set(localCar.getSpritePosition(), 0);
         camera.position.set(localCar.getSpritePosition().add(localCar.getVelocity().scl(10f)), 0);
         camera.up.set(localCar.getDirectionVector(), 0);
 
+        // Update local car and broadcast if not singleplayer.
         localCarController.update();
         if (!singlePlayer) {
             googleGameServices.broadcastState(
@@ -142,6 +150,8 @@ public class GladiatorMode extends GameMode {
                     localCarController.getForward(),
                     localCarController.getRotation());
         }
+
+        // Check if game is finished.
         if (endGameNextUpdate) {
             endGame();
         }
@@ -179,7 +189,6 @@ public class GladiatorMode extends GameMode {
     @Override
     public void endGame() {
         if (singlePlayer) {
-            Gdx.app.log("You won!!!", ".. but you also died.. shit happens!");
             return;
         }
         googleGameServices.broadcastScore(score);
