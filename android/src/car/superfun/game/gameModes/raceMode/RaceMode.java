@@ -31,7 +31,6 @@ public class RaceMode extends GameMode {
 
     private final Music raceSong;
 
-
     // Car textures
     private final static String[] TEXTURE_PATHS = new String[]{
             "racing-pack/PNG/Cars/car_yellow_5.png",
@@ -47,6 +46,10 @@ public class RaceMode extends GameMode {
 
     private int amountOfCheckpoints;
 
+    /**
+     * @param googleGameServices
+     * @param singlePlayer
+     */
     public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super(MAP_PATH, googleGameServices, singlePlayer);
 
@@ -97,6 +100,10 @@ public class RaceMode extends GameMode {
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
     }
 
+    /**
+     * Updates all the dynamic elements in the game, always propagating deltatime.
+     * @param dt
+     */
     @Override
     public void update(float dt) {
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
@@ -123,7 +130,12 @@ public class RaceMode extends GameMode {
         }
     }
 
-    // Renders objects that had a static position in the gameworld. Is called by superclass
+    /**
+     * Renders the objects relative to the camera. I.e. all objects in the gameworld.
+     * This method is called by the superclass, GameMode.
+     * @param sb
+     * @param camera
+     */
     @Override
     public void renderWithCamera(SpriteBatch sb, OrthographicCamera camera) {
         tiledMapRenderer.setView(camera);
@@ -136,18 +148,29 @@ public class RaceMode extends GameMode {
         sb.end();
     }
 
-    // Renders objects that have a static position on the screen. Is called by superclass
+    /**
+     * Renders the objects that have a static position on the screen. I.e. the HUD.
+     * This method is called by the superclass, GameMode.
+     * @param sb
+     */
     @Override
     public void renderHud(SpriteBatch sb) {
         localCarController.render(sb);
     }
 
+    /**
+     * Dispose any objects that must be disposed manually.
+     */
     @Override
     public void dispose() {
         raceSong.stop();
         raceSong.dispose();
     }
 
+    /**
+     * End the game and move to the Leaderboard state to display score.
+     * This method is called by LocalRaceCar when the map is traversed for the last time.
+     */
     @Override
     public void endGame() {
         int timeSinceStart = (int) ((TrueTime.now().getTime() - googleGameServices.getStartTime()) % 2147483648L);
