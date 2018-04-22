@@ -1,6 +1,7 @@
 package car.superfun.game.gameModes.raceMode;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -28,6 +29,9 @@ public class RaceMode extends GameMode {
 
     private final static String MAP_PATH = "tiled_maps/decentMap.tmx";
 
+    private final Music raceSong;
+
+
     // Car textures
     private final static String[] TEXTURE_PATHS = new String[]{
             "racing-pack/PNG/Cars/car_yellow_5.png",
@@ -45,6 +49,13 @@ public class RaceMode extends GameMode {
 
     public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super(MAP_PATH, googleGameServices, singlePlayer);
+
+        // Audio
+        raceSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/raceMode.ogg"));
+
+        raceSong.setLooping(true);
+        raceSong.setVolume(GlobalVariables.MUSIC_VOLUME);
+        raceSong.play();
 
         world.setContactListener(new RaceContactListener());
 
@@ -133,6 +144,8 @@ public class RaceMode extends GameMode {
 
     @Override
     public void dispose() {
+        raceSong.stop();
+        raceSong.dispose();
     }
 
     @Override
