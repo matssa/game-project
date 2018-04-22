@@ -39,7 +39,7 @@ public class GameStateManager {
      */
     public void push(State state) {
         states.push(state);
-        Gdx.graphics.requestRendering();
+        states.peek().setInputProcessor();
     }
 
     /**
@@ -48,7 +48,7 @@ public class GameStateManager {
     public void pop() {
         dispose();
         states.pop();
-        Gdx.graphics.requestRendering();
+        states.peek().setInputProcessor();
     }
 
     /**
@@ -61,7 +61,7 @@ public class GameStateManager {
         dispose();
         states.pop();
         states.push(state);
-        Gdx.graphics.requestRendering();
+        states.peek().setInputProcessor();
     }
 
     /**

@@ -31,7 +31,6 @@ public class LoadingScreen extends State {
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.input.setInputProcessor(MainMenu.stage);
                 GameStateManager.getInstance().pop();
                 return true;
             }
@@ -44,8 +43,6 @@ public class LoadingScreen extends State {
 
         stage.addActor(backButton);
         stage.addActor(loadingActor);
-
-        Gdx.input.setInputProcessor(stage);
     }
 
     /**
@@ -73,5 +70,10 @@ public class LoadingScreen extends State {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    @Override
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(stage);
     }
 }

@@ -49,7 +49,6 @@ public class GameSettings extends State{
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.input.setInputProcessor(MainMenu.stage);
                 GameStateManager.getInstance().pop();
                 return true;
             }
@@ -110,8 +109,6 @@ public class GameSettings extends State{
         table.add(fourplayerButton);
 
         stage.addActor(table);
-
-        Gdx.input.setInputProcessor(stage);
     }
 
     /**
@@ -142,5 +139,10 @@ public class GameSettings extends State{
     public void dispose() {
         background.dispose();
         stage.dispose();
+    }
+
+    @Override
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(stage);
     }
 }
