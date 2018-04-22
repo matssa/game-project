@@ -29,29 +29,38 @@ import car.superfun.game.states.NewState;
 
 public class AndroidLauncher extends AndroidApplication {
 
+    // TAG is used when logging to screen
     final static String TAG = "CarSuperFun";
 
+    // Define variables used for googlePlayGameServices
     public SetUpGame setUpGame;
     public SignIn signIn;
     public Communicator communicator;
 
+    // Define the Application Adapter, used for rendering and updating the screen
     private CarSuperFun carSuperFun;
-    private NewState newState = NewState.RACE_MODE;
+
+    // Enum class used to keep track of what game mode to choose.
+    private NewState newState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Creates a new Application adapter, CarSuperFun
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         this.carSuperFun = new CarSuperFun(googleGameServices, this);
         initialize(carSuperFun, config);
 
+        // Init google game services classes
         this.setUpGame = new SetUpGame(this);
         this.signIn = new SignIn(this, setUpGame, carSuperFun);
         this.communicator = setUpGame.getCommunicator();
 
+        // Tries to set the logged in GPGS client
         signIn.setSignInClient();
 
+        // Creates a new synchronized clock
         ClockSynchronizer clockSync = new ClockSynchronizer();
         clockSync.start();
         Gdx.graphics.setContinuousRendering(true);
@@ -60,17 +69,31 @@ public class AndroidLauncher extends AndroidApplication {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Try to signInSilienry in case, something have happent while the game was "offline"
         signIn.signInSilently();
     }
 
+
+    /**
+     * Method is used when requests are returned from GPGS
+     * @param requestCode
+     * @param resultCode
+     * @param intent
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+
+        // If intent is signIn
         if (requestCode == signIn.SIGN_IN_ID) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
+            // If the intent was a success
             if (result.isSuccess()) {
                 Log.d(TAG, "Login success");
-                carSuperFun.createNewState(NewState.LOGIN_MENU);
+                // As soon as the rendering is resumed,  send the user to the main menu
+                carSuperFun.createNewState(NewState.MAIN_MENU);
+                // if something went wrong with the login, print there was an issue..
             } else {
                 String message = result.getStatus().getStatusMessage();
                 if (message == null || message.isEmpty()) {
@@ -79,10 +102,14 @@ public class AndroidLauncher extends AndroidApplication {
                 new AlertDialog.Builder(this).setMessage(message)
                         .setNeutralButton(android.R.string.ok, null).show();
             }
+            // if the intent is waitingRoom
         } else if (requestCode == SetUpGame.RC_WAITING_ROOM) {
+            // if new waiting room is created
             if (resultCode == Activity.RESULT_OK) {
                 setUpGame.waitingRoomReady();
+                // Create the gamemode, specified in the new state.
                 carSuperFun.createNewState(newState);
+                // if anything went wrong leave the room.
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 setUpGame.leaveRoom();
             } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -91,10 +118,10 @@ public class AndroidLauncher extends AndroidApplication {
         }
     }
 
-    private class ClockSynchronizer extends Thread { // TODO make this more reliable
+    private class ClockSynchronizer extends Thread {
         public void run() {
             if (!TrueTime.isInitialized()) {
-                Gdx.app.log("TrueTime", "start of run");
+                Log.d("TrueTime", "start of run");
                 try {
                     TrueTime.build()
                             .withNtpHost("time.google.com")
@@ -102,13 +129,13 @@ public class AndroidLauncher extends AndroidApplication {
                             .withConnectionTimeout(3_1428)
                             .initialize();
                 } catch (IOException ex) {
-                    Gdx.app.log("IOException from TrueTime:", ex.getMessage());
+                    Log.d("IOException TrueTime:", ex.getMessage());
                     ex.printStackTrace();
                 }
                 if (!TrueTime.isInitialized()) {
                     Gdx.app.error("TrueTime", "True time is not initialized");
                 } else {
-                    Gdx.app.log("TrueTime", "True time now initialized! :D");
+                    Log.d("TrueTime", "True time now initialized! :D");
                 }
             } else {
                 Gdx.app.log("TrueTime", "True time all ready initialized! :D");
@@ -116,10 +143,19 @@ public class AndroidLauncher extends AndroidApplication {
         }
     }
 
+    /**
+     * Sets the next state to be added to the gsm
+     * @param newState
+     */
     public void setNewState(NewState newState) {
         this.newState = newState;
     }
 
+
+    /**
+     *  Creates a callback based on the GoogleGameServices interfaced, used for anything multilayer
+     *  related outside this class
+     */
     public GoogleGameServices googleGameServices = new GoogleGameServices() {
 
         @Override
