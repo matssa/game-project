@@ -1,2 +1,2 @@
 # CarSuperFun
-Were cars have fun!
+Where cars have fun!
