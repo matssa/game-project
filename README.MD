@@ -7,7 +7,7 @@ The game can be installed using one of the following methods, either using Andro
 ### Running the game using Android Studio
 
   1. Start by unzipping the included file CarSuperFun.zip, and place it in an arbitrary directory.
-  2. Next, start up Android Studio, make sure to meet the requirements in table bellow
+  2. Next, start up Android Studio, make sure to meet the requirements in the table bellow
   3. The third step is to configure the run configuration. It can be done from the drop-down menu on the top right corner of the screen. Enter the required information and ensure that the module is set to Android. 
   4. Run the game in one of the following ways; use the build in emulator, or use an Android phone. Either way, make sure to use Android API 14 or newer. In addition also make sure to have Google Play Game installed on the device. It can be downloaded from Play Store. 
   5. To run the game on an Android phone, one also needs to make sure to activate developer-mode, and enable USB-debugging. To activate developer-mode go to settings and tap the build-number 7 times.
