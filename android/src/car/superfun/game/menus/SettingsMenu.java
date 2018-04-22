@@ -61,12 +61,13 @@ public class SettingsMenu extends State {
 
         musicSlider = new Slider(0f, 1f, 0.01f, false, skin);
         soundSlider = new Slider(0f, 1f, 0.01f, false, skin);
-        soundSlider.getStyle().knob.setMinHeight(50);
-        soundSlider.getStyle().knob.setMinWidth(50);
+        soundSlider.getStyle().knob.setMinHeight(60);
+        soundSlider.getStyle().knob.setMinWidth(60);
         musicSlider.setValue(GlobalVariables.MUSIC_VOLUME);
         soundSlider.setValue(GlobalVariables.SOUND_VOLUME);
 
-        table.add(backButton).expandX().left().colspan(2).padBottom(-60);
+        // stage.getWidth()/50).padTop(stage.getHeight()/30
+        table.add(backButton).expandX().left().colspan(2).padLeft(stage.getWidth()/50).padTop(stage.getHeight()/30).padBottom(-60);
         table.row();
         table.add(new Label("Settings", skin)).center().colspan(2).padBottom(stage.getHeight()/8);
         table.row();

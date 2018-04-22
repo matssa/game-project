@@ -96,7 +96,7 @@ public class Leaderboard extends State implements HandlesScore {
     // This function can be called after leaderboard has been initialized,
     // to update the table with new data.
     public void fillTable(){
-        table.add(backButton).expandX().left().colspan(3).padBottom(-60);
+        table.add(backButton).expandX().left().colspan(3).padBottom(-60).padLeft(stage.getWidth()/50).padTop(stage.getHeight()/30);
         table.row();
         table.add(new Label("Leaderboard", headerSkin)).center().colspan(3);
         table.row();
