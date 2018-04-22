@@ -11,24 +11,21 @@ import car.superfun.game.states.NewState;
 
 public interface GoogleGameServices {
 
-    void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
-    void broadcastScore(int score);
-
-    Array<OpponentCarController> getOpponentCarControllers();
-
     boolean isSignedIn();
     void signOut();
     void startSignInIntent();
 
     void startQuickGame(NewState newState, int numberOfPlayers);
-    void leaveRoom();
-
     void readyToStart(boolean isSinglePlayer);
+    void leaveRoom();
+    String getMyID();
+    Participant getLocalParticipant();
 
     boolean gameStarted();
     ArrayList<Participant> getParticipants();
-    String getMyID();
+    Array<OpponentCarController> getOpponentCarControllers();
     long getStartTime();
+    void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation);
+    void broadcastScore(int score);
 
-    Participant getLocalParticipant();
 }

@@ -133,12 +133,12 @@ public class AndroidLauncher extends AndroidApplication {
                     ex.printStackTrace();
                 }
                 if (!TrueTime.isInitialized()) {
-                    Gdx.app.error("TrueTime", "True time is not initialized");
+                    Log.d("TrueTime", "True time is not initialized");
                 } else {
                     Log.d("TrueTime", "True time now initialized! :D");
                 }
             } else {
-                Gdx.app.log("TrueTime", "True time all ready initialized! :D");
+                Log.d("TrueTime", "True time all ready initialized! :D");
             }
         }
     }

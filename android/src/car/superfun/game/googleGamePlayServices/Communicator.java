@@ -23,13 +23,13 @@ import java.util.TimerTask;
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.car.OpponentCarController;
 import car.superfun.game.scoreHandling.HandlesScore;
-import car.superfun.game.scoreHandling.Leaderboard;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
 
 public class Communicator {
 
+    // Tag used when printing to console
     final static String TAG = "Communicator";
 
     private SetUpGame setUpGame;
@@ -40,28 +40,46 @@ public class Communicator {
     private int readyParticipants = 0;
     private long myReadyTime = 0L;
 
+    // sets start time to 0
     public long startTime = 0;
     public boolean gameStarted = false;
+
 
 
     public Communicator(SetUpGame setUpGame) {
         this.setUpGame = setUpGame;
     }
 
+    /**
+     * Adds a new participantController
+     * @param id
+     * @param controller
+     */
     public void putParticipantController(String id, OpponentCarController controller) {
         participantCarControllers.put(id, controller);
     }
 
+    /**
+     * Used to clear the list of participants, if the game is left by the player
+     */
     public void clearParticipantCarController() {
         participantCarControllers.clear();
     }
 
+
+    /**
+     * creates a map of all the participants and their start time 0
+     */
     public void initiateTimestampMap() {
         for (OpponentCarController opponent : participantCarControllers.values()) {
             lastTimestamps.put(opponent.getParticipant().getParticipantId(), 0);
         }
     }
 
+    /**
+     * Retunres a Array of opponentCarControllers
+     * @return
+     */
     public Array<OpponentCarController> getOpponentCarControllers() {
         Array<OpponentCarController> opponentCarControllers = new Array<>(participantCarControllers.size());
         for (Map.Entry<String, OpponentCarController> entry : participantCarControllers.entrySet()) {
@@ -73,12 +91,15 @@ public class Communicator {
     }
 
 
-    // Called when we receive a real-time message from the network.
+    /**
+     * Called when real time messages are received
+     */
     OnRealTimeMessageReceivedListener messageReceivedHandler = new OnRealTimeMessageReceivedListener() {
         @Override
         public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
             String senderId = realTimeMessage.getSenderParticipantId();
             ByteBuffer buffer = ByteBuffer.wrap(realTimeMessage.getMessageData());
+            // use the first byte to determend what kind of message is received
             switch (buffer.getChar(0)) {
                 case ('S'): {
                     handleStateMessage(buffer, senderId);
@@ -93,15 +114,19 @@ public class Communicator {
                     break;
                 }
                 default: {
-                    Gdx.app.error("unknown byte buffer content", "length: " + buffer.array().length);
+                    Log.d(TAG, "unknown byte buffer content, length: " + buffer.array().length);
                     for (byte b : buffer.array()) {
-                        Gdx.app.error("byte: ", "" + b);
+                        Log.e(TAG, "byte: " + b);
                     }
                 }
             }
         }
     };
 
+    /**
+     * Boradcast players score to the other participants
+     * @param score
+     */
     public void broadcastScore(int score) {
         ByteBuffer messageBuffer = ByteBuffer.allocate(6);
         messageBuffer.putChar(0, 'F'); // F for finished
@@ -110,11 +135,21 @@ public class Communicator {
         broadcastReliableMessage(messageBuffer.array());
     }
 
+    /**
+     * Broadsat players state to the other participants
+     * @param velocity
+     * @param position
+     * @param angle
+     * @param forward
+     * @param rotation
+     */
     public void broadcastState(Vector2 velocity, Vector2 position, float angle, float forward, float rotation) {
         ByteBuffer messageBuffer = ByteBuffer.allocate(34);
 
         messageBuffer.putChar(0, 'S'); // S for state
 
+        // Sets the different warbles to the messagebuffer, the first int defines the position in
+        // the array each position corresponds to one byte.
         int timestamp = (int) (TrueTime.now().getTime() % 2147483648L);
         messageBuffer.putInt(2, timestamp);
 
@@ -128,7 +163,7 @@ public class Communicator {
         messageBuffer.putFloat(26, forward);
         messageBuffer.putFloat(30, rotation);
 
-        // Send to all the other participants.
+        // Send the score to all the other participants.
         for (Participant p : setUpGame.participants) {
             if (p.getParticipantId().equals(setUpGame.myId)) {
                 continue;
@@ -141,6 +176,10 @@ public class Communicator {
         }
     }
 
+    /**
+     * Sends relible message to the other participants, that is using TCP
+     * @param byteArray
+     */
     private void broadcastReliableMessage(byte[] byteArray) {
         // Send to every other participant.
         for (Participant p : setUpGame.participants) {
@@ -169,6 +208,11 @@ public class Communicator {
         }
     }
 
+    /**
+     * Processes a final score messaged, received when a participant finishes the game
+     * @param buffer
+     * @param senderId
+     */
     private void handleFinalScoreMessage(ByteBuffer buffer, String senderId) {
         int score = buffer.getInt(2);
         String senderName = participantCarControllers.get(senderId).getParticipant().getDisplayName();
@@ -177,20 +221,25 @@ public class Communicator {
         if (currentState instanceof HandlesScore) {
             ((HandlesScore) currentState).handleScore(senderName, score);
         } else {
-            Gdx.app.error("No score handler", "A final score message has been received, but the current state could not handle it");
+            Log.e("No score handler", "A final score message has been received, but the current state could not handle it");
         }
     }
 
+    /**
+     * Handles incoming messages containing a participants current state
+     * @param buffer
+     * @param senderId
+     */
     private void handleStateMessage(ByteBuffer buffer, String senderId) {
         OpponentCarController opponentCarController = (OpponentCarController) participantCarControllers.get(senderId);
         if (!opponentCarController.hasControlledCar()) {
-            Gdx.app.error("opponentCarController missing car", "id: " + senderId);
+            Log.e(TAG, "opponentCarController missing car:  " + senderId);
             return;
         }
 
         int packageTimestamp = buffer.getInt(2);
         if (packageTimestamp < lastTimestamps.get(senderId)) {
-            Gdx.app.log("package loss", "out of order package arrived. timestamp: " + packageTimestamp);
+            Log.d("package loss", "out of order package arrived. timestamp: " + packageTimestamp);
             return; // Dropping outdated message
         }
         lastTimestamps.put(senderId, new Integer(packageTimestamp));
@@ -208,6 +257,10 @@ public class Communicator {
     }
 
 
+    /**
+     * Called when the gameMode is set up, and the game is ready to start
+     * @param isSinglePlayer
+     */
     public void readyToStart(boolean isSinglePlayer) {
         if (isSinglePlayer) {
             gameStarted = true;
@@ -224,17 +277,25 @@ public class Communicator {
         broadcastReliableMessage(messageBuffer.array());
     }
 
+    /**
+     * Increments the readyParticipants variable, when all the participants are ready the start game
+     * method is called
+     * @param newStartTime
+     */
     private void newParticipantReady(long newStartTime) {
         readyParticipants++;
         if (newStartTime > this.startTime) {
             this.startTime = newStartTime;
         }
         if (readyParticipants == setUpGame.participants.size()) {
-            Gdx.app.log("all participants have joined", "starting game in " + (startTime - TrueTime.now().getTime()) + " ms");
+            Log.d(TAG, "all participants have joined starting game in " + (startTime - TrueTime.now().getTime()) + " ms");
             startGame();
         }
     }
 
+    /**
+     * Called when all the participants are ready, such that the game can be started
+     */
     private void startGame() {
         new Timer().schedule(new TimerTask() {
             @Override
@@ -245,9 +306,14 @@ public class Communicator {
         }, startTime - TrueTime.now().getTime());
     }
 
+
+    /**
+     * Used to update the participants list, if a player leaves the game
+     * @param peersWhoLeft
+     */
     public void updateParticipants(List<String> peersWhoLeft) {
         for (String id : peersWhoLeft) {
-            OpponentCarController controller = (OpponentCarController) participantCarControllers.get(id);
+            OpponentCarController controller = participantCarControllers.get(id);
             controller.getControlledCar().setRender(false);
         }
     }
