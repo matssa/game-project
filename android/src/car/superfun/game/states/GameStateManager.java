@@ -17,7 +17,7 @@ public class GameStateManager {
 
     //Stack containing the states in use
     private Stack<State> states = new Stack<State>();
-    ;
+
 
     //Changed the constructor to private so that the only way to init the class is from the class
     //itself
