@@ -20,6 +20,8 @@ import car.superfun.game.scoreHandling.Leaderboard;
 import car.superfun.game.scoreHandling.ScoreFormatter;
 import car.superfun.game.states.GameStateManager;
 
+
+
 public class GladiatorMode extends GameMode {
 
 
@@ -53,6 +55,11 @@ public class GladiatorMode extends GameMode {
     */
     private boolean endGameNextUpdate = false;
 
+    /**
+     * Constructor
+     * @param googleGameServices
+     * @param isSinglePlayer
+     */
     public GladiatorMode(GoogleGameServices googleGameServices, boolean isSinglePlayer) {
         super(MAP_PATH, googleGameServices, isSinglePlayer);
 
@@ -72,7 +79,9 @@ public class GladiatorMode extends GameMode {
         setStartPositions(setStartPositionsCallback);
     }
 
-    // Set the car on its place in the map and gives it a unique color.
+    /**
+     * Set the car on its place in the map and gives it a unique color.
+     */
     private SetStartPositionCallback setStartPositionsCallback = new SetStartPositionCallback() {
         // Used to set different color to different players cars
         private int texturePathIndex = 0;
@@ -97,7 +106,9 @@ public class GladiatorMode extends GameMode {
     };
 
 
-
+    /**
+     * Build the maps fixtures
+     */
     protected void setUpMap() {
         super.setUpMap();
 
@@ -121,6 +132,10 @@ public class GladiatorMode extends GameMode {
     }
 
 
+    /**
+     * Update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
         if (!googleGameServices.gameStarted() && !singlePlayer) {
@@ -157,7 +172,11 @@ public class GladiatorMode extends GameMode {
         }
     }
 
-    // Renders objects that had a static position in the gameworld. Is called by superclass
+    /**
+     * Renders objects that had a static position in the gameworld. Is called by superclass
+     * @param sb
+     * @param camera
+     */
     @Override
     public void renderWithCamera(SpriteBatch sb, OrthographicCamera camera) {
         tiledMapRenderer.setView(camera);
@@ -170,12 +189,18 @@ public class GladiatorMode extends GameMode {
         sb.end();
     }
 
-    // Renders objects that have a static position on the screen. Is called by superclass
+    /**
+     * Renders objects that have a static position on the screen. Is called by superclass
+     * @param sb
+     */
     @Override
     public void renderHud(SpriteBatch sb) {
         localCarController.render(sb);
     }
 
+    /**
+     * Disposes the music when game mode is over.
+     */
     @Override
     public void dispose() {
         gladiatorSong.stop();
@@ -186,6 +211,9 @@ public class GladiatorMode extends GameMode {
         this.score = score;
     }
 
+    /**
+     * End the game
+     */
     @Override
     public void endGame() {
         if (singlePlayer) {
@@ -198,13 +226,20 @@ public class GladiatorMode extends GameMode {
         this.dispose();
     }
 
+    /**
+     * Handles the score
+     * @param senderName
+     * @param score
+     */
     @Override
     public void handleScore(String senderName, int score) {
         super.handleScore(senderName, score);
         endGameNextUpdate = true;
     }
 
-    // A callback for formatting score. Makes sure to format the GladiatorMode score as lives left
+    /**
+     *  A callback for formatting score. Makes sure to format the GladiatorMode score as lives left
+     */
     private ScoreFormatter scoreFormatter = new ScoreFormatter() {
         @Override
         public String formatScore(int livesLeft) {
