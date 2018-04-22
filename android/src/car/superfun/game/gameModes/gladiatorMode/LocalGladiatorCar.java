@@ -1,5 +1,8 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
+import android.util.Log;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -27,6 +30,7 @@ public class LocalGladiatorCar extends LocalCar {
 
 
     public void hitDeathWalls() {
+        Gdx.app.log("hit death walls", "yes");
         score -= 1;
         dustWallCrash.play(GlobalVariables.SOUND_VOLUME);
         gameClass.setScore(score);
@@ -36,7 +40,7 @@ public class LocalGladiatorCar extends LocalCar {
     }
 
 
-    public void hitByCar() {
+    public void hitOpponentCar() {
         // TODO: Let the cars crash and bounce.
     }
 
