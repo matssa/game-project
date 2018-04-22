@@ -147,6 +147,20 @@ public class TrackBuilder {
         return shape;
     }
 
+    private static ChainShape getPolyline(PolylineMapObject polylineMapObject) {
+        float[] vertices = polylineMapObject.getPolyline().getTransformedVertices();
+        Vector2[] worldVertices = new Vector2[vertices.length / 2];
+
+        for (int i = 0; i < vertices.length / 2; ++i) {
+            worldVertices[i] = new Vector2();
+            worldVertices[i].x = vertices[i * 2] / GlobalVariables.PIXELS_TO_METERS;
+            worldVertices[i].y = vertices[i * 2 + 1] / GlobalVariables.PIXELS_TO_METERS;
+        }
+
+        ChainShape chainShape = new ChainShape();
+        chainShape.createChain(worldVertices);
+        return chainShape;
+    }
 
     /**
      * NOT IN USE
@@ -235,21 +249,4 @@ public class TrackBuilder {
      * @param polylineMapObject
      * @return
      */
-    private static ChainShape getPolyline(PolylineMapObject polylineMapObject) {
-        float[] vertices = polylineMapObject.getPolyline().getTransformedVertices();
-        Vector2[] worldVertices = new Vector2[vertices.length / 2];
-
-        for (int i = 0; i < vertices.length / 2; ++i) {
-            worldVertices[i] = new Vector2();
-            worldVertices[i].x = vertices[i * 2] / GlobalVariables.PIXELS_TO_METERS;
-            worldVertices[i].y = vertices[i * 2 + 1] / GlobalVariables.PIXELS_TO_METERS;
-        }
-
-        ChainShape chainShape = new ChainShape();
-        chainShape.createChain(worldVertices);
-        return chainShape;
-    }
-
-
-
 }
