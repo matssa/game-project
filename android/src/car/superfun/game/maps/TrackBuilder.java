@@ -28,6 +28,12 @@ import car.superfun.game.maps.UserDataCreater;
 
 public class TrackBuilder {
 
+    /**
+     * TODO: What points? what is the point? Spawnpoints? potentially bad naming.
+     * @param map
+     * @param layerName
+     * @return
+     */
     public static Array<Vector2> getPoints(Map map, String layerName) {
         MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
         Array<Vector2> points = new Array<>();
@@ -37,10 +43,17 @@ public class TrackBuilder {
             float y = Float.parseFloat(mapObject.getProperties().get("y").toString());
             points.add(new Vector2(x, y));
         }
-
         return points;
     }
 
+    /**
+     * Build a layer from the tiled map.
+     * @param map
+     * @param world
+     * @param layerName
+     * @param fixtureDef
+     * @return
+     */
     public static Array<Body> buildLayer(Map map, World world, String layerName, FixtureDef fixtureDef) {
         MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
         Array<Body> bodies = new Array<>();
@@ -68,6 +81,15 @@ public class TrackBuilder {
         return bodies;
     }
 
+    /**
+     * Build a layer from the tiled map, with user data.
+     * @param map
+     * @param world
+     * @param layerName
+     * @param fixtureDef
+     * @param userDataCreater
+     * @return
+     */
     public static Array<Body> buildLayerWithUserData(Map map, World world, String layerName, FixtureDef fixtureDef, UserDataCreater userDataCreater) {
         MapObjects mapObjects = map.getLayers().get(layerName).getObjects();
         Array<Body> bodies = new Array<>();
@@ -96,11 +118,19 @@ public class TrackBuilder {
         return bodies;
     }
 
+    /**
+     * Get the specific shape from the tile object.
+     * @param mapObject
+     * @return
+     * @throws ClassNotFoundException
+     */
     private static Shape getShape(MapObject mapObject) throws ClassNotFoundException {
         Shape shape;
         if (mapObject instanceof PolylineMapObject) { // Test polylines first, since this is the objects we are actually using
             shape = getPolyline((PolylineMapObject)mapObject);
         }
+        /*
+         * NOT IN USE
         else if (mapObject instanceof TextureMapObject) {
             shape = getTile((TiledMapTileMapObject) mapObject);
         }
@@ -109,20 +139,22 @@ public class TrackBuilder {
         }
         else if (mapObject instanceof CircleMapObject) {
             shape = getCircle((CircleMapObject)mapObject);
-        } else {
+        }
+        */
+        else {
             throw new ClassNotFoundException("Cannot find class for mapObject");
         }
         return shape;
     }
 
 
-    // This is not being used yet, but will be used to register object tiles from Tiled in the future
+    /**
+     * NOT IN USE
+     * This is not being used yet, but will be used to register object tiles from Tiled in the future
+     * @param tileObject
+     * @return
+
     private static PolygonShape getTile(TiledMapTileMapObject tileObject) {
-//        Gdx.app.log("in method", "PolygonShape");
-//
-//        Gdx.app.log("getX()", "" + tileObject.getX());
-//        Gdx.app.log("getScaleX()", "" + tileObject.getScaleX());
-//        Gdx.app.log("getRegionWidth()", "" + tileObject.getTile().getTextureRegion().getRegionWidth());
 
         float width = tileObject.getTextureRegion().getRegionWidth() / (2 * GlobalVariables.PIXELS_TO_METERS);
         float height = tileObject.getTextureRegion().getRegionHeight() / (2 * GlobalVariables.PIXELS_TO_METERS);
@@ -133,9 +165,16 @@ public class TrackBuilder {
         shape.setAsBox(width, height, center, 0f);
         return shape;
     }
+     */
 
-    // Not in used at the present time.
-    // Nor is it possible to register rectangle objects from Tiled now, so when that will be implemented this method might be used.
+
+
+    /**
+     * NOT IN USE
+     * Not in used at the present time.
+     * Nor is it possible to register rectangle objects from Tiled now, so when that will be implemented this method might be used.
+     * @param rectangleObject
+     * @return
     private static PolygonShape getRectangle(RectangleMapObject rectangleObject) {
         Rectangle rectangle;
         PolygonShape polygonShape;
@@ -147,8 +186,14 @@ public class TrackBuilder {
         polygonShape.setAsBox(rectangle.width * 0.5f / GlobalVariables.PIXELS_TO_METERS, rectangle.height * 0.5f / GlobalVariables.PIXELS_TO_METERS, size, 0.0f);
         return polygonShape;
     }
+     */
 
-    // This has not been tested, as we don't use circles yet.
+
+    /**
+     * NOT IN USE
+     * This has not been tested, as we don't use circles yet.
+     * @param circleMapObject
+     * @return
     private static CircleShape getCircle(CircleMapObject circleMapObject) {
         Circle circle;
         CircleShape circleShape;
@@ -159,8 +204,13 @@ public class TrackBuilder {
         circleShape.setPosition(new Vector2(circle.x / GlobalVariables.PIXELS_TO_METERS, circle.y / GlobalVariables.PIXELS_TO_METERS));
         return circleShape;
     }
+     */
 
-    // There seems to be something fishy about this method, but we are not using polygon/rectangle map objects yet.
+    /**
+     * NOT IN USE
+     * There seems to be something fishy about this method, but we are not using polygon/rectangle map objects yet.
+     * @param polygonMapObject
+     * @return
     private static PolygonShape getPolygon(PolygonMapObject polygonMapObject) {
         PolygonShape polygonShape;
         float[] vertices;
@@ -177,8 +227,14 @@ public class TrackBuilder {
         polygonShape.set(worldVertices);
         return polygonShape;
     }
+     */
 
-    // PolyLines are the only map objects currently in use. So this method is the only method that is properly tested.
+
+    /**
+     * Gets the polyline shapes
+     * @param polylineMapObject
+     * @return
+     */
     private static ChainShape getPolyline(PolylineMapObject polylineMapObject) {
         float[] vertices = polylineMapObject.getPolyline().getTransformedVertices();
         Vector2[] worldVertices = new Vector2[vertices.length / 2];
