@@ -12,6 +12,10 @@ import car.superfun.game.GlobalVariables;
 
 public class RaceContactListener implements ContactListener {
 
+    /**
+     * Called by Box2D each time a collision is started
+     * @param contact
+     */
     @Override
     public void beginContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
@@ -40,6 +44,10 @@ public class RaceContactListener implements ContactListener {
         }
     }
 
+    /**
+     * Called by Box2D each time a collision ends.
+     * @param contact
+     */
     @Override
     public void endContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
@@ -69,6 +77,10 @@ public class RaceContactListener implements ContactListener {
 
     }
 
+    /**
+     * Called when a LocalRaceCar collides with a goal line.
+     * @param contact
+     */
     private void beginGoalContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
@@ -78,6 +90,10 @@ public class RaceContactListener implements ContactListener {
         localRaceCar.passGoal();
     }
 
+    /**
+     * Called when a LocalRaceCar collides with a checkpoint.
+     * @param contact
+     */
     private void beginCheckpointContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
