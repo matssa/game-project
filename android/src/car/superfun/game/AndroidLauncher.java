@@ -58,8 +58,7 @@ public class AndroidLauncher extends AndroidApplication {
         signIn.setSignInClient();
 
         // Creates a new synchronized clock
-        ClockSynchronizer clockSync = new ClockSynchronizer();
-        clockSync.start();
+        clockSynchronizer.start();
         Gdx.graphics.setContinuousRendering(true);
     }
 
@@ -114,7 +113,15 @@ public class AndroidLauncher extends AndroidApplication {
         }
     }
 
-    private class ClockSynchronizer extends Thread {
+
+    /**
+     * Create a thread for initalizing TrueTime, a library which runs NTP and stores the time difference
+     * needed to output a synchronized time.
+     * This must be a new thread because TrueTime.initialize() must be run on a separate thread.
+     * After this initialization TrueTime.now().getTime() can be used to get the synchronized time,
+     * which we can rely on being the same on all devices running this game.
+     */
+    private Thread clockSynchronizer = new Thread() {
         public void run() {
             if (!TrueTime.isInitialized()) {
                 try {
@@ -128,7 +135,7 @@ public class AndroidLauncher extends AndroidApplication {
                 }
             }
         }
-    }
+    };
 
     /**
      * Sets the next state to be added to the gsm
