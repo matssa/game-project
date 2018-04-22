@@ -1,7 +1,5 @@
 package car.superfun.game.menus;
 
-import android.provider.Settings;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,6 +24,10 @@ public class SettingsMenu extends State {
     private Stage stage;
     private Slider musicSlider, soundSlider;
 
+    /**
+     * Constructor
+     * This menu allows users to change music and sound effects volume
+     */
     public SettingsMenu(){
         background = new Texture("background.png");
         this.stage = new Stage(new ScreenViewport());
@@ -43,7 +45,7 @@ public class SettingsMenu extends State {
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                // Update volumes
+                // Update new volumes
                 GlobalVariables.MUSIC_VOLUME = musicSlider.getValue();
                 GlobalVariables.SOUND_VOLUME = soundSlider.getValue();
                 // Return to main menu
@@ -77,10 +79,18 @@ public class SettingsMenu extends State {
         Gdx.input.setInputProcessor(stage);
     }
 
+    /**
+     * update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
     }
 
+    /**
+     * render
+     * @param sb
+     */
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
@@ -90,6 +100,9 @@ public class SettingsMenu extends State {
         stage.draw();
     }
 
+    /**
+     * dispose
+     */
     @Override
     public void dispose() {
         background.dispose();

@@ -25,6 +25,12 @@ public class GameSettings extends State{
     private Texture background;
     private Stage stage;
 
+    /**
+     * Constructor
+     * Creates a menu where the user can choose how many players he wants to play with.
+     * @param newState
+     * @param googleGameServices
+     */
     public GameSettings(final NewState newState, final GoogleGameServices googleGameServices){
         this.stage = new Stage(new ScreenViewport());
 
@@ -108,15 +114,18 @@ public class GameSettings extends State{
         Gdx.input.setInputProcessor(stage);
     }
 
-    public void handleInput(){
-
-    }
-
+    /**
+     * update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
-        handleInput();
     }
 
+    /**
+     * render
+     * @param sb
+     */
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
@@ -126,6 +135,9 @@ public class GameSettings extends State{
         stage.draw();
     }
 
+    /**
+     * dispose
+     */
     @Override
     public void dispose() {
         background.dispose();

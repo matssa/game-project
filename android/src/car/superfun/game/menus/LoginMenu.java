@@ -15,7 +15,10 @@ public class LoginMenu extends State{
     private Sprite loginButton;
     private GoogleGameServices googleGameServices;
 
-
+    /**
+     * Constructor
+     * @param googleGameServices
+     */
     public LoginMenu(GoogleGameServices googleGameServices){
         this.googleGameServices = googleGameServices;
         background = new Texture("background.png");
