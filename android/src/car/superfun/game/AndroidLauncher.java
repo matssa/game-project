@@ -117,7 +117,6 @@ public class AndroidLauncher extends AndroidApplication {
     private class ClockSynchronizer extends Thread {
         public void run() {
             if (!TrueTime.isInitialized()) {
-                Log.d("TrueTime", "start of run");
                 try {
                     TrueTime.build()
                             .withNtpHost("time.google.com")
@@ -125,16 +124,8 @@ public class AndroidLauncher extends AndroidApplication {
                             .withConnectionTimeout(3_1428)
                             .initialize();
                 } catch (IOException ex) {
-                    Log.d("IOException TrueTime:", ex.getMessage());
                     ex.printStackTrace();
                 }
-                if (!TrueTime.isInitialized()) {
-                    Log.d("TrueTime", "True time is not initialized");
-                } else {
-                    Log.d("TrueTime", "True time now initialized! :D");
-                }
-            } else {
-                Log.d("TrueTime", "True time all ready initialized! :D");
             }
         }
     }

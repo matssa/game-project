@@ -175,7 +175,6 @@ public class RaceMode extends GameMode {
     public void endGame() {
         int timeSinceStart = (int) ((TrueTime.now().getTime() - googleGameServices.getStartTime()) % 2147483648L);
         if (singlePlayer) {
-            Gdx.app.log("You won!", "" + timeSinceStart + " milliseconds used");
             return;
         }
         googleGameServices.broadcastScore(timeSinceStart);

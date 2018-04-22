@@ -29,7 +29,6 @@ public class LocalGladiatorCar extends LocalCar {
 
     // Is called from GladiatorContactListener.
     public void hitDeathWalls() {
-        Gdx.app.log("hit death walls", "yes");
         score -= 1;
         dustWallCrash.play(GlobalVariables.SOUND_VOLUME);
         gameClass.setScore(score);
