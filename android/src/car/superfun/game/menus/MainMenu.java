@@ -17,12 +17,12 @@ import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
 public class MainMenu extends State {
-    public static Stage stage = new Stage(new ScreenViewport());
-  
+    private Stage stage;
     private Texture background;
 
     public MainMenu(final GoogleGameServices googleGameServices) {
         background = new Texture("background.png");
+        stage = new Stage(new ScreenViewport());
 
         // Create a scene2d table to make it easier to position elements
         Table table = new Table();
@@ -35,7 +35,7 @@ public class MainMenu extends State {
         settingsButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                GameStateManager.getInstance().push(new SettingsMenu());
+                GameStateManager.getInstance().push(new SettingsMenu(googleGameServices));
                 return true;
             }
         });
@@ -59,15 +59,14 @@ public class MainMenu extends State {
         });
 
         // Add buttons to table
-        table.add(settingsButton).expandX().top().right().padBottom(120).padRight(stage.getWidth()/50).padTop(stage.getHeight()/30);
+        table.add(settingsButton).expandX().top().right().padBottom(-settingsButton.getHeight()).padRight(stage.getWidth()/50).padTop(stage.getHeight()/30);
         table.row();
-        table.add(raceButton).padBottom(120).center();
+        table.add(raceButton).padTop(stage.getHeight()/5).center();
         table.row();
-        table.add(gladiatorButton).center();
+        table.add(gladiatorButton).padTop(stage.getHeight()/6).center();
 
 
         stage.addActor(table);
-        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -87,5 +86,10 @@ public class MainMenu extends State {
     public void dispose() {
         background.dispose();
         stage.dispose();
+    }
+
+    @Override
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(stage);
     }
 }
