@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.googlePlayGameServices.GoogleGameServices;
 import car.superfun.game.states.NewState;
 import car.superfun.game.actors.ButtonActor;
 import car.superfun.game.gameModes.gladiatorMode.GladiatorMode;
@@ -25,6 +25,12 @@ public class GameSettings extends State{
     private Texture background;
     private Stage stage;
 
+    /**
+     * Constructor
+     * Creates a menu where the user can choose how many players he wants to play with.
+     * @param newState
+     * @param googleGameServices
+     */
     public GameSettings(final NewState newState, final GoogleGameServices googleGameServices){
         this.stage = new Stage(new ScreenViewport());
 
@@ -105,15 +111,18 @@ public class GameSettings extends State{
         stage.addActor(table);
     }
 
-    public void handleInput(){
-
-    }
-
+    /**
+     * update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
-        handleInput();
     }
 
+    /**
+     * render
+     * @param sb
+     */
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
@@ -123,6 +132,9 @@ public class GameSettings extends State{
         stage.draw();
     }
 
+    /**
+     * dispose
+     */
     @Override
     public void dispose() {
         background.dispose();

@@ -1,4 +1,4 @@
-package car.superfun.game.car;
+package car.superfun.game.cars;
 
 import android.support.annotation.NonNull;
 
@@ -12,12 +12,21 @@ public class OpponentCarController implements CarController {
     private Participant participant;
     private OpponentCar controlledCar;
 
+
+    /**
+     * Constructor
+     * @param participant
+     */
     public OpponentCarController(Participant participant) {
         forward = 0;
         rotation = 0;
         this.participant = participant;
     }
 
+    /**
+     * Set the car.
+     * @param controlledCar
+     */
     public void setControlledCar(OpponentCar controlledCar) {
         this.controlledCar = controlledCar;
     }
@@ -30,11 +39,25 @@ public class OpponentCarController implements CarController {
         this.rotation = rotation;
     }
 
+
+    /**
+     * Set the speed and angle
+     * @param forward
+     * @param rotation
+     */
     public void setForwardAndRotation(float forward, float rotation) {
         this.forward = forward;
         this.rotation = rotation;
     }
 
+
+    /**
+     * Set the car movement details.
+     * @param position
+     * @param angle
+     * @param velocity
+     * @param timeDiff
+     */
     public void setCarMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff) {
         controlledCar.setMovement(position, angle, velocity, timeDiff);
     }

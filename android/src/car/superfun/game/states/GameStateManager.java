@@ -5,9 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Stack;
 
-import car.superfun.game.menus.MainMenu;
-import car.superfun.game.gameModes.GameMode;
-
 
 /**
  * This class handles the different states the game can be in, that is menu, game, game over etc...
@@ -20,7 +17,7 @@ public class GameStateManager {
 
     //Stack containing the states in use
     private Stack<State> states = new Stack<State>();
-    ;
+
 
     //Changed the constructor to private so that the only way to init the class is from the class
     //itself
@@ -68,8 +65,7 @@ public class GameStateManager {
     }
 
     /**
-     * updates the states
-     *
+     * updates the top state
      * @param dt
      */
     public void update(float dt) {
@@ -98,26 +94,15 @@ public class GameStateManager {
         }
     }
 
+    /**
+     * Retunes the state at the top of the stack
+     * @return
+     */
     public State peek() {
-        return states.peek();
-    }
-
-    public boolean isInGameMode() {
         if (!states.empty()) {
-            return states.peek() instanceof GameMode;
+            return states.peek();
         }
-        return false;
+        return null;
     }
 
-    public boolean isEmpty() {
-        return states.isEmpty();
-    }
-
-    public boolean isOnlyOneLeft() {
-        return (states.size() == 1);
-    }
-
-    public boolean isInMainMenu() {
-        return (states.peek() instanceof MainMenu);
-    }
 }

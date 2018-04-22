@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import car.superfun.game.GlobalVariables;
 import car.superfun.game.actors.ButtonActor;
-import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.googlePlayGameServices.GoogleGameServices;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -25,6 +25,10 @@ public class SettingsMenu extends State {
     private Stage stage;
     private Slider musicSlider, soundSlider;
 
+    /**
+     * Constructor
+     * This menu allows users to change music and sound effects volume
+     */
     public SettingsMenu(final GoogleGameServices googleGameServices){
         background = new Texture("background.png");
         this.stage = new Stage(new ScreenViewport());
@@ -41,6 +45,7 @@ public class SettingsMenu extends State {
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                // Update new volumes
                 GlobalVariables.MUSIC_VOLUME = musicSlider.getValue();
                 GlobalVariables.SOUND_VOLUME = soundSlider.getValue();
                 GameStateManager.getInstance().pop();
@@ -83,10 +88,18 @@ public class SettingsMenu extends State {
         Gdx.input.setInputProcessor(stage);
     }
 
+    /**
+     * update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
     }
 
+    /**
+     * render
+     * @param sb
+     */
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
@@ -96,6 +109,9 @@ public class SettingsMenu extends State {
         stage.draw();
     }
 
+    /**
+     * dispose
+     */
     @Override
     public void dispose() {
         background.dispose();

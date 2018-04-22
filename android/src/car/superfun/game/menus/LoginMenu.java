@@ -7,10 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
+import car.superfun.game.googlePlayGameServices.GoogleGameServices;
 import car.superfun.game.actors.ButtonActor;
-import car.superfun.game.googleGamePlayServices.GoogleGameServices;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -18,6 +17,11 @@ public class LoginMenu extends State{
     private Stage stage;
     private Texture background;
     private final GoogleGameServices googleGameServices;
+
+    /**
+     * Constructor
+     * @param googleGameServices
+     */
 
     public LoginMenu(final GoogleGameServices googleGameServices){
         this.googleGameServices = googleGameServices;

@@ -7,8 +7,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import java.util.Arrays;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.car.LocalCarController;
-import car.superfun.game.car.LocalCar;
+import car.superfun.game.cars.LocalCarController;
+import car.superfun.game.cars.LocalCar;
 
 public class LocalRaceCar extends LocalCar {
     boolean[] passedCheckpoints;
@@ -35,7 +35,6 @@ public class LocalRaceCar extends LocalCar {
     public void passGoal() {
         if (allCheckpointsPassed()) {
             completedRounds++;
-            Gdx.app.log("GOAL PASSED!", "" + completedRounds + " rounds passed");
             Arrays.fill(passedCheckpoints, Boolean.FALSE);
             if (completedRounds == 3) {
                 raceMode.endGame();
