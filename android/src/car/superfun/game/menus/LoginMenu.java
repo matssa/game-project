@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.googlePlayGameServices.GoogleGameServices;
 import car.superfun.game.states.GameStateManager;
 import car.superfun.game.states.State;
 
@@ -15,7 +15,10 @@ public class LoginMenu extends State{
     private Sprite loginButton;
     private GoogleGameServices googleGameServices;
 
-
+    /**
+     * Constructor
+     * @param googleGameServices
+     */
     public LoginMenu(GoogleGameServices googleGameServices){
         this.googleGameServices = googleGameServices;
         background = new Texture("background.png");

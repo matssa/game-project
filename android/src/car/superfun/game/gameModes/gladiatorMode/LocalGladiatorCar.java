@@ -1,15 +1,13 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
-import android.util.Log;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.car.LocalCarController;
-import car.superfun.game.car.LocalCar;
+import car.superfun.game.cars.LocalCarController;
+import car.superfun.game.cars.LocalCar;
 
 import static java.lang.Math.abs;
 

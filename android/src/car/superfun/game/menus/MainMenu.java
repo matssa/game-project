@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.googlePlayGameServices.GoogleGameServices;
 import car.superfun.game.states.NewState;
 import car.superfun.game.actors.ButtonActor;
 import car.superfun.game.states.GameStateManager;
@@ -21,6 +21,11 @@ public class MainMenu extends State {
   
     private Texture background;
 
+    /**
+     * Constructor
+     * Creates a main menu where the user can choose a game mode or go to settings
+     * @param googleGameServices
+     */
     public MainMenu(final GoogleGameServices googleGameServices) {
         background = new Texture("background.png");
 
@@ -70,10 +75,18 @@ public class MainMenu extends State {
         Gdx.input.setInputProcessor(stage);
     }
 
+    /**
+     * update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
     }
 
+    /**
+     * render
+     * @param sb
+     */
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
@@ -83,6 +96,9 @@ public class MainMenu extends State {
         stage.draw();
     }
 
+    /**
+     * Disposes background and stage
+     */
     @Override
     public void dispose() {
         background.dispose();
