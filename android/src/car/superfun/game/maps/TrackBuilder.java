@@ -29,7 +29,7 @@ import car.superfun.game.maps.UserDataCreater;
 public class TrackBuilder {
 
     /**
-     * TODO: What points? what is the point? Spawnpoints? potentially bad naming.
+     * Used to get starting points on the map for the cars.
      * @param map
      * @param layerName
      * @return
