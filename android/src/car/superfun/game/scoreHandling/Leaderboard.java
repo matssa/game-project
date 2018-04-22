@@ -36,8 +36,7 @@ public class Leaderboard extends State implements HandlesScore {
     private boolean doUpdate = false;
 
     /**
-     * Constructor
-     * Creates a leaderboard to display the players position and score/time
+     * Instantiates the leaderboard without filling it with content.
      * @param formatter
      * @param isPositive
      */
@@ -70,13 +69,8 @@ public class Leaderboard extends State implements HandlesScore {
         Gdx.input.setInputProcessor(stage);
     }
 
-    /*
-    Todo:
-    What is this constructor for? Is this called everytime we want to update the table?
-     */
-
     /**
-     * Another constructor?
+     * Calls the first constructor to instantiate the leaderboard, then fills it with the supplied scores.
      * @param formatter
      * @param isPositive
      * @param scores
