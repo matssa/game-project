@@ -172,11 +172,6 @@ public class GladiatorMode extends GameMode {
         gladiatorSong.dispose();
     }
 
-    @Override
-    public void setInputProcessor() {
-        Gdx.input.setInputProcessor(null);
-    }
-
     public void setScore(int score) {
         this.score = score;
     }

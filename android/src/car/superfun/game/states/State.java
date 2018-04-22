@@ -1,5 +1,6 @@
 package car.superfun.game.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class State {
@@ -17,5 +18,7 @@ public abstract class State {
     public abstract void dispose();
 
     //Set input processor
-    public abstract void setInputProcessor();
+    public void setInputProcessor(){
+        Gdx.input.setInputProcessor(null);
+    };
 }
