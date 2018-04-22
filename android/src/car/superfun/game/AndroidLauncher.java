@@ -29,9 +29,6 @@ import car.superfun.game.states.NewState;
 
 public class AndroidLauncher extends AndroidApplication {
 
-    // TAG is used when logging to screen
-    final static String TAG = "CarSuperFun";
-
     // Define variables used for googlePlayGameServices
     public SetUpGame setUpGame;
     public SignIn signIn;
@@ -90,7 +87,6 @@ public class AndroidLauncher extends AndroidApplication {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
             // If the intent was a success
             if (result.isSuccess()) {
-                Log.d(TAG, "Login success");
                 // As soon as the rendering is resumed,  send the user to the main menu
                 carSuperFun.createNewState(NewState.MAIN_MENU);
                 // if something went wrong with the login, print there was an issue..
