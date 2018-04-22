@@ -72,7 +72,6 @@ public class CarSuperFun extends ApplicationAdapter {
                 case RACE_MODE:
                     Log.d("CarSuperFun", "Pushed RaceMode");
                     GameStateManager.getInstance().set(new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
-                    Gdx.input.setInputProcessor(null);
                     break;
                 case MAIN_MENU:
                     Log.d("CarSuperFun", "Pushed MainMenu");
@@ -85,7 +84,6 @@ public class CarSuperFun extends ApplicationAdapter {
                 case GLADIATOR_MODE:
                     Log.d("CarSuperFun", "Pushed GladiatorMode");
                     GameStateManager.getInstance().set(new GladiatorMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
-                    Gdx.input.setInputProcessor(null);
                     break;
             }
         }
@@ -127,7 +125,6 @@ public class CarSuperFun extends ApplicationAdapter {
                     googleGameServices.leaveRoom();
                 }
                 gsm.pop();
-                Gdx.input.setInputProcessor(MainMenu.stage);
             }
         }
     }

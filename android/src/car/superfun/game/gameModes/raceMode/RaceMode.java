@@ -136,6 +136,11 @@ public class RaceMode extends GameMode {
     }
 
     @Override
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(null);
+    }
+
+    @Override
     public void endGame() {
         int timeSinceStart = (int) ((TrueTime.now().getTime() - googleGameServices.getStartTime()) % 2147483648L);
         if (singlePlayer) {

@@ -46,7 +46,6 @@ public class Leaderboard extends State implements HandlesScore {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 GameStateManager.getInstance().pop();
-                Gdx.input.setInputProcessor(MainMenu.stage);
                 return true;
             }
         });
@@ -61,7 +60,6 @@ public class Leaderboard extends State implements HandlesScore {
         skin.getFont("default-font").getData().setScale(4f,4f);
 
         stage.addActor(table);
-        Gdx.input.setInputProcessor(stage);
     }
 
     public Leaderboard(ScoreFormatter formatter, boolean isPositive, Map<String, Integer> scores) {
@@ -143,6 +141,11 @@ public class Leaderboard extends State implements HandlesScore {
         stage.dispose();
         background.dispose();
         playerList.clear();
+    }
+
+    @Override
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(stage);
     }
 
     private class Player {

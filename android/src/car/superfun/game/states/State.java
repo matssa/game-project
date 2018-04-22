@@ -15,4 +15,7 @@ public abstract class State {
 
     //dispose
     public abstract void dispose();
+
+    //Set input processor
+    public abstract void setInputProcessor();
 }
