@@ -29,9 +29,6 @@ import car.superfun.game.states.State;
 
 public class Communicator {
 
-    // Tag used when printing to console
-    final static String TAG = "Communicator";
-
     private SetUpGame setUpGame;
 
     public Map<String, OpponentCarController> participantCarControllers = new HashMap<>();
@@ -114,9 +111,7 @@ public class Communicator {
                     break;
                 }
                 default: {
-                    Log.d(TAG, "unknown byte buffer content, length: " + buffer.array().length);
                     for (byte b : buffer.array()) {
-                        Log.e(TAG, "byte: " + b);
                     }
                 }
             }
@@ -193,16 +188,11 @@ public class Communicator {
                     setUpGame.roomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
                         @Override
                         public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
-                            Log.d(TAG, "RealTime message sent");
-                            Log.d(TAG, "  statusCode: " + statusCode);
-                            Log.d(TAG, "  tokenId: " + tokenId);
-                            Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
                         }
                     })
                     .addOnSuccessListener(new OnSuccessListener<Integer>() {
                         @Override
                         public void onSuccess(Integer tokenId) {
-                            Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
                         }
                     });
         }
@@ -221,7 +211,6 @@ public class Communicator {
         if (currentState instanceof HandlesScore) {
             ((HandlesScore) currentState).handleScore(senderName, score);
         } else {
-            Log.e("No score handler", "A final score message has been received, but the current state could not handle it");
         }
     }
 
@@ -233,13 +222,11 @@ public class Communicator {
     private void handleStateMessage(ByteBuffer buffer, String senderId) {
         OpponentCarController opponentCarController = (OpponentCarController) participantCarControllers.get(senderId);
         if (!opponentCarController.hasControlledCar()) {
-            Log.e(TAG, "opponentCarController missing car:  " + senderId);
             return;
         }
 
         int packageTimestamp = buffer.getInt(2);
         if (packageTimestamp < lastTimestamps.get(senderId)) {
-            Log.d("package loss", "out of order package arrived. timestamp: " + packageTimestamp);
             return; // Dropping outdated message
         }
         lastTimestamps.put(senderId, new Integer(packageTimestamp));
@@ -288,7 +275,6 @@ public class Communicator {
             this.startTime = newStartTime;
         }
         if (readyParticipants == setUpGame.participants.size()) {
-            Log.d(TAG, "all participants have joined starting game in " + (startTime - TrueTime.now().getTime()) + " ms");
             startGame();
         }
     }
@@ -300,7 +286,6 @@ public class Communicator {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Gdx.app.log("GAME STARTED", "GO GO GO!!!");
                 gameStarted = true;
             }
         }, startTime - TrueTime.now().getTime());
