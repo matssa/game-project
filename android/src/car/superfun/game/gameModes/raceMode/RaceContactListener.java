@@ -36,7 +36,6 @@ public class RaceContactListener implements ContactListener {
 
         if ((bothCategoryBits & 0b10000) == 0b10000) {
             LocalRaceCar localRaceCar = (fixtureA.getUserData() instanceof LocalRaceCar) ? (LocalRaceCar) fixtureA.getUserData() : (LocalRaceCar) fixtureB.getUserData();
-            Gdx.app.log("hit test tile", "yay");
             localRaceCar.getBody().applyForceToCenter(localRaceCar.getDirectionVector().scl(100), true);
         }
     }

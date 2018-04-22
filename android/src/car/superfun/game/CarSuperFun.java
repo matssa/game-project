@@ -84,20 +84,16 @@ public class CarSuperFun extends ApplicationAdapter {
         for (NewState state : statesToBeCreated) {
             switch (state) {
                 case RACE_MODE:
-                    Log.d("CarSuperFun", "Pushed RaceMode");
                     GameStateManager.getInstance().set(new RaceMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
                     Gdx.input.setInputProcessor(null);
                     break;
                 case MAIN_MENU:
-                    Log.d("CarSuperFun", "Pushed MainMenu");
                     GameStateManager.getInstance().push(new MainMenu(googleGameServices));
                     break;
                 case LOGIN_MENU:
-                    Log.d("CarSuperFun", "Pushed LoginMenu");
                     GameStateManager.getInstance().push(new LoginMenu(googleGameServices));
                     break;
                 case GLADIATOR_MODE:
-                    Log.d("CarSuperFun", "Pushed GladiatorMode");
                     GameStateManager.getInstance().set(new GladiatorMode(googleGameServices, GlobalVariables.SINGLE_PLAYER));
                     Gdx.input.setInputProcessor(null);
                     break;

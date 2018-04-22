@@ -92,7 +92,6 @@ public class MapLoader extends TmxMapLoader {
                             if (mapObject instanceof PolylineMapObject) {
                                 shape = getPolyline((PolylineMapObject)mapObject, height, tileWidth, tileHeight, x, y, rotation);
                             } else {
-                                Gdx.app.log("MapLoader", "encountered non-polyLine tileObject");
                                 continue;
                             }
 
