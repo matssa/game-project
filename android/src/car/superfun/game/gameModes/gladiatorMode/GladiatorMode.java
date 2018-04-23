@@ -10,15 +10,17 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.googlePlayGameServices.GoogleGameServices;
 import car.superfun.game.maps.TrackBuilder;
-import car.superfun.game.car.LocalCarController;
-import car.superfun.game.car.OpponentCar;
-import car.superfun.game.car.OpponentCarController;
+import car.superfun.game.cars.LocalCarController;
+import car.superfun.game.cars.OpponentCar;
+import car.superfun.game.cars.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
 import car.superfun.game.scoreHandling.Leaderboard;
 import car.superfun.game.scoreHandling.ScoreFormatter;
 import car.superfun.game.states.GameStateManager;
+
+
 
 public class GladiatorMode extends GameMode {
 
@@ -47,28 +49,39 @@ public class GladiatorMode extends GameMode {
     private LocalGladiatorCar localCar;
 
     private int score = 5;
+    /*
+    Boost is not yet integrated.
     private float boost = 10;
+    */
     private boolean endGameNextUpdate = false;
 
+    /**
+     * Constructor
+     * @param googleGameServices
+     * @param isSinglePlayer
+     */
     public GladiatorMode(GoogleGameServices googleGameServices, boolean isSinglePlayer) {
         super(MAP_PATH, googleGameServices, isSinglePlayer);
 
         // Audio
-        gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
         dustWallCrash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash_in_dirt_wall.ogg"));
-
+        gladiatorSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/gladiatorMode.ogg"));
         gladiatorSong.setLooping(true);
         gladiatorSong.setVolume(GlobalVariables.MUSIC_VOLUME);
         gladiatorSong.play();
 
         world.setContactListener(new GladiatorContactListener());
 
+        // Build the map with collision lines and spawn points.
         setUpMap();
 
         // place all participants cars in the map
         setStartPositions(setStartPositionsCallback);
     }
 
+    /**
+     * Set the car on its place in the map and gives it a unique color.
+     */
     private SetStartPositionCallback setStartPositionsCallback = new SetStartPositionCallback() {
         // Used to set different color to different players cars
         private int texturePathIndex = 0;
@@ -93,7 +106,9 @@ public class GladiatorMode extends GameMode {
     };
 
 
-
+    /**
+     * Build the maps fixtures
+     */
     protected void setUpMap() {
         super.setUpMap();
 
@@ -117,11 +132,17 @@ public class GladiatorMode extends GameMode {
     }
 
 
+    /**
+     * Update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
         if (!googleGameServices.gameStarted() && !singlePlayer) {
             return;
         }
+
+        // Updates the opponents.
         for (OpponentCar car : opponentCars) {
             car.update(dt);
         }
@@ -129,10 +150,12 @@ public class GladiatorMode extends GameMode {
 
         world.step(dt, 2, 1); // Using deltaTime
 
+        // Update the camera
         camera.position.set(localCar.getSpritePosition(), 0);
         camera.position.set(localCar.getSpritePosition().add(localCar.getVelocity().scl(10f)), 0);
         camera.up.set(localCar.getDirectionVector(), 0);
 
+        // Update local car and broadcast if not singleplayer.
         localCarController.update();
         if (!singlePlayer) {
             googleGameServices.broadcastState(
@@ -142,12 +165,18 @@ public class GladiatorMode extends GameMode {
                     localCarController.getForward(),
                     localCarController.getRotation());
         }
+
+        // Check if game is finished.
         if (endGameNextUpdate) {
             endGame();
         }
     }
 
-    // Renders objects that had a static position in the gameworld. Is called by superclass
+    /**
+     * Renders objects that had a static position in the gameworld. Is called by superclass
+     * @param sb
+     * @param camera
+     */
     @Override
     public void renderWithCamera(SpriteBatch sb, OrthographicCamera camera) {
         tiledMapRenderer.setView(camera);
@@ -160,12 +189,18 @@ public class GladiatorMode extends GameMode {
         sb.end();
     }
 
-    // Renders objects that have a static position on the screen. Is called by superclass
+    /**
+     * Renders objects that have a static position on the screen. Is called by superclass
+     * @param sb
+     */
     @Override
     public void renderHud(SpriteBatch sb) {
         localCarController.render(sb);
     }
 
+    /**
+     * Disposes the music when game mode is over.
+     */
     @Override
     public void dispose() {
         gladiatorSong.stop();
@@ -176,10 +211,12 @@ public class GladiatorMode extends GameMode {
         this.score = score;
     }
 
+    /**
+     * End the game
+     */
     @Override
     public void endGame() {
         if (singlePlayer) {
-            Gdx.app.log("You won!!!", ".. but you also died.. shit happens!");
             return;
         }
         googleGameServices.broadcastScore(score);
@@ -189,13 +226,20 @@ public class GladiatorMode extends GameMode {
         this.dispose();
     }
 
+    /**
+     * Handles the score
+     * @param senderName
+     * @param score
+     */
     @Override
     public void handleScore(String senderName, int score) {
         super.handleScore(senderName, score);
         endGameNextUpdate = true;
     }
 
-    // A callback for formatting score. Makes sure to format the GladiatorMode score as lives left
+    /**
+     *  A callback for formatting score. Makes sure to format the GladiatorMode score as lives left
+     */
     private ScoreFormatter scoreFormatter = new ScoreFormatter() {
         @Override
         public String formatScore(int livesLeft) {

@@ -18,12 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.googlePlayGameServices.GoogleGameServices;
 import car.superfun.game.maps.MapLoader;
 import car.superfun.game.maps.TrackBuilder;
-import car.superfun.game.car.CarController;
-import car.superfun.game.car.LocalCarController;
-import car.superfun.game.car.OpponentCarController;
+import car.superfun.game.cars.CarController;
+import car.superfun.game.cars.LocalCarController;
+import car.superfun.game.cars.OpponentCarController;
 import car.superfun.game.scoreHandling.HandlesScore;
 import car.superfun.game.states.State;
 
@@ -38,6 +38,7 @@ public abstract class GameMode extends State implements HandlesScore {
     protected LocalCarController localCarController;
 
     protected boolean singlePlayer;
+
     protected World world;
 
     protected TiledMap tiledMap;
@@ -47,6 +48,12 @@ public abstract class GameMode extends State implements HandlesScore {
 
     protected Map<String, Integer> scoreTable = new HashMap<>();
 
+    /**
+     * Constructor
+     * @param mapPath
+     * @param googleGameServices
+     * @param isSinglePlayer
+     */
     protected GameMode(String mapPath, GoogleGameServices googleGameServices, boolean isSinglePlayer) {
         this.googleGameServices = googleGameServices;
         this.singlePlayer = isSinglePlayer;
@@ -56,12 +63,13 @@ public abstract class GameMode extends State implements HandlesScore {
         camera.zoom = camera.zoom * 1.4f * (3 / Gdx.graphics.getDensity());
         camera.update();
 
-        // Using this specific SpriteBatch constructor is supposedly forcing VBO mode for mesh rendering,
-        // which seems to have a huge impact on performance.
+        /* Using this specific SpriteBatch constructor is supposedly forcing VBO mode for mesh rendering,
+           which seems to have a huge impact on performance. */
         ShaderProgram shader = SpriteBatch.createDefaultShader();
         camBatch = new SpriteBatch(1024, shader);
 
-        world = new World(new Vector2(0, 0), true);
+        world = new World(new Vector2(0, 0), true);            Gdx.app.log("You won!!!", ".. but you also died.. shit happens!");
+
         tiledMap = new MapLoader(world).load(mapPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, camBatch);
 
@@ -76,6 +84,10 @@ public abstract class GameMode extends State implements HandlesScore {
         googleGameServices.readyToStart(isSinglePlayer);
     }
 
+    /**
+     * Sets the cars start positions
+     * @param callback
+     */
     protected void setStartPositions(SetStartPositionCallback callback) {
         ArrayList<CarController> carControllers = new ArrayList<>();
         for (CarController carController : googleGameServices.getOpponentCarControllers()) {
@@ -94,6 +106,10 @@ public abstract class GameMode extends State implements HandlesScore {
         }
     }
 
+    /**
+     * Initiates the start positions
+     * @param layer
+     */
     protected void initiateStartPositions(String layer) {
         startPositions = TrackBuilder.getPoints(tiledMap, layer);
     }
@@ -113,9 +129,7 @@ public abstract class GameMode extends State implements HandlesScore {
         FixtureDef wallDef = new FixtureDef();
         wallDef.filter.categoryBits = GlobalVariables.WALL_ENTITY;
         wallDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
-
         TrackBuilder.buildLayer(tiledMap, world, "walls", wallDef);
-
     }
 
     @Override

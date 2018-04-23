@@ -1,12 +1,13 @@
 package car.superfun.game.gameModes.gladiatorMode;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.car.LocalCarController;
-import car.superfun.game.car.LocalCar;
+import car.superfun.game.cars.LocalCarController;
+import car.superfun.game.cars.LocalCar;
 
 import static java.lang.Math.abs;
 
@@ -26,6 +27,7 @@ public class LocalGladiatorCar extends LocalCar {
     }
 
 
+    // Is called from GladiatorContactListener.
     public void hitDeathWalls() {
         score -= 1;
         dustWallCrash.play(GlobalVariables.SOUND_VOLUME);
@@ -36,7 +38,7 @@ public class LocalGladiatorCar extends LocalCar {
     }
 
 
-    public void hitByCar() {
+    public void hitOpponentCar() {
         // TODO: Let the cars crash and bounce.
     }
 

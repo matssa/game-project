@@ -1,4 +1,4 @@
-package car.superfun.game.car;
+package car.superfun.game.cars;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -18,6 +18,13 @@ public class OpponentCar extends Car {
     private boolean doUpdate;
     private boolean render;
 
+    /**
+     * Constructor
+     * @param position
+     * @param opponentCarController
+     * @param world
+     * @param texturePath
+     */
     public OpponentCar(Vector2 position, OpponentCarController opponentCarController, World world, String texturePath) {
         super(position,
                 new Sprite(new Texture(texturePath)),
@@ -29,6 +36,11 @@ public class OpponentCar extends Car {
         render = true;
     }
 
+
+    /**
+     * Update if render is true.
+     * @param dt
+     */
     public void update(float dt){
         if (!render) {
             return;
@@ -40,6 +52,14 @@ public class OpponentCar extends Car {
         super.update(dt);
     }
 
+
+    /**
+     * Update the states
+     * @param position
+     * @param angle
+     * @param velocity
+     * @param timeDiff
+     */
     private void updateState(Vector2 position, float angle, Vector2 velocity, int timeDiff) {
         Vector2 travelledDistance = velocity.cpy().scl((0.5f * carController.getForward() + 1f) * 5 * (float) timeDiff / 10000f);
         Vector2 updatedPosition = position.cpy().add(travelledDistance);
@@ -64,6 +84,13 @@ public class OpponentCar extends Car {
         body.setLinearVelocity(velocity);
     }
 
+    /**
+     * Set recieved states.
+     * @param position
+     * @param angle
+     * @param velocity
+     * @param timeDiff
+     */
     public void setMovement(Vector2 position, float angle, Vector2 velocity, int timeDiff) {
         receivedPosition = position;
         receivedVelocity = velocity;

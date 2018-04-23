@@ -16,16 +16,21 @@ import car.superfun.game.states.State;
 public class LoadingScreen extends State {
     private Stage stage;
 
+    /**
+     * Constructor
+     * Creates a loading screen
+     */
     public LoadingScreen(){
         this.stage = new Stage(new ScreenViewport());
 
-        // Creates a delayed button (see Actors/DelayedButtonActor) to prevent users
-        // from getting stuck in the loading screen
+        /*
+         * Creates a delayed button (see Actors/DelayedButtonActor) to prevent users
+         * from getting stuck in the loading screen
+         */
         DelayedButtonActor backButton = new DelayedButtonActor("menu-buttons/backWhite.png", 5f);
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.input.setInputProcessor(MainMenu.stage);
                 GameStateManager.getInstance().pop();
                 return true;
             }
@@ -38,18 +43,20 @@ public class LoadingScreen extends State {
 
         stage.addActor(backButton);
         stage.addActor(loadingActor);
-
-        Gdx.input.setInputProcessor(stage);
     }
 
-    public void handleInput() {
-    }
-
+    /**
+     * update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
-        handleInput();
     }
 
+    /**
+     * render
+     * @param sb
+     */
     @Override
     public void render(SpriteBatch sb) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -57,8 +64,16 @@ public class LoadingScreen extends State {
         stage.draw();
     }
 
+    /**
+     * dispose
+     */
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    @Override
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(stage);
     }
 }

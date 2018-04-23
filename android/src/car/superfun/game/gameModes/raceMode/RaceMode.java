@@ -1,6 +1,7 @@
 package car.superfun.game.gameModes.raceMode;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -9,12 +10,12 @@ import com.badlogic.gdx.utils.Array;
 import com.instacart.library.truetime.TrueTime;
 
 import car.superfun.game.GlobalVariables;
-import car.superfun.game.googleGamePlayServices.GoogleGameServices;
+import car.superfun.game.googlePlayGameServices.GoogleGameServices;
 import car.superfun.game.maps.TrackBuilder;
 import car.superfun.game.maps.UserDataCreater;
-import car.superfun.game.car.LocalCarController;
-import car.superfun.game.car.OpponentCar;
-import car.superfun.game.car.OpponentCarController;
+import car.superfun.game.cars.LocalCarController;
+import car.superfun.game.cars.OpponentCar;
+import car.superfun.game.cars.OpponentCarController;
 import car.superfun.game.gameModes.GameMode;
 import car.superfun.game.scoreHandling.Leaderboard;
 import car.superfun.game.scoreHandling.ScoreFormatter;
@@ -27,6 +28,8 @@ public class RaceMode extends GameMode {
     public static final int TEST_ENTITY = 0b1 << 10;
 
     private final static String MAP_PATH = "tiled_maps/decentMap.tmx";
+
+    private final Music raceSong;
 
     // Car textures
     private final static String[] TEXTURE_PATHS = new String[]{
@@ -43,8 +46,19 @@ public class RaceMode extends GameMode {
 
     private int amountOfCheckpoints;
 
+    /**
+     * @param googleGameServices
+     * @param singlePlayer
+     */
     public RaceMode(GoogleGameServices googleGameServices, boolean singlePlayer) {
         super(MAP_PATH, googleGameServices, singlePlayer);
+
+        // Audio
+        raceSong = Gdx.audio.newMusic(Gdx.files.internal("sounds/raceMode.ogg"));
+
+        raceSong.setLooping(true);
+        raceSong.setVolume(GlobalVariables.MUSIC_VOLUME);
+        raceSong.play();
 
         world.setContactListener(new RaceContactListener());
 
@@ -86,6 +100,10 @@ public class RaceMode extends GameMode {
         amountOfCheckpoints = TrackBuilder.buildLayerWithUserData(tiledMap, world, "checkpoints", checkpointDef, new checkpointUserData()).size;
     }
 
+    /**
+     * Updates all the dynamic elements in the game, always propagating deltatime.
+     * @param dt
+     */
     @Override
     public void update(float dt) {
         camera.position.set(localRaceCar.getSpritePosition().add(localRaceCar.getVelocity().scl(10f)), 0);
@@ -112,7 +130,12 @@ public class RaceMode extends GameMode {
         }
     }
 
-    // Renders objects that had a static position in the gameworld. Is called by superclass
+    /**
+     * Renders the objects relative to the camera. I.e. all objects in the gameworld.
+     * This method is called by the superclass, GameMode.
+     * @param sb
+     * @param camera
+     */
     @Override
     public void renderWithCamera(SpriteBatch sb, OrthographicCamera camera) {
         tiledMapRenderer.setView(camera);
@@ -125,21 +148,33 @@ public class RaceMode extends GameMode {
         sb.end();
     }
 
-    // Renders objects that have a static position on the screen. Is called by superclass
+    /**
+     * Renders the objects that have a static position on the screen. I.e. the HUD.
+     * This method is called by the superclass, GameMode.
+     * @param sb
+     */
     @Override
     public void renderHud(SpriteBatch sb) {
         localCarController.render(sb);
     }
 
+    /**
+     * Dispose any objects that must be disposed manually.
+     */
     @Override
     public void dispose() {
+        raceSong.stop();
+        raceSong.dispose();
     }
 
+    /**
+     * End the game and move to the Leaderboard state to display score.
+     * This method is called by LocalRaceCar when the map is traversed for the last time.
+     */
     @Override
     public void endGame() {
         int timeSinceStart = (int) ((TrueTime.now().getTime() - googleGameServices.getStartTime()) % 2147483648L);
         if (singlePlayer) {
-            Gdx.app.log("You won!", "" + timeSinceStart + " milliseconds used");
             return;
         }
         googleGameServices.broadcastScore(timeSinceStart);

@@ -1,4 +1,4 @@
-package car.superfun.game.googleGamePlayServices;
+package car.superfun.game.googlePlayGameServices;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -31,35 +31,38 @@ import java.util.List;
 import car.superfun.game.AndroidLauncher;
 import car.superfun.game.states.NewState;
 import car.superfun.game.R;
-import car.superfun.game.car.OpponentCarController;
+import car.superfun.game.cars.OpponentCarController;
 
 
 public class SetUpGame {
 
     private int lastTimestamp;
 
+    // Used as the tag parameter when loging to console
     private final static String TAG = "SetUpGame";
 
+    // refrence to the androidLauncher class
     private AndroidLauncher androidLauncher;
 
+    // The communicator is added to handle the messages set between the devices
     private Communicator communicator;
 
+    // the roomconfig for the active game
     private RoomConfig joinedRoomConfig = null;
 
-    private String playerId;
-
+    // The roomID of the active room, null otherwise
     public String roomId;
 
+    // This players participant object
     private Participant localParticipant;
 
-
+    // Used to identify the intent made when returning from GPGS UI
     public final static int RC_WAITING_ROOM = 10002;
 
-    // The participants in the currently active game
+    // ArrayList containg the participants
     public ArrayList<Participant> participants = null;
 
-
-    // My participant ID in the currently active game
+    // This players participant ID
     public String myId = null;
 
 
@@ -76,10 +79,18 @@ public class SetUpGame {
         return communicator;
     }
 
+
+    /**
+     * Creates a new game based on the amount of players.
+     * As soon as the game is ready it will automatically start
+     * @param newState
+     * @param numberOfPlayers
+     */
     public void startQuickGame(NewState newState, int numberOfPlayers) {
         androidLauncher.setNewState(newState);
-        // auto-match criteria to invite one random automatch opponent.
-        // You can also specify more opponents (up to 3).
+
+        // Sets up the autoMatchCirteria with a given amout of players, min 1 max 3 opponents.
+        // In addition the third parameter defences a exclusive bitmask that i currently not in use
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(numberOfPlayers, numberOfPlayers, 0);
 
         // build the room config:
@@ -104,8 +115,6 @@ public class SetUpGame {
                 Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
                 return;
             }
-
-            // save room ID so we can leave cleanly before the game starts.
             roomId = room.getRoomId();
 
             // show the waiting room UI
@@ -120,6 +129,7 @@ public class SetUpGame {
                 Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
                 return;
             }
+            // updates the room
             updateRoom(room);
         }
 
@@ -140,12 +150,17 @@ public class SetUpGame {
         }
     };
 
+    /**
+     * Callback used every time the rooms satus is updated
+     */
     private RoomStatusUpdateCallback roomStatusCallbackHandler = new RoomStatusUpdateCallback() {
         @Override
         public void onConnectedToRoom(Room room) {
             Log.d(TAG, "onConnectedToRoom.");
 
+            // clear the old participants
             participants.clear();
+
             //get participants and my ID:
             participants = room.getParticipants();
             myId = room.getParticipantId(playerId);
@@ -218,6 +233,9 @@ public class SetUpGame {
         }
     };
 
+    /**
+     * Used to leave the room, when the player leaves or finishes the game
+     */
     public void leaveRoom() {
         if (roomId != null) {
             realTimeMultiplayerClient.leave(joinedRoomConfig, roomId)
@@ -232,6 +250,11 @@ public class SetUpGame {
         }
     }
 
+
+    /**
+     * Displayes the GPGS waiting lobby
+     * @param room
+     */
     void showWaitingRoom(Room room) {
         final int MIN_PLAYERS = Integer.MAX_VALUE;
         realTimeMultiplayerClient.getWaitingRoomIntent(room, MIN_PLAYERS)
@@ -247,6 +270,12 @@ public class SetUpGame {
 
     GoogleSignInAccount signedInAccount = null;
 
+
+    private String playerId;
+    /**
+     * Called when the user is connected to GPGS
+     * @param googleSignInAccount
+     */
     public void onConnected(GoogleSignInAccount googleSignInAccount) {
         Log.d(TAG, "onConnected(): connected to Google APIs");
         if (signedInAccount != googleSignInAccount) {
@@ -270,6 +299,11 @@ public class SetUpGame {
 
     }
 
+    /**
+     * prints a message if anything goes wrong
+     * @param string
+     * @return
+     */
     private OnFailureListener createFailureListener(final String string) {
         return new OnFailureListener() {
             @Override
@@ -279,6 +313,11 @@ public class SetUpGame {
         };
     }
 
+    /**
+     * Prints the apporpriet message for the error
+     * @param exception
+     * @param details
+     */
     private void handleException(Exception exception, String details) {
         int status = 0;
 
@@ -327,6 +366,10 @@ public class SetUpGame {
                 .show();
     }
 
+    /**
+     * if the state changes the room is updated using this method
+     * @param room
+     */
     private void updateRoom(Room room) {
         if (room != null) {
             participants = room.getParticipants();
@@ -336,6 +379,9 @@ public class SetUpGame {
         }
     }
 
+    /**
+     * When the waiting room is ready this function is called to get teh participants and set up the game
+     */
     public void waitingRoomReady() {
         communicator.clearParticipantCarController();
         for (Participant participant : participants) {
@@ -349,6 +395,10 @@ public class SetUpGame {
         }
     }
 
+    /**
+     * returnes the local participant
+     * @return
+     */
     public Participant getLocalParticipant() {
         return localParticipant;
     }

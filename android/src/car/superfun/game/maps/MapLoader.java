@@ -28,6 +28,10 @@ public class MapLoader extends TmxMapLoader {
     World world;
     FixtureDef fixtureDef;
 
+    /**
+     * Constructor
+     * @param world
+     */
     public MapLoader(World world) {
         super();
         this.world = world;
@@ -37,6 +41,12 @@ public class MapLoader extends TmxMapLoader {
         fixtureDef.filter.maskBits = GlobalVariables.PLAYER_ENTITY | GlobalVariables.OPPONENT_ENTITY;
     }
 
+    /**
+     * Loads the tile layer.
+     * @param map
+     * @param parentLayers
+     * @param element
+     */
     @Override
     protected void loadTileLayer (TiledMap map, MapLayers parentLayers, Element element) {
         if (element.getName().equals("layer")) {
@@ -82,7 +92,6 @@ public class MapLoader extends TmxMapLoader {
                             if (mapObject instanceof PolylineMapObject) {
                                 shape = getPolyline((PolylineMapObject)mapObject, height, tileWidth, tileHeight, x, y, rotation);
                             } else {
-                                Gdx.app.log("MapLoader", "encountered non-polyLine tileObject");
                                 continue;
                             }
 
@@ -107,14 +116,40 @@ public class MapLoader extends TmxMapLoader {
         }
     }
 
+    /**
+     * Converst coordinate system x.
+     * @param tileXPos
+     * @param tileWidth
+     * @param offset
+     * @return
+     */
     private static float getBox2dX(int tileXPos, int tileWidth, int offset) {
         return (tileXPos * tileWidth + offset) / GlobalVariables.PIXELS_TO_METERS;
     }
 
+    /**
+     * Converts coordinate system y.
+     * @param tileYPos
+     * @param tileHeight
+     * @param height
+     * @param offset
+     * @return
+     */
     private static float getBox2dY(int tileYPos, int tileHeight, int height, int offset) {
         return ((height - tileYPos - 1) * tileHeight + offset) / GlobalVariables.PIXELS_TO_METERS;
     }
 
+    /**
+     * Returns the polyline as a ChainShape.
+     * @param polylineMapObject
+     * @param height
+     * @param tileWidth
+     * @param tileHeight
+     * @param x
+     * @param y
+     * @param rotation
+     * @return
+     */
     private static ChainShape getPolyline(PolylineMapObject polylineMapObject, int height, int tileWidth, int tileHeight, int x, int y, int rotation) {
         float[] vertices = polylineMapObject.getPolyline().getTransformedVertices();
         Vector2[] worldVertices = new Vector2[vertices.length / 2];

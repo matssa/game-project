@@ -35,6 +35,11 @@ public class Leaderboard extends State implements HandlesScore {
 
     private boolean doUpdate = false;
 
+    /**
+     * Instantiates the leaderboard without filling it with content.
+     * @param formatter
+     * @param isPositive
+     */
     public Leaderboard(ScoreFormatter formatter, boolean isPositive) {
         this.stage = new Stage(new ScreenViewport());
         background = new Texture("background.png");
@@ -46,7 +51,6 @@ public class Leaderboard extends State implements HandlesScore {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 GameStateManager.getInstance().pop();
-                Gdx.input.setInputProcessor(MainMenu.stage);
                 return true;
             }
         });
@@ -61,9 +65,14 @@ public class Leaderboard extends State implements HandlesScore {
         skin.getFont("default-font").getData().setScale(4f,4f);
 
         stage.addActor(table);
-        Gdx.input.setInputProcessor(stage);
     }
 
+    /**
+     * Calls the first constructor to instantiate the leaderboard, then fills it with the supplied scores.
+     * @param formatter
+     * @param isPositive
+     * @param scores
+     */
     public Leaderboard(ScoreFormatter formatter, boolean isPositive, Map<String, Integer> scores) {
         this(formatter, isPositive);
         for (Map.Entry<String, Integer> scoreEntry : scores.entrySet()) {
@@ -72,6 +81,10 @@ public class Leaderboard extends State implements HandlesScore {
         fillTable();
     }
 
+    /**
+     * update
+     * @param dt
+     */
     @Override
     public void update(float dt) {
         if (doUpdate) {
@@ -85,6 +98,10 @@ public class Leaderboard extends State implements HandlesScore {
         }
     }
 
+    /**
+     * render
+     * @param sb
+     */
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
@@ -94,11 +111,12 @@ public class Leaderboard extends State implements HandlesScore {
         stage.draw();
     }
 
-    // Fill table with a button, labels and data from the playerList.
-    // This function can be called after leaderboard has been initialized,
-    // to update the table with new data.
+    /**
+     * Populates the table with elements, such as player information and a button.
+     * To update the table with new data, just call the function again.
+     */
     public void fillTable(){
-        table.add(backButton).expandX().left().colspan(3).padBottom(-60);
+        table.add(backButton).expandX().left().colspan(3).padBottom(-60).padLeft(stage.getWidth()/50).padTop(stage.getHeight()/30);
         table.row();
         table.add(new Label("Leaderboard", headerSkin)).center().colspan(3);
         table.row();
@@ -127,17 +145,30 @@ public class Leaderboard extends State implements HandlesScore {
         }
     }
 
+    /**
+     * Adds player and score/time to playerList
+     * @param name
+     * @param score
+     */
     private void placePlayer(String name, int score){
         Player player = new Player(name, score);
         playerList.add(player);
     }
 
+    /**
+     * Handles new player score
+     * @param player
+     * @param score
+     */
     @Override
     public void handleScore(String player, int score) {
         placePlayer(player, score);
         doUpdate = true;
     }
 
+    /**
+     * dispose
+     */
     @Override
     public void dispose() {
         stage.dispose();
@@ -145,6 +176,14 @@ public class Leaderboard extends State implements HandlesScore {
         playerList.clear();
     }
 
+    @Override
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    /**
+     * Player class used to store name and score/time
+     */
     private class Player {
         private String name;
         private int score;

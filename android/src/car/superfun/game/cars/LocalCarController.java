@@ -1,4 +1,4 @@
-package car.superfun.game.car;
+package car.superfun.game.cars;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -35,6 +35,9 @@ public class LocalCarController implements CarController {
 
     }
 
+    /**
+     * Constructor
+     */
     public LocalCarController() {
         slider1Position = Gdx.graphics.getHeight() / 2;
         slider2Position = Gdx.graphics.getHeight() / 2;
@@ -53,6 +56,9 @@ public class LocalCarController implements CarController {
         }
     }
 
+    /**
+     * Update
+     */
     public void update() {
         boolean slider1Touched = false;
         boolean slider2Touched = false;
@@ -88,6 +94,11 @@ public class LocalCarController implements CarController {
         rotation = Math.max(-1f, Math.min(1f, (slider2Position - slider1Position) / (Gdx.graphics.getHeight() * 0.8f)));
     }
 
+
+    /**
+     * Render
+     * @param sb
+     */
     public void render(SpriteBatch sb) {
         sb.begin();
 
